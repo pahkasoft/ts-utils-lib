@@ -2,7 +2,7 @@
     "name": "@tspro/ts-utils-lib",
     "version": "1.0.0",
     "author": "Stefan++ Software Studio",
-    "private": true,
+    "private": false,
     "license": "zlib",
     "description": "",
     "main": "./dist/index.esm.mjs",
