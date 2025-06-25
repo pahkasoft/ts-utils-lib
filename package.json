@@ -1,0 +1,51 @@
+{
+    "name": "@tspro/ts-utils-lib",
+    "version": "1.0.0",
+    "author": "Stefan++ Software Studio",
+    "private": true,
+    "license": "zlib",
+    "description": "",
+    "main": "./dist/index.esm.mjs",
+    "types": "./dist/types/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.esm.mjs",
+            "types": "./dist/types/index.d.ts"
+        }
+    },
+    "devDependencies": {
+        "@types/jasmine": "^5.1.8",
+        "jasmine": "^5.7.1",
+        "jasmine-core": "^5.7.1",
+        "karma": "^6.4.4",
+        "karma-chrome-launcher": "^3.2.0",
+        "karma-cli": "^2.0.0",
+        "karma-jasmine": "^5.1.0",
+        "karma-sourcemap-loader": "^0.4.0",
+        "karma-webpack": "^5.0.1",
+        "rimraf": "^6.0.1",
+        "ts-loader": "^9.5.2",
+        "typedoc": "^0.28.4",
+        "typescript": "^5.8.3",
+        "webpack": "^5.99.8",
+        "webpack-cli": "^6.0.1",
+        "webpack-dev-server": "^5.2.1"
+    },
+    "watch": {
+        "build:dev": {
+            "patterns": [
+                "src"
+            ],
+            "extensions": "ts,tsx",
+            "quiet": false
+        }
+    },
+    "scripts": {
+        "build:prod": "webpack",
+        "test": "karma start",
+        "docs": "typedoc"
+    },
+    "browserslist": [
+        "defaults"
+    ]
+}

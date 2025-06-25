@@ -1,0 +1,17 @@
+/node_modules
+/src
+/docs
+/.vscode
+/coverage
+/.git
+.gitignore
+.gitattributes
+.npmignore
+package-lock.json
+babel.config.js
+karma.conf.js
+tsconfig.json
+typedoc.json
+webpack.config.js
+INSTRUCTIONS.md
+workspace.code-workspace
