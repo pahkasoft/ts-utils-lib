@@ -1,29 +1,27 @@
 "use strict";
 
 module.exports = function (api) {
-
-    const targets = {
-        browsers: [
-            "last 2 Chrome versions",
-            "last 2 Firefox versions",
-            "last 2 Safari versions",
-            "last 2 Edge versions"
-        ]
-    }
+    api.cache(true); // Enables caching for faster builds
 
     return {
-        "presets": [
+        presets: [
             [
                 "@babel/preset-env",
                 {
-                    targets: targets,
-                    //debug: true,
+                    // ES6
+                    targets: {
+                        chrome: "51",
+                        firefox: "54",
+                        edge: "15",
+                        safari: "10",
+                        ios: "10"
+                    },
                     modules: false,
                     useBuiltIns: false,
-                    corejs: false
+                    shippedProposals: false
                 }
             ]
         ],
-        "plugins": []
+        plugins: []
     };
 };
