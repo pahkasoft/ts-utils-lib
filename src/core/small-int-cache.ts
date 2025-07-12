@@ -1,4 +1,4 @@
-import { isInteger } from "../math";
+import { isInteger } from "../utils/math";
 
 /**
  * A cache-like structure optimized for small-range integer keys, including negatives.

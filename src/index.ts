@@ -1,4 +1,3 @@
-export * as Utils from "./export-utils";
-
+export * as Utils from "./utils";
 export * from "./modules";
 export * from "./core";
