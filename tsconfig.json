@@ -1,36 +1,35 @@
 {
     "compilerOptions": {
+        "target": "esnext",
         "baseUrl": "./src",
-        "rootDir": "./src",
         "outDir": "./dist",
         "lib": [
-            "ES6",
-            "DOM"
+            "esnext",
+            "dom"
         ],
-        "module": "ES6",
-        "target": "ES6",
+        "module": "esnext",
         "moduleResolution": "node",
         "esModuleInterop": true,
-        "declaration": true,
-        "declarationDir": "./dist/types",
-        "declarationMap": false,
+        "allowSyntheticDefaultImports": true,
+        "declaration": false,
         "preserveConstEnums": true,
         "sourceMap": true,
+        "allowJs": true,
+        "resolveJsonModule": true,
         "strict": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "noImplicitReturns": true,
         "alwaysStrict": true,
-        "removeComments": true,
-        "allowSyntheticDefaultImports": true,
+        "removeComments": false,
         "skipLibCheck": true
     },
     "include": [
         "src/**/*.ts"
     ],
     "exclude": [
-        "node-modules/**/*"
+        "node_modules"
     ],
     "compileOnSave": false
 }

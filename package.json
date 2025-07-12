@@ -5,47 +5,50 @@
     "license": "MIT",
     "private": false,
     "description": "",
-    "main": "./dist/index.esm.mjs",
-    "types": "./dist/types/index.d.ts",
+    "types": "dist/index.d.ts",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
     "exports": {
         ".": {
-            "import": "./dist/index.esm.mjs",
-            "types": "./dist/types/index.d.ts"
+            "browser": {
+                "require": {
+                    "types": "./dist/index.d.ts",
+                    "default": "./dist/index.js"
+                },
+                "import": {
+                    "types": "./dist/index.d.mts",
+                    "default": "./dist/index.mjs"
+                }
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            }
         }
     },
     "devDependencies": {
         "@types/jasmine": "^5.1.8",
-        "jasmine": "^5.7.1",
-        "jasmine-core": "^5.7.1",
+        "benchmark": "^2.1.4",
+        "jasmine": "^5.8.0",
         "karma": "^6.4.4",
         "karma-chrome-launcher": "^3.2.0",
         "karma-cli": "^2.0.0",
         "karma-jasmine": "^5.1.0",
-        "karma-sourcemap-loader": "^0.4.0",
         "karma-webpack": "^5.0.1",
-        "rimraf": "^6.0.1",
+        "npm-watch": "^0.13.0",
         "ts-loader": "^9.5.2",
-        "typedoc": "^0.28.4",
+        "tsup": "^8.5.0",
         "typescript": "latest",
-        "webpack": "^5.99.8",
-        "webpack-cli": "^6.0.1",
-        "webpack-dev-server": "^5.2.1"
-    },
-    "watch": {
-        "build:dev": {
-            "patterns": [
-                "src"
-            ],
-            "extensions": "ts,tsx",
-            "quiet": false
-        }
+        "webpack": "^5.100.0"
     },
     "scripts": {
-        "build:prod": "webpack",
+        "build": "tsup",
+        "watch": "tsup --watch",
         "test": "karma start",
         "docs": "typedoc"
-    },
-    "browserslist": [
-        "defaults"
-    ]
+    }
 }

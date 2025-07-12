@@ -1,31 +1,30 @@
-"use strict";
-
-const webpackConfig = require("./webpack.config.js");
-
 module.exports = function (config) {
     config.set({
-        basePath: "",
-        frameworks: ["jasmine"],
+        frameworks: ['jasmine'],
         files: [
-            {
-                pattern: "src/**/*.ts"
-            }
+            'src/**/*.test.ts'
         ],
         preprocessors: {
-            "src/**/*.ts": ["webpack", "sourcemap"]
+            'src/**/*.test.ts': ['webpack']
         },
         webpack: {
-            mode: "development",
-            devtool: "source-map",
-            module: webpackConfig.module,
-            resolve: webpackConfig.resolve
+            mode: 'development',
+            module: {
+                rules: [
+                    {
+                        test: /\.ts$/,
+                        use: 'ts-loader',
+                        exclude: /node_modules/
+                    }
+                ]
+            },
+            resolve: {
+                extensions: ['.ts', '.js']
+            }
         },
-        reporters: ["progress"],
-        browsers: ["Chrome"],
-        autoWatch: true,
-        port: 9876,
-        colors: true,
-        logLevel: config.LOG_INFO,
-        sinleRun: true
+        reporters: ['progress'],
+        browsers: ['ChromeHeadless'],
+        singleRun: true
     });
-}
+};
+
