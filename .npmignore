@@ -11,6 +11,7 @@ package-lock.json
 babel.config.js
 karma.conf.js
 tsconfig.json
+tsup.config.ts
 typedoc.json
 webpack.config.js
 INSTRUCTIONS.md

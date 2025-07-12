@@ -17,7 +17,7 @@
     npm version major|minor|patch
 
     // Build production version
-    npm run build:prod
+    npm run build
 
     // Test package
     npm pack
