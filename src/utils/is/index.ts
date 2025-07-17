@@ -68,22 +68,22 @@ export function isInteger(n: unknown): n is number {
     return typeof n === "number" && isFinite(n) && n === Math.trunc(n);
 }
 
-export function isIntegerEQ(value: unknown, compareTo: number): value is number {
+export function isIntegerEq(value: unknown, compareTo: number): value is number {
     return isInteger(value) && value === compareTo;
 }
 
-export function isIntegerGT(value: unknown, compareTo: number): value is number {
+export function isIntegerGt(value: unknown, compareTo: number): value is number {
     return isInteger(value) && value > compareTo;
 }
 
-export function isIntegerGTE(value: unknown, compareTo: number): value is number {
+export function isIntegerGte(value: unknown, compareTo: number): value is number {
     return isInteger(value) && value >= compareTo;
 }
 
-export function isIntegerLT(value: unknown, compareTo: number): value is number {
+export function isIntegerLt(value: unknown, compareTo: number): value is number {
     return isInteger(value) && value < compareTo;
 }
 
-export function isIntegerLTE(value: unknown, compareTo: number): value is number {
+export function isIntegerLte(value: unknown, compareTo: number): value is number {
     return isInteger(value) && value <= compareTo;
 }
