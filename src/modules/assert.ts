@@ -1,3 +1,5 @@
+import { getEnumValues } from "../utils/enum";
+
 export namespace Assert {
 
     export type ErrorConstructor = new (msg: string) => Error;
@@ -23,6 +25,12 @@ export namespace Assert {
     export function assert<T>(a: T, userMsg?: string) {
         if (!a) {
             throwError(userMsg ?? "Assertion failed!");
+        }
+    }
+
+    export function assertEnum<E extends Record<string, string | number>>(value: unknown, enumObj: E, name = "value"): asserts value is E[keyof E] {
+        if (!getEnumValues(enumObj).some(v => v === value)) {
+            throw new TypeError(`Invalid ${name} enum value: ${value}`);
         }
     }
 

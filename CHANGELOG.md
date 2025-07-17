@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.0] - 2025-07-17
+### Added
+- Assert.assertEnum(...)
+
 ## [1.1.0] - 2025-07-12
 ### Added
 - Utils.Obj.isObject
