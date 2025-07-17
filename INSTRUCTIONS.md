@@ -7,7 +7,7 @@
     npm run docs
 
 ## Build
-    npm run build:prod
+    npm run build
 
 ## Publish
     // Update changelog
