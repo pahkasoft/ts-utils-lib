@@ -30,6 +30,16 @@
             }
         }
     },
+    "files": [
+        "CHANGELOG.md",
+        "LICENSE",
+        "README.md",
+        "dist/**/*.js",
+        "dist/**/*.mjs",
+        "dist/**/*.d.ts",
+        "dist/**/*.d.mts",
+        "package.json"
+    ],
     "devDependencies": {
         "@types/jasmine": "^5.1.8",
         "benchmark": "^2.1.4",
