@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0] - 2025-09-16
+### Added
+- Utils.Is.isNullish()
+- Utils.Is.isEmptyString()
+- Utils.Is.isNonEmptyString()
+- Utils.Is.isIntegerOrUndefined()
+- Utils.Is.isIntegerBetween()
+- Utils.Is.isNaNValue()
+- Utils.Is.isInfinity()
+- Utils.Is.isPosInfinity()
+- Utils.Is.isNegInfinity()
+
 ## [1.4.0] - 2025-09-16
 ### Added
 - Utils.Str.charCount(str, ch)
