@@ -23,6 +23,15 @@ describe("StringUtil", () => {
         expect(StringUtils.removeAt("abcde", 0, 0)).toEqual("abcde");
         expect(() => StringUtils.removeAt("abcde", 0, -1)).toThrow();
 
+        expect(StringUtils.charCount("", "a")).toEqual(0);
+        expect(StringUtils.charCount("a", "a")).toEqual(1);
+        expect(StringUtils.charCount("aa", "a")).toEqual(2);
+        expect(StringUtils.charCount("aa", "")).toEqual(0);
+        expect(StringUtils.charCount("aa", "aa")).toEqual(0);
+        expect(StringUtils.charCount("aa", "b")).toEqual(0);
+        expect(StringUtils.charCount("ab", "b")).toEqual(1);
+        expect(StringUtils.charCount("ba", "b")).toEqual(1);
+
         expect(StringUtils.makeSentenceFromPascal("WhatAGreatDay!")).toEqual("What a great day!");
     });
 

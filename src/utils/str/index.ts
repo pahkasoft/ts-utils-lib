@@ -78,6 +78,23 @@ export function removeAt(str: string, pos: number, removeCount: number) {
 }
 
 /**
+ * Count number of char in string.
+ * @param str
+ * @param ch - must be single char.
+ * @returns number of chars in string.
+ */
+export function charCount(str: string, ch: string): number {
+    if (ch.length !== 1 || str.length === 0) return 0;
+
+    let count = 0;
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] === ch) count++;
+    }
+
+    return count;
+}
+
+/**
  * "UndeclaredVariable" => "Undeclared variable"
  * @param PascalString 
  */

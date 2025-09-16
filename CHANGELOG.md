@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.0] - 2025-09-16
+### Added
+- Utils.Str.charCount(str, ch)
+
 ## [1.3.0] - 2025-07-18
 ### Added
 - Utils.Is
