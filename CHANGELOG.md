@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.0] - 2025-09-16
+### Added
+- Utils.Is.isEmptyArray()
+- Utils.Is.isNonEmptyArray()
+- Utils.Is.isEmptyArrayOrUndefined()
+- Utils.Is.isNonEmptyArrayOrUndefined()
+- Utils.Is.isEmptyStringOrUndefined()
+- Utils.Is.isNonEmptyStringOrUndefined()
+- Utils.Is.isFinite()
+
 ## [1.5.0] - 2025-09-16
 ### Added
 - Utils.Is.isNullish()

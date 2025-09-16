@@ -28,6 +28,22 @@ export function isArrayOrUndefined(value: unknown): value is unknown[] | undefin
     return value === undefined || isArray(value);
 }
 
+export function isEmptyArray<T>(a: T[] | unknown): a is T[] {
+    return isArray(a) && a.length === 0;
+}
+
+export function isNonEmptyArray<T>(a: T[] | unknown): a is T[] {
+    return isArray(a) && a.length > 0;
+}
+
+export function isEmptyArrayOrUndefined<T>(a: T[] | unknown): a is T[] | undefined {
+    return isArray(a) && a.length === 0 || a === undefined;
+}
+
+export function isNonEmptyArrayOrUndefined<T>(a: T[] | unknown): a is T[] | undefined {
+    return isArray(a) && a.length > 0 || a === undefined;
+}
+
 export function isString(value: unknown): value is string {
     return typeof value === "string";
 }
@@ -42,6 +58,14 @@ export function isNonEmptyString(value: unknown): value is string {
 
 export function isStringOrUndefined(value: unknown): value is string | undefined {
     return value === undefined || typeof value === "string";
+}
+
+export function isEmptyStringOrUndefined(value: unknown): value is "" | undefined {
+    return typeof value === "string" && value.length === 0 || value === undefined;
+}
+
+export function isNonEmptyStringOrUndefined(value: unknown): value is string | undefined {
+    return typeof value === "string" && value.length > 0 || value === undefined;
 }
 
 export function isBoolean(value: unknown): value is boolean {
@@ -74,6 +98,10 @@ export function isNumber(value: unknown): value is number {
 
 export function isNumberOrUndefined(value: unknown): value is number | undefined {
     return typeof value === "number" || value === undefined;
+}
+
+export function isFinite(value: unknown): value is number {
+    return typeof value === "number" && Number.isFinite(value);
 }
 
 export function isInteger(n: unknown): n is number {
