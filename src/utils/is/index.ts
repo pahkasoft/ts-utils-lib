@@ -8,6 +8,10 @@ export function isNull(value: unknown): value is null {
     return value === null;
 }
 
+export function isNullish(value: unknown): value is null | undefined {
+    return value === undefined || value === null;
+}
+
 export function isObject(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null && !isArray(value);
 }
@@ -26,6 +30,14 @@ export function isArrayOrUndefined(value: unknown): value is unknown[] | undefin
 
 export function isString(value: unknown): value is string {
     return typeof value === "string";
+}
+
+export function isEmptyString(value: unknown): value is "" {
+    return typeof value === "string" && value.length === 0;
+}
+
+export function isNonEmptyString(value: unknown): value is string {
+    return typeof value === "string" && value.length > 0;
 }
 
 export function isStringOrUndefined(value: unknown): value is string | undefined {
@@ -48,14 +60,6 @@ export function isFunctionOrUndefined(value: unknown): value is Function | undef
     return value === undefined || typeof value === "function";
 }
 
-export function isNumber(value: unknown): value is number {
-    return typeof value === "number";
-}
-
-export function isNumberOrUndefined(value: unknown): value is number | undefined {
-    return value === undefined || typeof value === "number";
-}
-
 export function isEnumValue<E extends Record<string, string | number>>(value: unknown, enumObj: E, name = "value"): value is E[keyof E] {
     return getEnumValues(enumObj).some(v => v === value);
 }
@@ -64,8 +68,20 @@ export function isEnumValueOrUndefined<E extends Record<string, string | number>
     return value === undefined || getEnumValues(enumObj).some(v => v === value);
 }
 
+export function isNumber(value: unknown): value is number {
+    return typeof value === "number";
+}
+
+export function isNumberOrUndefined(value: unknown): value is number | undefined {
+    return typeof value === "number" || value === undefined;
+}
+
 export function isInteger(n: unknown): n is number {
     return typeof n === "number" && isFinite(n) && n === Math.trunc(n);
+}
+
+export function isIntegerOrUndefined(n: unknown): n is number | undefined {
+    return typeof n === "number" && isFinite(n) && n === Math.trunc(n) || n === undefined;
 }
 
 export function isIntegerEq(value: unknown, compareTo: number): value is number {
@@ -86,4 +102,24 @@ export function isIntegerLt(value: unknown, compareTo: number): value is number 
 
 export function isIntegerLte(value: unknown, compareTo: number): value is number {
     return isInteger(value) && value <= compareTo;
+}
+
+export function isIntegerBetween(value: unknown, min: number, max: number): value is number {
+    return isInteger(value) && value >= min && value <= max;
+}
+
+export function isNaNValue(value: unknown): value is number {
+    return typeof value === "number" && Number.isNaN(value);
+}
+
+export function isInfinity(value: unknown): value is number {
+    return typeof value === "number" && Math.abs(value) === Infinity;
+}
+
+export function isPosInfinity(value: unknown): value is number {
+    return typeof value === "number" && value === Infinity;
+}
+
+export function isNegInfinity(value: unknown): value is number {
+    return typeof value === "number" && value === -Infinity;
 }
