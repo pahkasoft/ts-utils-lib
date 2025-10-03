@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.7.0] - 2025-
+## [1.7.0] - 2025-10-03
 ### Added
 - Utils.Obj.hasProperties()
 
