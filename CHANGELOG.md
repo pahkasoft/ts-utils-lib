@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.7.0] - 2025-
+### Added
+- Utils.Obj.hasProperties()
+
 ## [1.6.0] - 2025-09-16
 ### Added
 - Utils.Is.isEmptyArray()
