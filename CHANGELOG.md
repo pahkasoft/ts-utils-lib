@@ -1,9 +1,5 @@
 # Changelog
 
-## [1.8.0] - 2025-10-07
-### Added
-- Utils.Math.cmp()
-
 ## [1.7.0] - 2025-10-03
 ### Added
 - Utils.Obj.hasProperties()

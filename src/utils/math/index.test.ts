@@ -15,18 +15,4 @@ describe("MathUtil", () => {
 
         expect(MathUtils.isInteger("0")).toEqual(false);
     });
-
-    it("cmp", () => {
-        expect(MathUtils.cmp(0, 0)).toEqual(0);
-        expect(MathUtils.cmp(2, 2)).toEqual(0);
-        expect(MathUtils.cmp(-2, -2)).toEqual(0);
-        expect(MathUtils.cmp(0, 2)).toEqual(-1);
-        expect(MathUtils.cmp(2, 0)).toEqual(1);
-        expect(MathUtils.cmp(Infinity, Infinity)).toEqual(0);
-        expect(MathUtils.cmp(-Infinity, Infinity)).toEqual(-1);
-        expect(MathUtils.cmp(Infinity, -Infinity)).toEqual(1);
-        expect(MathUtils.cmp(NaN, 1)).toEqual(0);
-        expect(MathUtils.cmp(1, NaN)).toEqual(0);
-        expect(MathUtils.cmp(NaN, NaN)).toEqual(0);
-    });
 });

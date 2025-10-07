@@ -5,28 +5,48 @@
 Here are some chore instructions.
 
 ### Run Test
-# Run test
-npm run test
+```sh
+    # Run test
+    npm run test
+```
 
 ### Build Docs
-# Builddocs
-npm run docs
+```sh
+    # Builddocs
+    npm run docs
+```
+
+### Build Bundle
+```sh
+    # Build bundle
+    npm run build
+```
 
 ### Publish
-# Update changelog
-git log --pretty="- %s"
+```sh
+    # Update changelog
+    git log --pretty="- %s"
+```
 
-# Update version
-npm version major
-npm version minor
-npm version patch
+```sh
+    # Update version
+    npm version major
+    npm version minor
+    npm version patch
+```
 
-# Build production version
-npm run build
+```sh
+    # Build production version
+    npm run build
+```
 
-# Test package
-npm pack
+```sh
+    # Test package
+    npm pack
+```
 
-# Publish
-npm login
-npm publish --access public
+```sh
+    # Publish
+    npm login
+    npm publish --access public
+```
