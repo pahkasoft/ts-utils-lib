@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.9.0] - 2025-10-
+## [1.9.0] - 2025-10-12
 ### Added
 - Utils.Math.avg()
 - Utils.Obj.deepEqual()
