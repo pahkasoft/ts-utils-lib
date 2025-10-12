@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.9.0] - 2025-10-
+### Added
+- Utils.Math.avg()
+- Utils.Obj.deepEqual()
+
 ## [1.8.0] - 2025-10-07
 ### Added
 - Utils.Math.cmp()
