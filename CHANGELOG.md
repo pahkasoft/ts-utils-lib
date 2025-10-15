@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.10.0] - 2025-10-15
+### Added
+- Map1<KEY1, VALUE>
+- Map2<KEY1, KEY2, VALUE>
+- Map3<KEY1, KEY2, KEY3, VALUE>
+
 ## [1.9.0] - 2025-10-12
 ### Added
 - Utils.Math.avg()
