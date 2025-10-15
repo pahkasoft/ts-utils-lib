@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.11.0] - 2025-10-15
+### Added
+- Forgot to build 1.10.0, now added Map1, Map2 and Map3.
+
 ## [1.10.0] - 2025-10-15
 ### Added
 - Map1<KEY1, VALUE>
