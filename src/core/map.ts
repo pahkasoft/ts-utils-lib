@@ -1,8 +1,17 @@
 
 export class Map1<KEY1, VALUE> {
-    private map1 = new Map<KEY1, VALUE>();
+    private map1: Map<KEY1, VALUE>;
 
-    constructor() { }
+    constructor();
+    constructor(map1: Map1<KEY1, VALUE>)
+    constructor(entries: Iterable<[KEY1, VALUE]>)
+    constructor(entries?: Map1<KEY1, VALUE> | Iterable<[KEY1, VALUE]>) {
+        this.map1 = entries instanceof Map1 ? new Map(entries.map1) : new Map(entries);
+    }
+
+    has(key1: KEY1): boolean {
+        return this.map1.has(key1);
+    }
 
     set(key1: KEY1, value: VALUE): VALUE {
         this.map1.set(key1, value);
@@ -13,8 +22,16 @@ export class Map1<KEY1, VALUE> {
         return this.map1.get(key1);
     }
 
-    has(key1: KEY1): boolean {
-        return this.map1.has(key1);
+    getOrDefault(key1: KEY1, defaultValue: VALUE): VALUE {
+        return this.get(key1) ?? defaultValue;
+    }
+
+    getOrCreate(key1: KEY1, creator: () => VALUE): VALUE {
+        let value = this.get(key1);
+        if (!value) {
+            this.set(key1, value = creator());
+        }
+        return value;
     }
 
     delete(key1: KEY1): boolean {
@@ -37,8 +54,16 @@ export class Map1<KEY1, VALUE> {
         return this.map1.keys();
     }
 
+    keysArray(): KEY1[] {
+        return [...this.keys()];
+    }
+
     values(): IterableIterator<VALUE> {
         return this.map1.values();
+    }
+
+    valuesArray(): VALUE[] {
+        return [...this.values()];
     }
 
     *entries(): IterableIterator<[KEY1, VALUE]> {
@@ -46,15 +71,104 @@ export class Map1<KEY1, VALUE> {
             yield [key1, value];
     }
 
+    entriesArray(): [KEY1, VALUE][] {
+        return [...this.entries()];
+    }
+
     *[Symbol.iterator]() {
         yield* this.entries();
+    }
+
+    clone(): Map1<KEY1, VALUE> {
+        return new Map1(this);
+    }
+
+    merge(other: Map1<KEY1, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1) => VALUE): this {
+        for (const [key1, value] of other.entries()) {
+            if (this.has(key1) && conflictResolver) {
+                this.set(key1, conflictResolver(this.get(key1)!, value, key1));
+            }
+            else {
+                this.set(key1, value);
+            }
+        }
+        return this;
+    }
+
+    some(fn: (value: VALUE, key1: KEY1) => boolean): boolean {
+        for (const [key1, value] of this.map1) {
+            if (fn(value, key1)) return true;
+        }
+        return false;
+    }
+
+    every(fn: (value: VALUE, key1: KEY1) => boolean): boolean {
+        for (const [key1, value] of this.map1) {
+            if (!fn(value, key1)) return false;
+        }
+        return true;
+    }
+
+    filter(fn: (value: VALUE, key1: KEY1) => boolean): Map1<KEY1, VALUE> {
+        let result = new Map1<KEY1, VALUE>();
+        for (const [key1, value] of this.map1) {
+            if (fn(value, key1)) result.set(key1, value);
+        }
+        return result;
+    }
+
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1) => R, init: R): R {
+        let acc = init;
+        for (const [key1, value] of this.map1) {
+            acc = fn(acc, value, key1);
+        }
+        return acc;
+    }
+
+    mapEntries<R>(fn: (value: VALUE, key1: KEY1) => R): R[] {
+        let result: R[] = [];
+        for (const [key1, value] of this.map1) {
+            result.push(fn(value, key1));
+        }
+        return result;
+    }
+
+    mapValues<R = VALUE>(fn: (value: VALUE, key1: KEY1) => R): Map1<KEY1, R> {
+        let result = new Map1<KEY1, R>();
+        for (const [key1, value] of this.map1) {
+            result.set(key1, fn(value, key1));
+        }
+        return result;
+    }
+
+    toString(): string {
+        const entries = [...this.map1].map(([k, v]) => `${k} => ${v}`).join(', ');
+        return `Map1(${this.map1.size}) { ${entries} }`;
     }
 }
 
 export class Map2<KEY1, KEY2, VALUE> {
     private map1 = new Map<KEY1, Map<KEY2, VALUE>>();
 
-    constructor() { }
+    constructor();
+    constructor(map2: Map2<KEY1, KEY2, VALUE>)
+    constructor(entries: Iterable<[KEY1, KEY2, VALUE]>)
+    constructor(entries?: Map2<KEY1, KEY2, VALUE> | Iterable<[KEY1, KEY2, VALUE]>) {
+        if (entries instanceof Map2) {
+            for (const [key1, inner] of entries.map1) {
+                this.map1.set(key1, new Map(inner));
+            }
+        }
+        else if (entries) {
+            for (const [key1, key2, value] of entries) {
+                this.set(key1, key2, value);
+            }
+        }
+    }
+
+    has(key1: KEY1, key2: KEY2): boolean {
+        return this.map1.get(key1)?.has(key2) ?? false;
+    }
 
     set(key1: KEY1, key2: KEY2, value: VALUE): VALUE {
         let map2 = this.map1.get(key1) ?? this.map1.set(key1, new Map()).get(key1)!;
@@ -66,8 +180,16 @@ export class Map2<KEY1, KEY2, VALUE> {
         return this.map1.get(key1)?.get(key2);
     }
 
-    has(key1: KEY1, key2: KEY2): boolean {
-        return this.map1.get(key1)?.has(key2) ?? false;
+    getOrDefault(key1: KEY1, key2: KEY2, defaultValue: VALUE): VALUE {
+        return this.get(key1, key2) ?? defaultValue;
+    }
+
+    getOrCreate(key1: KEY1, key2: KEY2, creator: () => VALUE): VALUE {
+        let value = this.get(key1, key2);
+        if (!value) {
+            this.set(key1, key2, value = creator());
+        }
+        return value;
     }
 
     delete(key1: KEY1): boolean;
@@ -97,11 +219,15 @@ export class Map2<KEY1, KEY2, VALUE> {
 
     keys(): IterableIterator<[KEY1, KEY2]> {
         function* gen(map1: Map<KEY1, Map<KEY2, VALUE>>): IterableIterator<[KEY1, KEY2]> {
-            for (const [k1, map2] of map1)
-                for (const k2 of map2.keys())
-                    yield [k1, k2];
+            for (const [key1, map2] of map1)
+                for (const key2 of map2.keys())
+                    yield [key1, key2];
         }
         return gen(this.map1);
+    }
+
+    keysArray(): [KEY1, KEY2][] {
+        return [...this.keys()];
     }
 
     values(): IterableIterator<VALUE> {
@@ -112,21 +238,135 @@ export class Map2<KEY1, KEY2, VALUE> {
         }
         return gen(this.map1);
     }
+
+    valuesArray(): VALUE[] {
+        return [...this.values()];
+    }
+
     *entries(): IterableIterator<[KEY1, KEY2, VALUE]> {
         for (const [key1, map2] of this.map1)
             for (const [key2, value] of map2)
                 yield [key1, key2, value];
     }
 
+    entriesArray(): [KEY1, KEY2, VALUE][] {
+        return [...this.entries()];
+    }
+
     *[Symbol.iterator]() {
         yield* this.entries();
+    }
+
+    clone(): Map2<KEY1, KEY2, VALUE> {
+        return new Map2(this);
+    }
+
+    merge(other: Map2<KEY1, KEY2, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1, key2: KEY2) => VALUE): this {
+        for (const [key1, key2, value] of other.entries()) {
+            if (this.has(key1, key2) && conflictResolver) {
+                this.set(key1, key2, conflictResolver(this.get(key1, key2)!, value, key1, key2));
+            }
+            else {
+                this.set(key1, key2, value);
+            }
+        }
+        return this;
+    }
+
+    some(fn: (value: VALUE, key1: KEY1, key2: KEY2) => boolean): boolean {
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, value] of map2) {
+                if (fn(value, key1, key2)) return true;
+            }
+        }
+        return false;
+    }
+
+    every(fn: (value: VALUE, key1: KEY1, key2: KEY2) => boolean): boolean {
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, value] of map2) {
+                if (!fn(value, key1, key2)) return false;
+            }
+        }
+        return true;
+    }
+
+    filter(fn: (value: VALUE, key1: KEY1, key2: KEY2) => boolean): Map2<KEY1, KEY2, VALUE> {
+        let result = new Map2<KEY1, KEY2, VALUE>();
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, value] of map2) {
+                if (fn(value, key1, key2)) result.set(key1, key2, value);
+            }
+        }
+        return result;
+    }
+
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1, key2: KEY2) => R, init: R): R {
+        let acc = init;
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, value] of map2) {
+                acc = fn(acc, value, key1, key2);
+            }
+        }
+        return acc;
+    }
+
+    mapEntries<R>(fn: (value: VALUE, key1: KEY1, key2: KEY2) => R): R[] {
+        let result: R[] = [];
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, value] of map2) {
+                result.push(fn(value, key1, key2));
+            }
+        }
+        return result;
+    }
+
+    mapValues<R = VALUE>(fn: (value: VALUE, key1: KEY1, key2: KEY2) => R): Map2<KEY1, KEY2, R> {
+        let result = new Map2<KEY1, KEY2, R>();
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, value] of map2) {
+                result.set(key1, key2, fn(value, key1, key2));
+            }
+        }
+        return result;
+    }
+
+    toString(): string {
+        const entries: string[] = [];
+        for (const [key1, map2] of this.map1) {
+            const inner = [...map2].map(([key2, v]) => `${key2} => ${v}`).join(', ');
+            entries.push(`${key1} => { ${inner} }`);
+        }
+        return `Map2(${this.size}) { ${entries.join(', ')} }`;
     }
 }
 
 export class Map3<KEY1, KEY2, KEY3, VALUE> {
     private map1 = new Map<KEY1, Map<KEY2, Map<KEY3, VALUE>>>();
 
-    constructor() { }
+    constructor();
+    constructor(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>);
+    constructor(map3: Map3<KEY1, KEY2, KEY3, VALUE>);
+    constructor(entries?: Iterable<[KEY1, KEY2, KEY3, VALUE]> | Map3<KEY1, KEY2, KEY3, VALUE>) {
+        if (entries instanceof Map3) {
+            for (const [key1, map2] of entries.map1) {
+                const newMap2 = new Map<KEY2, Map<KEY3, VALUE>>();
+                for (const [key2, map3] of map2) {
+                    newMap2.set(key2, new Map(map3));
+                }
+                this.map1.set(key1, newMap2);
+            }
+        }
+        else if (entries) {
+            for (const [key1, key2, key3, value] of entries) {
+                this.set(key1, key2, key3, value);
+            }
+        }
+    }
+
+    has(key1: KEY1, key2: KEY2, key3: KEY3): boolean {
+        return this.map1.get(key1)?.get(key2)?.has(key3) ?? false;
+    }
 
     set(key1: KEY1, key2: KEY2, key3: KEY3, value: VALUE): VALUE {
         let map2 = this.map1.get(key1);
@@ -141,8 +381,16 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> {
         return this.map1.get(key1)?.get(key2)?.get(key3);
     }
 
-    has(key1: KEY1, key2: KEY2, key3: KEY3): boolean {
-        return this.map1.get(key1)?.get(key2)?.has(key3) ?? false;
+    getOrDefault(key1: KEY1, key2: KEY2, key3: KEY3, defaultValue: VALUE): VALUE {
+        return this.get(key1, key2, key3) ?? defaultValue;
+    }
+
+    getOrCreate(key1: KEY1, key2: KEY2, key3: KEY3, creator: () => VALUE): VALUE {
+        let value = this.get(key1, key2, key3);
+        if (!value) {
+            this.set(key1, key2, key3, value = creator());
+        }
+        return value;
     }
 
     delete(key1: KEY1): boolean;
@@ -183,12 +431,16 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> {
 
     keys(): IterableIterator<[KEY1, KEY2, KEY3]> {
         function* gen(map1: Map<KEY1, Map<KEY2, Map<KEY3, VALUE>>>): IterableIterator<[KEY1, KEY2, KEY3]> {
-            for (const [k1, map2] of map1)
-                for (const [k2, map3] of map2)
-                    for (const k3 of map3.keys())
-                        yield [k1, k2, k3];
+            for (const [key1, map2] of map1)
+                for (const [key2, map3] of map2)
+                    for (const key3 of map3.keys())
+                        yield [key1, key2, key3];
         }
         return gen(this.map1);
+    }
+
+    keysArray(): [KEY1, KEY2, KEY3][] {
+        return [...this.keys()];
     }
 
     values(): IterableIterator<VALUE> {
@@ -201,6 +453,10 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> {
         return gen(this.map1);
     }
 
+    valuesArray(): VALUE[] {
+        return [...this.values()];
+    }
+
     *entries(): IterableIterator<[KEY1, KEY2, KEY3, VALUE]> {
         for (const [key1, map2] of this.map1)
             for (const [key2, map3] of map2)
@@ -208,7 +464,108 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> {
                     yield [key1, key2, key3, value];
     }
 
+    entriesArray(): [KEY1, KEY2, KEY3, VALUE][] {
+        return [...this.entries()];
+    }
+
     *[Symbol.iterator]() {
         yield* this.entries();
+    }
+
+    clone(): Map3<KEY1, KEY2, KEY3, VALUE> {
+        return new Map3(this);
+    }
+
+    merge(other: Map3<KEY1, KEY2, KEY3, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => VALUE): this {
+        for (const [key1, key2, key3, value] of other.entries()) {
+            if (this.has(key1, key2, key3) && conflictResolver) {
+                this.set(key1, key2, key3, conflictResolver(this.get(key1, key2, key3)!, value, key1, key2, key3));
+            }
+            else {
+                this.set(key1, key2, key3, value);
+            }
+        }
+        return this;
+    }
+
+    some(fn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => boolean): boolean {
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, map3] of map2) {
+                for (const [key3, value] of map3) {
+                    if (fn(value, key1, key2, key3)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    every(fn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => boolean): boolean {
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, map3] of map2) {
+                for (const [key3, value] of map3) {
+                    if (!fn(value, key1, key2, key3)) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    filter(fn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => boolean): Map3<KEY1, KEY2, KEY3, VALUE> {
+        let result = new Map3<KEY1, KEY2, KEY3, VALUE>();
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, map3] of map2) {
+                for (const [key3, value] of map3) {
+                    if (fn(value, key1, key2, key3)) result.set(key1, key2, key3, value);
+                }
+            }
+        }
+        return result;
+    }
+
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => R, init: R): R {
+        let acc = init;
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, map3] of map2) {
+                for (const [key3, value] of map3) {
+                    acc = fn(acc, value, key1, key2, key3);
+                }
+            }
+        }
+        return acc;
+    }
+
+    mapEntries<R>(fn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => R): R[] {
+        let result: R[] = [];
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, map3] of map2) {
+                for (const [key3, value] of map3) {
+                    result.push(fn(value, key1, key2, key3));
+                }
+            }
+        }
+        return result;
+    }
+
+    mapValues<R = VALUE>(fn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => R): Map3<KEY1, KEY2, KEY3, R> {
+        let result = new Map3<KEY1, KEY2, KEY3, R>();
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, map3] of map2) {
+                for (const [key3, value] of map3) {
+                    result.set(key1, key2, key3, fn(value, key1, key2, key3));
+                }
+            }
+        }
+        return result;
+    }
+
+    toString(): string {
+        const entries: string[] = [];
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, map3] of map2) {
+                const inner = [...map3].map(([key3, v]) => `${key3} => ${v}`).join(', ');
+                entries.push(`${key1} => ${key2} => { ${inner} }`);
+            }
+        }
+        return `Map3(${this.size}) { ${entries.join(', ')} }`;
     }
 }

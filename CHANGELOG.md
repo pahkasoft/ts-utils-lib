@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.13.0] - 2025-10-
+### Added
+- Added even more functionality to Map1, Map2 and Map3.
+
 ## [1.12.0] - 2025-10-15
 ### Added
 - Added more functionality to Map1, Map2 and Map3.
