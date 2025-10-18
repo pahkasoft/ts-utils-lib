@@ -3,6 +3,7 @@
 ## [1.14.0] - 2025-10-
 ### Added
 - Map1, Map2 and Map3.getOrCreate() accepts value and creator.
+- SignedIndexArray<ELEM>
 
 ## [1.13.0] - 2025-10-18
 ### Added
