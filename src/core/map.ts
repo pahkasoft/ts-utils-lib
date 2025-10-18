@@ -1,3 +1,4 @@
+import { isFunction } from "../utils/is";
 
 export class Map1<KEY1, VALUE> {
     private map1: Map<KEY1, VALUE>;
@@ -26,10 +27,17 @@ export class Map1<KEY1, VALUE> {
         return this.get(key1) ?? defaultValue;
     }
 
-    getOrCreate(key1: KEY1, creator: () => VALUE): VALUE {
+    getOrCreate(key1: KEY1, value: VALUE): VALUE;
+    getOrCreate(key1: KEY1, creator: () => VALUE): VALUE;
+    getOrCreate(key1: KEY1, creatorOrValue: VALUE | (() => VALUE)): VALUE {
         let value = this.get(key1);
         if (!value) {
-            this.set(key1, value = creator());
+            if (isFunction(creatorOrValue)) {
+                this.set(key1, value = creatorOrValue());
+            }
+            else {
+                this.set(key1, value = creatorOrValue);
+            }
         }
         return value;
     }
@@ -188,10 +196,17 @@ export class Map2<KEY1, KEY2, VALUE> {
         return this.get(key1, key2) ?? defaultValue;
     }
 
-    getOrCreate(key1: KEY1, key2: KEY2, creator: () => VALUE): VALUE {
+    getOrCreate(key1: KEY1, key2: KEY2, value: VALUE): VALUE;
+    getOrCreate(key1: KEY1, key2: KEY2, creator: () => VALUE): VALUE;
+    getOrCreate(key1: KEY1, key2: KEY2, creatorOrValue: VALUE | (() => VALUE)): VALUE {
         let value = this.get(key1, key2);
         if (!value) {
-            this.set(key1, key2, value = creator());
+            if (isFunction(creatorOrValue)) {
+                this.set(key1, key2, value = creatorOrValue());
+            }
+            else {
+                this.set(key1, key2, value = creatorOrValue);
+            }
         }
         return value;
     }
@@ -399,10 +414,17 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> {
         return this.get(key1, key2, key3) ?? defaultValue;
     }
 
-    getOrCreate(key1: KEY1, key2: KEY2, key3: KEY3, creator: () => VALUE): VALUE {
+    getOrCreate(key1: KEY1, key2: KEY2, key3: KEY3, value: VALUE): VALUE;
+    getOrCreate(key1: KEY1, key2: KEY2, key3: KEY3, creator: () => VALUE): VALUE;
+    getOrCreate(key1: KEY1, key2: KEY2, key3: KEY3, creatorOrValue: VALUE | (() => VALUE)): VALUE {
         let value = this.get(key1, key2, key3);
         if (!value) {
-            this.set(key1, key2, key3, value = creator());
+            if (isFunction(creatorOrValue)) {
+                this.set(key1, key2, key3, value = creatorOrValue());
+            }
+            else {
+                this.set(key1, key2, key3, value = creatorOrValue);
+            }
         }
         return value;
     }

@@ -19,6 +19,8 @@ describe(Map1.name, () => {
         expect(new Map1([["a", 2], ["b", 3]]).getOrDefault("c", 0)).toEqual(0);
 
         // getOrCreate
+        expect(new Map1([["a", 2], ["b", 3]]).getOrCreate("a", 1)).toEqual(2);
+        expect(new Map1([["a", 2], ["b", 3]]).getOrCreate("c", 1)).toEqual(1);
         expect(new Map1([["a", 2], ["b", 3]]).getOrCreate("a", () => 1)).toEqual(2);
         expect(new Map1([["a", 2], ["b", 3]]).getOrCreate("c", () => 1)).toEqual(1);
 
@@ -95,6 +97,8 @@ describe(Map2.name, () => {
         expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrDefault("a", "c", 0)).toEqual(0);
 
         // getOrCreate
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "b", 1)).toEqual(2);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "c", 1)).toEqual(1);
         expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "b", () => 1)).toEqual(2);
         expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "c", () => 1)).toEqual(1);
 
@@ -173,6 +177,8 @@ describe(Map3.name, () => {
         expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "c", "d", 0)).toEqual(0);
 
         // getOrCreate
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", 1)).toEqual(2);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", 1)).toEqual(1);
         expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", () => 1)).toEqual(2);
         expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", () => 1)).toEqual(1);
 
