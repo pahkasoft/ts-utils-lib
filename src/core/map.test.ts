@@ -1,5 +1,9 @@
 import { Map1, Map2, Map3 } from "./map";
 
+function mapArr<K, V>(m: Map<K, V>) {
+    return [...m.entries()];
+}
+
 describe(Map1.name, () => {
     it("should work", () => {
         // has
@@ -67,6 +71,9 @@ describe(Map1.name, () => {
 
         // mapValues
         expect(new Map1([["a", "x"], ["b", "y"]]).mapValues((v, k1) => (k1 + v).toUpperCase())).toEqual(new Map1([["a", "AX"], ["b", "BY"]]));
+
+        // toMap
+        expect(mapArr(new Map1([["a", 2], ["d", 3]]).toMap())).toEqual(mapArr(new Map([["a", 2], ["d", 3]])));
 
         // toString
         expect(new Map1([["a", 1], ["b", 2]]).toString()).toEqual("Map1(2) { a => 1, b => 2 }");
@@ -142,6 +149,9 @@ describe(Map2.name, () => {
 
         // mapValues
         expect(new Map2([["a", "b", "x"], ["a", "c", "y"]]).mapValues((v, k1, k2) => k1.toUpperCase())).toEqual(new Map2([["a", "b", "A"], ["a", "c", "A"]]));
+
+        // toMap
+        expect(mapArr(new Map2([["a", "b", 2], ["a", "d", 3]]).toMap())).toEqual(mapArr(new Map([[["a", "b"], 2], [["a", "d"], 3]])));
 
         // toString
         expect(new Map2([["a", "b", "x"], ["a", "c", "y"]]).toString()).toEqual("Map2(2) { a => { b => x, c => y } }");
@@ -219,6 +229,9 @@ describe(Map3.name, () => {
 
         // mapValues
         expect(new Map3([["a", "b", "c", "x"], ["a", "b", "d", "y"]]).mapValues((v, k1, k2, k3) => v.toUpperCase())).toEqual(new Map3([["a", "b", "c", "X"], ["a", "b", "d", "Y"]]));
+
+        // toMap
+        expect(mapArr(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).toMap())).toEqual(mapArr(new Map([[["a", "b", "c"], 2], [["a", "b", "d"], 3]])));
 
         // toString
         expect(new Map3([["a", "b", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual("Map3(2) { a => b => { c => x, d => y } }");

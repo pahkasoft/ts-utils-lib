@@ -141,6 +141,10 @@ export class Map1<KEY1, VALUE> {
         return result;
     }
 
+    toMap(): Map<KEY1, VALUE> {
+        return new Map(this.map1);
+    }
+
     toString(): string {
         const entries = [...this.map1].map(([k, v]) => `${k} => ${v}`).join(', ');
         return `Map1(${this.map1.size}) { ${entries} }`;
@@ -326,6 +330,16 @@ export class Map2<KEY1, KEY2, VALUE> {
         for (const [key1, map2] of this.map1) {
             for (const [key2, value] of map2) {
                 result.set(key1, key2, fn(value, key1, key2));
+            }
+        }
+        return result;
+    }
+
+    toMap(): Map<[KEY1, KEY2], VALUE> {
+        let result = new Map<[KEY1, KEY2], VALUE>();
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, value] of map2) {
+                result.set([key1, key2], value);
             }
         }
         return result;
@@ -552,6 +566,18 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> {
             for (const [key2, map3] of map2) {
                 for (const [key3, value] of map3) {
                     result.set(key1, key2, key3, fn(value, key1, key2, key3));
+                }
+            }
+        }
+        return result;
+    }
+
+    toMap(): Map<[KEY1, KEY2, KEY3], VALUE> {
+        let result = new Map<[KEY1, KEY2, KEY3], VALUE>();
+        for (const [key1, map2] of this.map1) {
+            for (const [key2, map3] of map2) {
+                for (const [key3, value] of map3) {
+                    result.set([key1, key2, key3], value);
                 }
             }
         }
