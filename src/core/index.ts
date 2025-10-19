@@ -6,3 +6,4 @@ export { KVComponent } from "./kv-container";
 export { IndexArray } from "./index-array";
 export { SignedIndexArray } from "./signed-index-array";
 export { Map1, Map2, Map3 } from "./map";
+export { MultiContainer, asMulti } from "./multi-container";
