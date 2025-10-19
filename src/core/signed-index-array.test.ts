@@ -21,6 +21,7 @@ describe(Arr.name, () => {
         expect(new Arr([[-1, "a"], [1, "b"]]).has(-1)).toEqual(true);
         expect(new Arr([[-1, "a"], [1, "b"]]).has(1)).toEqual(true);
         expect(new Arr([[-1, "a"], [1, "b"]]).has(0)).toEqual(false);
+        expect(() => new Arr([[-1, "a"], [1, "b"]]).has(1.5)).toThrow();
 
         // get
         expect(new Arr([[-2, "a"], [3, "b"]]).get(-2)).toEqual("a");

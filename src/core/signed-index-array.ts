@@ -5,6 +5,15 @@ import { isInteger } from "../utils/math";
  * An array-like structure for signed indexes, including negatives.
  */
 export class SignedIndexArray<EL> {
+    private static toNegIndex(id: number): number {
+        return -id - 1;
+    }
+
+    private static validateIndex(id: number): number {
+        if (!isInteger(id)) throw new Error(`Invalid index ${id} - must be an integer!`);
+        return id;
+    }
+
     // for indexes >= 0
     private posEl: EL[];
     private hasPos: boolean[];
@@ -13,10 +22,6 @@ export class SignedIndexArray<EL> {
     private hasNeg: boolean[];
     // number of elems
     private elCount: number;
-
-    private static toNegIndex(id: number): number {
-        return -id - 1;
-    }
 
     constructor();
     constructor(arr: SignedIndexArray<EL>)
@@ -49,10 +54,9 @@ export class SignedIndexArray<EL> {
     }
 
     has(id: number): boolean {
-        if (!isInteger(id)) {
-            return false;
-        }
-        else if (id >= 0) {
+        SignedIndexArray.validateIndex(id);
+
+        if (id >= 0) {
             return this.hasPos[id] === true;
         }
         else {
@@ -61,10 +65,9 @@ export class SignedIndexArray<EL> {
     }
 
     set(id: number, el: EL): void {
-        if (!isInteger(id)) {
-            throw new Error("Index must be an integer");
-        }
-        else if (id >= 0) {
+        SignedIndexArray.validateIndex(id);
+
+        if (id >= 0) {
             if (this.hasPos[id] !== true) this.elCount++;
             this.posEl[id] = el;
             this.hasPos[id] = true;
@@ -77,10 +80,9 @@ export class SignedIndexArray<EL> {
     }
 
     get(id: number): EL | undefined {
-        if (!isInteger(id)) {
-            throw new Error("Index must be an integer");
-        }
-        else if (id >= 0) {
+        SignedIndexArray.validateIndex(id);
+
+        if (id >= 0) {
             return this.hasPos[id] ? this.posEl[id] : undefined;
         }
         else {
@@ -106,7 +108,7 @@ export class SignedIndexArray<EL> {
     }
 
     delete(id: number): boolean {
-        if (!isInteger(id)) return false;
+        SignedIndexArray.validateIndex(id);
 
         const isPos = id >= 0;
         const arr = isPos ? this.posEl : this.negEl;
