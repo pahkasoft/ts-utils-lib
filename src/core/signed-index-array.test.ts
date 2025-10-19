@@ -110,6 +110,7 @@ describe(Arr.name, () => {
         expect(new Arr([[-1, "a"], [2, "b"]]).equals(new Arr([[-1, "a"]]))).toEqual(false);
 
         // toString
+        expect(new Arr().toString()).toEqual("SignedIndexArray[ ]");
         expect(new Arr([[-1, "a"], [2, "b"]]).toString()).toEqual("SignedIndexArray[ -1: a, 2: b ]");
     });
 });

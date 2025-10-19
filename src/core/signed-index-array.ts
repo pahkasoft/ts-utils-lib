@@ -1,5 +1,4 @@
-import { isFunction } from "../utils/is";
-import { isInteger } from "../utils/math";
+import { isFunction, isInteger } from "../utils/is";
 
 /**
  * An array-like structure for signed indexes, including negatives.
@@ -147,32 +146,26 @@ export class SignedIndexArray<EL> {
         }
     }
 
-    indices(): IterableIterator<number> {
-        function* gen(self: SignedIndexArray<EL>): IterableIterator<number> {
-            for (let id = self.negLen - 1; id >= 0; id--) {
-                if (self.hasNeg[id]) yield SignedIndexArray.toNegIndex(id);
-            }
-            for (let id = 0; id < self.posLen; id++) {
-                if (self.hasPos[id]) yield id;
-            }
+    *indices(): IterableIterator<number> {
+        for (let id = this.negLen - 1; id >= 0; id--) {
+            if (this.hasNeg[id]) yield SignedIndexArray.toNegIndex(id);
         }
-        return gen(this);
+        for (let id = 0; id < this.posLen; id++) {
+            if (this.hasPos[id]) yield id;
+        }
     }
 
     indicesArray(): number[] {
         return [...this.indices()];
     }
 
-    values(): IterableIterator<EL> {
-        function* gen(self: SignedIndexArray<EL>): IterableIterator<EL> {
-            for (let id = self.negLen - 1; id >= 0; id--) {
-                if (self.hasNeg[id]) yield self.negEl[id];
-            }
-            for (let id = 0; id < self.posLen; id++) {
-                if (self.hasPos[id]) yield self.posEl[id];
-            }
+    *values(): IterableIterator<EL> {
+        for (let id = this.negLen - 1; id >= 0; id--) {
+            if (this.hasNeg[id]) yield this.negEl[id];
         }
-        return gen(this);
+        for (let id = 0; id < this.posLen; id++) {
+            if (this.hasPos[id]) yield this.posEl[id];
+        }
     }
 
     valuesArray(): EL[] {
@@ -310,6 +303,7 @@ export class SignedIndexArray<EL> {
     }
 
     toString(): string {
+        if (this.size === 0) return `SignedIndexArray[ ]`;
         const entries = this.entriesArray().map(([id, el]) => `${id}: ${el}`).join(', ');
         return `SignedIndexArray[ ${entries} ]`;
     }
