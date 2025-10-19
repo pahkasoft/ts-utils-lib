@@ -275,6 +275,32 @@ export class SignedIndexArray<EL> {
         return result;
     }
 
+    equals(other: SignedIndexArray<EL>): boolean;
+    equals(other: SignedIndexArray<EL>, eq: (a: EL, b: EL) => boolean): boolean;
+    equals(other: SignedIndexArray<EL>, eq?: (a: EL, b: EL) => boolean): boolean {
+        if (this.size !== other.size) return false;
+
+        eq ??= (a, b) => a === b;
+
+        const posLen = Math.max(this.hasPos.length, other.hasPos.length);
+        for (let i = 0; i < posLen; ++i) {
+            const hasA = this.hasPos[i];
+            const hasB = other.hasPos[i];
+            if (hasA !== hasB) return false;
+            if (hasA && !eq(this.posEl[i], other.posEl[i])) return false;
+        }
+
+        const negLen = Math.max(this.hasNeg.length, other.hasNeg.length);
+        for (let i = 0; i < negLen; ++i) {
+            const hasA = this.hasNeg[i];
+            const hasB = other.hasNeg[i];
+            if (hasA !== hasB) return false;
+            if (hasA && !eq(this.negEl[i], other.negEl[i])) return false;
+        }
+
+        return true;
+    }
+
     toString(): string {
         const entries = this.entriesArray().map(([id, el]) => `${id}: ${el}`).join(', ');
         return `SignedIndexArray[ ${entries} ]`;

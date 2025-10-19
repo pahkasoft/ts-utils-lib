@@ -50,7 +50,15 @@ describe(Arr.name, () => {
         clr.clear();
         expect(clr.entriesArray()).toEqual([]);
 
-        // keysArray
+        // forEach
+        let arr = new Arr([[-9, 3], [-7, 5], [8, 13], [99, 0]]);
+        let idStr = " ";
+        let elStr = " ";
+        arr.forEach((e, i) => { idStr += i + " "; elStr += e + " "; });
+        expect(idStr).toEqual(" -9 -7 8 99 ");
+        expect(elStr).toEqual(" 3 5 13 0 ");
+
+        // indicesArray
         expect(new Arr([[2, "a"], [-5, "b"]]).indicesArray()).toEqual([-5, 2]);
 
         // valuesArray
@@ -93,15 +101,15 @@ describe(Arr.name, () => {
         // map
         expect(new Arr([[14, "x"], [88, "y"]]).map((v, id) => ("" + id + ": " + v).toUpperCase())).toEqual(new Arr([[14, "14: X"], [88, "88: Y"]]));
 
+        // equals
+        expect(new Arr().equals(new Arr())).toEqual(true);
+        expect(new Arr([[-1, "a"], [2, "b"]]).equals(new Arr([[-1, "a"], [2, "b"]]))).toEqual(true);
+        expect(new Arr([[-1, "a"], [2, "b"]]).equals(new Arr([[-1, "a"], [2, "b"]]), (a, b) => false)).toEqual(false);
+        expect(new Arr([[-1, "a"], [2, "b"]]).equals(new Arr([[-1, "a"], [2, "c"]]))).toEqual(false);
+        expect(new Arr([[-1, "a"], [2, "b"]]).equals(new Arr([[-1, "a"], [3, "b"]]))).toEqual(false);
+        expect(new Arr([[-1, "a"], [2, "b"]]).equals(new Arr([[-1, "a"]]))).toEqual(false);
+
         // toString
         expect(new Arr([[-1, "a"], [2, "b"]]).toString()).toEqual("SignedIndexArray[ -1: a, 2: b ]");
-
-        // forEach
-        let arr = new Arr([[-9, 3], [-7, 5], [8, 13], [99, 0]]);
-        let idStr = " ";
-        let elStr = " ";
-        arr.forEach((e, i) => { idStr += i + " "; elStr += e + " "; });
-        expect(idStr).toEqual(" -9 -7 8 99 ");
-        expect(elStr).toEqual(" 3 5 13 0 ");
     });
 });
