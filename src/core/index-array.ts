@@ -1,9 +1,10 @@
 import { isFunction, isIntegerGte } from "../utils/is";
+import { KVComponent } from "./kv-container";
 
 /**
  * An array-like structure for non-negative indexes.
  */
-export class IndexArray<EL> {
+export class IndexArray<EL> implements KVComponent<[number], EL> {
     private static toNegIndex(id: number): number {
         return -id - 1;
     }

@@ -1,9 +1,10 @@
 import { isFunction, isInteger } from "../utils/is";
+import { KVComponent } from "./kv-container";
 
 /**
  * An array-like structure for signed indexes, including negatives.
  */
-export class SignedIndexArray<EL> {
+export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
     private static toNegIndex(id: number): number {
         return -id - 1;
     }

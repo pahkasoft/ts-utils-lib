@@ -1,6 +1,7 @@
 import { isFunction } from "../utils/is";
+import { KVComponent } from "./kv-container";
 
-export class Map1<KEY1, VALUE> {
+export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
     private map1: Map<KEY1, VALUE>;
 
     constructor();
@@ -157,7 +158,7 @@ export class Map1<KEY1, VALUE> {
     }
 }
 
-export class Map2<KEY1, KEY2, VALUE> {
+export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE> {
     private map1 = new Map<KEY1, Map<KEY2, VALUE>>();
 
     constructor();
@@ -366,7 +367,7 @@ export class Map2<KEY1, KEY2, VALUE> {
     }
 }
 
-export class Map3<KEY1, KEY2, KEY3, VALUE> {
+export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {
     private map1 = new Map<KEY1, Map<KEY2, Map<KEY3, VALUE>>>();
 
     constructor();
