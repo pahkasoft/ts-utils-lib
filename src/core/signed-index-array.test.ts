@@ -2,6 +2,21 @@ import { SignedIndexArray as Arr } from "./signed-index-array";
 
 describe(Arr.name, () => {
     it("should work", () => {
+        // size
+        let sizeArr = new Arr([[-1, "a"], [1, "b"]]);
+        sizeArr.set(-1, "x");
+        expect(sizeArr.size).toEqual(2);
+        sizeArr.set(-2, "y");
+        expect(sizeArr.size).toEqual(3);
+        sizeArr.delete(-3);
+        expect(sizeArr.size).toEqual(3);
+        sizeArr.delete(1);
+        expect(sizeArr.size).toEqual(2);
+        sizeArr = sizeArr.clone();
+        expect(sizeArr.size).toEqual(2);
+        sizeArr.clear();
+        expect(sizeArr.size).toEqual(0);
+
         // has
         expect(new Arr([[-1, "a"], [1, "b"]]).has(-1)).toEqual(true);
         expect(new Arr([[-1, "a"], [1, "b"]]).has(1)).toEqual(true);
@@ -68,12 +83,14 @@ describe(Arr.name, () => {
 
         // reduce
         expect(new Arr([[2, "a"], [3, "b"]]).reduce((acc, v, id) => (acc + v), "x-")).toEqual("x-ab");
+        expect(new Arr([[2, "a"], [3, "b"]]).reduce((acc, v, id) => (acc + v))).toEqual("ab");
+        expect(() => new Arr<string>().reduce((acc, v, id) => (acc + v))).toThrow();
 
-        // mapEntries
-        expect(new Arr([[-2, "a"], [3, "b"]]).mapEntries((v, id) => id + v)).toEqual(["-2a", "3b"]);
+        // mapToArray
+        expect(new Arr([[-2, "a"], [3, "b"]]).mapToArray((v, id) => id + v)).toEqual(["-2a", "3b"]);
 
-        // mapValues
-        expect(new Arr([[14, "x"], [88, "y"]]).mapValues((v, id) => ("" + id + ": " + v).toUpperCase())).toEqual(new Arr([[14, "14: X"], [88, "88: Y"]]));
+        // map
+        expect(new Arr([[14, "x"], [88, "y"]]).map((v, id) => ("" + id + ": " + v).toUpperCase())).toEqual(new Arr([[14, "14: X"], [88, "88: Y"]]));
 
         // toString
         expect(new Arr([[-1, "a"], [2, "b"]]).toString()).toEqual("SignedIndexArray[ -1: a, 2: b ]");

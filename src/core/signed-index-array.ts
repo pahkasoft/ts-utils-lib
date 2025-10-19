@@ -1,38 +1,51 @@
 import { isFunction } from "../utils/is";
 import { isInteger } from "../utils/math";
 
-const negId = (id: number) => -id - 1;
-
 /**
  * An array-like structure for signed indexes, including negatives.
  */
 export class SignedIndexArray<EL> {
-    private pos: EL[]; // for indexes >= 0
-    private hasPos: boolean[]; // for indexes >= 0
-    private neg: EL[]; // for indexes < 0
-    private hasNeg: boolean[]; // for indexes < 0
+    // for indexes >= 0
+    private posEl: EL[];
+    private hasPos: boolean[];
+    // for indexes < 0
+    private negEl: EL[];
+    private hasNeg: boolean[];
+    // number of elems
+    private elCount: number;
+
+    private static toNegIndex(id: number): number {
+        return -id - 1;
+    }
 
     constructor();
     constructor(arr: SignedIndexArray<EL>)
     constructor(entries: Iterable<[number, EL]>)
     constructor(entries?: SignedIndexArray<EL> | Iterable<[number, EL]>) {
         if (entries instanceof SignedIndexArray) {
-            this.neg = entries.neg.slice();
+            this.negEl = entries.negEl.slice();
             this.hasNeg = entries.hasNeg.slice();
-            this.pos = entries.pos.slice();
+            this.posEl = entries.posEl.slice();
             this.hasPos = entries.hasPos.slice();
+            this.elCount = entries.elCount;
         }
         else {
-            this.neg = [];
+            this.negEl = [];
             this.hasNeg = [];
-            this.pos = [];
+            this.posEl = [];
             this.hasPos = [];
+            this.elCount = 0;
+
             if (entries) {
                 for (const [id, el] of entries) {
                     this.set(id, el);
                 }
             }
         }
+    }
+
+    get size(): number {
+        return this.elCount;
     }
 
     has(id: number): boolean {
@@ -43,7 +56,7 @@ export class SignedIndexArray<EL> {
             return this.hasPos[id] === true;
         }
         else {
-            return this.hasNeg[negId(id)] === true;
+            return this.hasNeg[SignedIndexArray.toNegIndex(id)] === true;
         }
     }
 
@@ -52,12 +65,14 @@ export class SignedIndexArray<EL> {
             throw new Error("Index must be an integer");
         }
         else if (id >= 0) {
-            this.pos[id] = el;
+            if (this.hasPos[id] !== true) this.elCount++;
+            this.posEl[id] = el;
             this.hasPos[id] = true;
         }
         else {
-            this.neg[negId(id)] = el;
-            this.hasNeg[negId(id)] = true;
+            if (this.hasNeg[SignedIndexArray.toNegIndex(id)] !== true) this.elCount++;
+            this.negEl[SignedIndexArray.toNegIndex(id)] = el;
+            this.hasNeg[SignedIndexArray.toNegIndex(id)] = true;
         }
     }
 
@@ -66,10 +81,10 @@ export class SignedIndexArray<EL> {
             throw new Error("Index must be an integer");
         }
         else if (id >= 0) {
-            return this.hasPos[id] ? this.pos[id] : undefined;
+            return this.hasPos[id] ? this.posEl[id] : undefined;
         }
         else {
-            return this.hasNeg[negId(id)] ? this.neg[negId(id)] : undefined;
+            return this.hasNeg[SignedIndexArray.toNegIndex(id)] ? this.negEl[SignedIndexArray.toNegIndex(id)] : undefined;
         }
     }
 
@@ -80,49 +95,38 @@ export class SignedIndexArray<EL> {
     getOrCreate(id: number, value: EL): EL;
     getOrCreate(id: number, creator: () => EL): EL;
     getOrCreate(id: number, creatorOrValue: EL | (() => EL)): EL {
-        let value = this.get(id);
-        if (!value) {
-            if (isFunction(creatorOrValue)) {
-                this.set(id, value = creatorOrValue());
-            }
-            else {
-                this.set(id, value = creatorOrValue);
-            }
+        if (!this.has(id)) {
+            const value = isFunction(creatorOrValue)
+                ? creatorOrValue()
+                : creatorOrValue;
+            this.set(id, value);
+            return value;
         }
-        return value;
+        return this.get(id)!;
     }
 
     delete(id: number): boolean {
-        if (!isInteger(id)) {
-            return false;
-        }
-        else if (id >= 0) {
-            if (this.hasPos[id]) {
-                this.pos[id] = undefined!;
-                this.hasPos[id] = false;
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            if (this.hasNeg[negId(id)]) {
-                this.neg[negId(id)] = undefined!;
-                this.hasNeg[negId(id)] = false;
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+        if (!isInteger(id)) return false;
+
+        const isPos = id >= 0;
+        const arr = isPos ? this.posEl : this.negEl;
+        const has = isPos ? this.hasPos : this.hasNeg;
+        const idx = isPos ? id : SignedIndexArray.toNegIndex(id);
+
+        if (!has[idx]) return false;
+
+        arr[idx] = undefined!;
+        has[idx] = false;
+        this.elCount--;
+        return true;
     }
 
     clear(): void {
-        this.neg = [];
+        this.negEl = [];
         this.hasNeg = [];
-        this.pos = [];
+        this.posEl = [];
         this.hasPos = [];
+        this.elCount = 0;
     }
 
     forEach(callbackfn: (el: EL, id: number, arr: SignedIndexArray<EL>) => void, thisArg?: any): void {
@@ -133,10 +137,10 @@ export class SignedIndexArray<EL> {
 
     indices(): IterableIterator<number> {
         function* gen(self: SignedIndexArray<EL>): IterableIterator<number> {
-            for (let id = self.neg.length - 1; id >= 0; id--) {
-                if (self.hasNeg[id]) yield negId(id);
+            for (let id = self.negEl.length - 1; id >= 0; id--) {
+                if (self.hasNeg[id]) yield SignedIndexArray.toNegIndex(id);
             }
-            for (let id = 0; id < self.pos.length; id++) {
+            for (let id = 0; id < self.posEl.length; id++) {
                 if (self.hasPos[id]) yield id;
             }
         }
@@ -149,11 +153,11 @@ export class SignedIndexArray<EL> {
 
     values(): IterableIterator<EL> {
         function* gen(self: SignedIndexArray<EL>): IterableIterator<EL> {
-            for (let id = self.neg.length - 1; id >= 0; id--) {
-                if (self.hasNeg[id]) yield self.neg[id];
+            for (let id = self.negEl.length - 1; id >= 0; id--) {
+                if (self.hasNeg[id]) yield self.negEl[id];
             }
-            for (let id = 0; id < self.pos.length; id++) {
-                if (self.hasPos[id]) yield self.pos[id];
+            for (let id = 0; id < self.posEl.length; id++) {
+                if (self.hasPos[id]) yield self.posEl[id];
             }
         }
         return gen(this);
@@ -164,11 +168,11 @@ export class SignedIndexArray<EL> {
     }
 
     *entries(): IterableIterator<[number, EL]> {
-        for (let id = this.neg.length - 1; id >= 0; id--) {
-            if (this.hasNeg[id]) yield [negId(id), this.neg[id]];
+        for (let id = this.negEl.length - 1; id >= 0; id--) {
+            if (this.hasNeg[id]) yield [SignedIndexArray.toNegIndex(id), this.negEl[id]];
         }
-        for (let id = 0; id < this.pos.length; id++) {
-            if (this.hasPos[id]) yield [id, this.pos[id]];
+        for (let id = 0; id < this.posEl.length; id++) {
+            if (this.hasPos[id]) yield [id, this.posEl[id]];
         }
     }
 
@@ -218,15 +222,40 @@ export class SignedIndexArray<EL> {
         return result;
     }
 
-    reduce<R>(fn: (acc: R, el: EL, id: number) => R, init: R): R {
-        let acc = init;
-        for (const [id, el] of this.entries()) {
+    reduce(fn: (acc: EL, el: EL, id: number) => EL): EL;
+    reduce<R>(fn: (acc: R, el: EL, id: number) => R, init: R): R;
+    reduce<R>(fn: (acc: R, el: EL, id: number) => R, init?: R): R {
+        let iterator = this.entries();
+        let first = iterator.next();
+
+        if (first.done) {
+            if (arguments.length < 2) {
+                throw new TypeError("Reduce of empty SignedIndexArray with no initial value!");
+            }
+            return init!;
+        }
+
+        let acc: any;
+        let start: IteratorResult<[number, EL]>;
+
+        if (arguments.length < 2) {
+            // no init → use first entry as accumulator
+            acc = first.value[1];
+            start = iterator.next();
+        } else {
+            acc = init;
+            start = first;
+        }
+
+        for (let current = start; !current.done; current = iterator.next()) {
+            const [id, el] = current.value;
             acc = fn(acc, el, id);
         }
+
         return acc;
     }
 
-    mapEntries<R>(fn: (value: EL, key1: number) => R): R[] {
+    mapToArray<R>(fn: (value: EL, key1: number) => R): R[] {
         let result: R[] = [];
         for (const [id, el] of this.entries()) {
             result.push(fn(el, id));
@@ -234,7 +263,7 @@ export class SignedIndexArray<EL> {
         return result;
     }
 
-    mapValues<R = EL>(fn: (value: EL, key1: number) => R): SignedIndexArray<R> {
+    map<R = EL>(fn: (value: EL, key1: number) => R): SignedIndexArray<R> {
         let result = new SignedIndexArray<R>();
         for (const [id, el] of this.entries()) {
             result.set(id, fn(el, id));
