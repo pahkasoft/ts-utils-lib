@@ -1,6 +1,12 @@
-# Ts Utils Lib
+# @tspro/ts-utils-lib
 
-NPM Package: [@tspro/ts-utils-lib](https://www.npmjs.com/package/@tspro/ts-utils-lib)
+## About
+A small collection TypeScript functions, containers, etc. used in my personal projects.
 
-This typescript library contains some useful classes, modules and 
-functions shared across multiple projects.
+## Links
+[GitHub repo](https://github.com/pahkasoft/ts-utils-lib) |
+[NPM pkg](https://www.npmjs.com/package/@tspro/ts-utils-lib) |
+[Homepage](https://pahkasoft.github.io/)
+
+## Install
+`npm i @tspro/ts-utils-lib`
