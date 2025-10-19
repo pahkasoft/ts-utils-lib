@@ -18,6 +18,8 @@ import { isInteger } from "../utils/is";
  * cache.set(3, 'B');
  * console.log(cache.get(-2)); // 'A'
  * ```
+ * 
+ * @deprecated - Same functionality an more is available now in SignedIndexArray<EL> and IndexArray<EL> containers.
  */
 export class SmallIntCache<V> {
     private pos: V[]; // for keys >= 0
