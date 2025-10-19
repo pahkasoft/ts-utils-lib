@@ -1,7 +1,7 @@
 # @tspro/ts-utils-lib
 
 ## About
-A small collection TypeScript functions, containers, etc. used in my personal projects.
+A small collection of TypeScript functions, containers, etc. used in my personal projects.
 
 ## Links
 [GitHub repo](https://github.com/pahkasoft/ts-utils-lib) |
