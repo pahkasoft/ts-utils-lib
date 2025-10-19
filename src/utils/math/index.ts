@@ -1,7 +1,6 @@
+import { isInteger, isNumber } from "../is";
 
-export function isInteger(n: unknown): n is number {
-    return typeof n === "number" && isFinite(n) && n === Math.trunc(n);
-}
+export { isInteger, isNumber }
 
 export function linearToDecibels(linearVolume: number): number {
     if (!isFinite(linearVolume)) {

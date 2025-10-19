@@ -1,8 +1,6 @@
-import { isInteger } from "../math";
+import { isInteger, isArray } from "../is";
 
-export function isArray<T>(a: T[] | unknown): a is T[] {
-    return !!a && Object.prototype.toString.call(a) === "[object Array]";
-}
+export { isArray }
 
 export function toArray<T>(a: T | T[]): Array<T> {
     return isArray(a) ? a : [a];

@@ -1,4 +1,6 @@
-import { isInteger } from "../math";
+import { isInteger, isString } from "../is";
+
+export { isString }
 
 /**
  * toCharArray("abc") => ["a", "b", "c"].

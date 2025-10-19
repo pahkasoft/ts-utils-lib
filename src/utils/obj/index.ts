@@ -1,8 +1,6 @@
-import { isArray } from "../arr";
+import { isObject } from "../is";
 
-export function isObject(obj: unknown): obj is Record<string, unknown> {
-    return typeof obj === "object" && obj !== null && !isArray(obj);
-}
+export { isObject }
 
 /**
  * <pre>
