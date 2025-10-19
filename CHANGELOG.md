@@ -1,11 +1,14 @@
 # Changelog
 
-## [1.14.0] - 2025-10-
+## [1.14.0] - 2025-10-20
 ### Added
 - SignedIndexArray.equals()
 - class IndexArray<EL>, same as SignedIndexArray but for non-negative indices.
 - Added KVComponent interface for Map1, Map2, Map3, IndexArray and SignedIndexArray.
 - Added MultiContainer.
+
+## Deprecate
+- SmallIntCache, use SignedIndexArray has same functionality and more.
 
 ## [1.14.0] - 2025-10-19
 ### Added
