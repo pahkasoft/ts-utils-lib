@@ -30,16 +30,14 @@ export class Map1<KEY1, VALUE> {
     getOrCreate(key1: KEY1, value: VALUE): VALUE;
     getOrCreate(key1: KEY1, creator: () => VALUE): VALUE;
     getOrCreate(key1: KEY1, creatorOrValue: VALUE | (() => VALUE)): VALUE {
-        let value = this.get(key1);
-        if (!value) {
-            if (isFunction(creatorOrValue)) {
-                this.set(key1, value = creatorOrValue());
-            }
-            else {
-                this.set(key1, value = creatorOrValue);
-            }
+        if (!this.has(key1)) {
+            const value = isFunction(creatorOrValue)
+                ? creatorOrValue()
+                : creatorOrValue;
+            this.set(key1, value);
+            return value;
         }
-        return value;
+        return this.get(key1)!;
     }
 
     delete(key1: KEY1): boolean {
@@ -199,16 +197,14 @@ export class Map2<KEY1, KEY2, VALUE> {
     getOrCreate(key1: KEY1, key2: KEY2, value: VALUE): VALUE;
     getOrCreate(key1: KEY1, key2: KEY2, creator: () => VALUE): VALUE;
     getOrCreate(key1: KEY1, key2: KEY2, creatorOrValue: VALUE | (() => VALUE)): VALUE {
-        let value = this.get(key1, key2);
-        if (!value) {
-            if (isFunction(creatorOrValue)) {
-                this.set(key1, key2, value = creatorOrValue());
-            }
-            else {
-                this.set(key1, key2, value = creatorOrValue);
-            }
+        if (!this.has(key1, key2)) {
+            const value = isFunction(creatorOrValue)
+                ? creatorOrValue()
+                : creatorOrValue;
+            this.set(key1, key2, value);
+            return value;
         }
-        return value;
+        return this.get(key1, key2)!;
     }
 
     delete(key1: KEY1): boolean;
@@ -417,16 +413,14 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> {
     getOrCreate(key1: KEY1, key2: KEY2, key3: KEY3, value: VALUE): VALUE;
     getOrCreate(key1: KEY1, key2: KEY2, key3: KEY3, creator: () => VALUE): VALUE;
     getOrCreate(key1: KEY1, key2: KEY2, key3: KEY3, creatorOrValue: VALUE | (() => VALUE)): VALUE {
-        let value = this.get(key1, key2, key3);
-        if (!value) {
-            if (isFunction(creatorOrValue)) {
-                this.set(key1, key2, key3, value = creatorOrValue());
-            }
-            else {
-                this.set(key1, key2, key3, value = creatorOrValue);
-            }
+        if (!this.has(key1, key2, key3)) {
+            const value = isFunction(creatorOrValue)
+                ? creatorOrValue()
+                : creatorOrValue;
+            this.set(key1, key2, key3, value);
+            return value;
         }
-        return value;
+        return this.get(key1, key2, key3)!;
     }
 
     delete(key1: KEY1): boolean;
