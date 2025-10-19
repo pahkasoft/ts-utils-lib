@@ -53,6 +53,14 @@ export class SignedIndexArray<EL> {
         return this.elCount;
     }
 
+    private get posLen(): number {
+        return this.hasPos.length;
+    }
+
+    private get negLen(): number {
+        return this.hasNeg.length;
+    }
+
     has(id: number): boolean {
         SignedIndexArray.validateIndex(id);
 
@@ -141,10 +149,10 @@ export class SignedIndexArray<EL> {
 
     indices(): IterableIterator<number> {
         function* gen(self: SignedIndexArray<EL>): IterableIterator<number> {
-            for (let id = self.negEl.length - 1; id >= 0; id--) {
+            for (let id = self.negLen - 1; id >= 0; id--) {
                 if (self.hasNeg[id]) yield SignedIndexArray.toNegIndex(id);
             }
-            for (let id = 0; id < self.posEl.length; id++) {
+            for (let id = 0; id < self.posLen; id++) {
                 if (self.hasPos[id]) yield id;
             }
         }
@@ -157,10 +165,10 @@ export class SignedIndexArray<EL> {
 
     values(): IterableIterator<EL> {
         function* gen(self: SignedIndexArray<EL>): IterableIterator<EL> {
-            for (let id = self.negEl.length - 1; id >= 0; id--) {
+            for (let id = self.negLen - 1; id >= 0; id--) {
                 if (self.hasNeg[id]) yield self.negEl[id];
             }
-            for (let id = 0; id < self.posEl.length; id++) {
+            for (let id = 0; id < self.posLen; id++) {
                 if (self.hasPos[id]) yield self.posEl[id];
             }
         }
@@ -172,10 +180,10 @@ export class SignedIndexArray<EL> {
     }
 
     *entries(): IterableIterator<[number, EL]> {
-        for (let id = this.negEl.length - 1; id >= 0; id--) {
+        for (let id = this.negLen - 1; id >= 0; id--) {
             if (this.hasNeg[id]) yield [SignedIndexArray.toNegIndex(id), this.negEl[id]];
         }
-        for (let id = 0; id < this.posEl.length; id++) {
+        for (let id = 0; id < this.posLen; id++) {
             if (this.hasPos[id]) yield [id, this.posEl[id]];
         }
     }
@@ -282,7 +290,7 @@ export class SignedIndexArray<EL> {
 
         eq ??= (a, b) => a === b;
 
-        const posLen = Math.max(this.hasPos.length, other.hasPos.length);
+        const posLen = Math.max(this.posLen, other.posLen);
         for (let i = 0; i < posLen; ++i) {
             const hasA = this.hasPos[i];
             const hasB = other.hasPos[i];
@@ -290,7 +298,7 @@ export class SignedIndexArray<EL> {
             if (hasA && !eq(this.posEl[i], other.posEl[i])) return false;
         }
 
-        const negLen = Math.max(this.hasNeg.length, other.hasNeg.length);
+        const negLen = Math.max(this.negLen, other.negLen);
         for (let i = 0; i < negLen; ++i) {
             const hasA = this.hasNeg[i];
             const hasB = other.hasNeg[i];
