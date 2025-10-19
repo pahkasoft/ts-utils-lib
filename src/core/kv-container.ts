@@ -1,3 +1,4 @@
+
 export interface KVComponent<K extends any[], EL> {
     get size(): number;
     has(...keys: K): boolean;
