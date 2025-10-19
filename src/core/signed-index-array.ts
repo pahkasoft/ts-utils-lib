@@ -73,9 +73,10 @@ export class SignedIndexArray<EL> {
             this.hasPos[id] = true;
         }
         else {
-            if (this.hasNeg[SignedIndexArray.toNegIndex(id)] !== true) this.elCount++;
-            this.negEl[SignedIndexArray.toNegIndex(id)] = el;
-            this.hasNeg[SignedIndexArray.toNegIndex(id)] = true;
+            let negId = SignedIndexArray.toNegIndex(id);
+            if (this.hasNeg[negId] !== true) this.elCount++;
+            this.negEl[negId] = el;
+            this.hasNeg[negId] = true;
         }
     }
 
@@ -86,7 +87,8 @@ export class SignedIndexArray<EL> {
             return this.hasPos[id] ? this.posEl[id] : undefined;
         }
         else {
-            return this.hasNeg[SignedIndexArray.toNegIndex(id)] ? this.negEl[SignedIndexArray.toNegIndex(id)] : undefined;
+            let negId = SignedIndexArray.toNegIndex(id);
+            return this.hasNeg[negId] ? this.negEl[negId] : undefined;
         }
     }
 
