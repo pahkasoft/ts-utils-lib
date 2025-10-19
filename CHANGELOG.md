@@ -3,6 +3,7 @@
 ## [1.14.0] - 2025-10-
 ### Added
 - SignedIndexArray.equals()
+- class IndexArray<EL>, same as SignedIndexArray but for non-negative indices.
 
 ## [1.14.0] - 2025-10-19
 ### Added
