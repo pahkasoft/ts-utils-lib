@@ -163,7 +163,7 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
 
         if (first.done) {
             if (arguments.length < 2) {
-                throw new TypeError("Reduce of empty Map3 with no initial value!");
+                throw new TypeError("Reduce of empty Map1 with no initial value!");
             }
             return init!;
         }
@@ -403,7 +403,7 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
 
         if (first.done) {
             if (arguments.length < 2) {
-                throw new TypeError("Reduce of empty Map3 with no initial value!");
+                throw new TypeError("Reduce of empty Map2 with no initial value!");
             }
             return init!;
         }
