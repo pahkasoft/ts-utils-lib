@@ -15,9 +15,13 @@ describe(Arr.name, () => {
         multi.remove(1, "b");
 
         expect(multi.getAll(1)).toEqual(["c"]);
+        expect(multi.isEmpty()).toEqual(false);
+
+        expect(multi.toString()).toEqual(`MultiContainer{ [0] => ["a"], [1] => ["c"] }`);
 
         multi.clear();
 
+        expect(multi.isEmpty()).toEqual(true);
         expect(multi.getAll(0)).toEqual([]);
         expect(multi.getAll(1)).toEqual([]);
     });

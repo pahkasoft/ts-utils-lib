@@ -40,14 +40,27 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
                 }
             }
         }
+
+        /*
+        this.indices = this.indices.bind(this);
+        this.values = this.values.bind(this);
+        this.entries = this.entries.bind(this);
+        this.kvKeys = this.kvKeys.bind(this);
+        this.kvValues = this.kvValues.bind(this);
+        this.kvEntries = this.kvEntries.bind(this);
+        */
+    }
+
+    private get posLen(): number {
+        return this.hasPos.length;
     }
 
     get size(): number {
         return this.elCount;
     }
 
-    private get posLen(): number {
-        return this.hasPos.length;
+    isEmpty(): boolean {
+        return this.size === 0;
     }
 
     has(id: number): boolean {
@@ -115,18 +128,10 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
-    indicesArray(): number[] {
-        return [...this.indices()];
-    }
-
     *values(): IterableIterator<EL> {
         for (let id = 0; id < this.posLen; id++) {
             if (this.hasPos[id]) yield this.posEl[id];
         }
-    }
-
-    valuesArray(): EL[] {
-        return [...this.values()];
     }
 
     *entries(): IterableIterator<[number, EL]> {
@@ -135,8 +140,34 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
+    indicesArray(): number[] {
+        return [...this.indices()];
+    }
+
+    valuesArray(): EL[] {
+        return [...this.values()];
+    }
+
     entriesArray(): [number, EL][] {
         return [...this.entries()];
+    }
+
+    *kvKeys(): IterableIterator<[number]> {
+        for (const id of this.indices()) {
+            yield [id];
+        }
+    }
+
+    *kvValues(): IterableIterator<EL> {
+        for (const el of this.values()) {
+            yield el;
+        }
+    }
+
+    *kvEntries(): IterableIterator<[[number], EL]> {
+        for (const [id, el] of this.entries()) {
+            yield [[id], el];
+        }
     }
 
     *[Symbol.iterator]() {

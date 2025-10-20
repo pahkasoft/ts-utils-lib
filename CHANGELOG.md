@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.16.0] - 2025-10-20
+### Added
+- Add isEmpty() to interface and containers.
+- Add more functions and iterators to MultiContainer.
+
 ## [1.15.0] - 2025-10-20
 ### Added
 - SignedIndexArray.equals()

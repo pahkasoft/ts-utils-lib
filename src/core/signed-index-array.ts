@@ -47,10 +47,23 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
                 }
             }
         }
+
+        /*
+        this.indices = this.indices.bind(this);
+        this.values = this.values.bind(this);
+        this.entries = this.entries.bind(this);
+        this.kvKeys = this.kvKeys.bind(this);
+        this.kvValues = this.kvValues.bind(this);
+        this.kvEntries = this.kvEntries.bind(this);
+        */
     }
 
     get size(): number {
         return this.elCount;
+    }
+
+    isEmpty(): boolean {
+        return this.size === 0;
     }
 
     private get posLen(): number {
@@ -156,10 +169,6 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
-    indicesArray(): number[] {
-        return [...this.indices()];
-    }
-
     *values(): IterableIterator<EL> {
         for (let id = this.negLen - 1; id >= 0; id--) {
             if (this.hasNeg[id]) yield this.negEl[id];
@@ -167,10 +176,6 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         for (let id = 0; id < this.posLen; id++) {
             if (this.hasPos[id]) yield this.posEl[id];
         }
-    }
-
-    valuesArray(): EL[] {
-        return [...this.values()];
     }
 
     *entries(): IterableIterator<[number, EL]> {
@@ -182,8 +187,34 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
+    indicesArray(): number[] {
+        return [...this.indices()];
+    }
+
+    valuesArray(): EL[] {
+        return [...this.values()];
+    }
+
     entriesArray(): [number, EL][] {
         return [...this.entries()];
+    }
+
+    *kvKeys(): IterableIterator<[number]> {
+        for (const id of this.indices()) {
+            yield [id];
+        }
+    }
+
+    *kvValues(): IterableIterator<EL> {
+        for (const el of this.values()) {
+            yield el;
+        }
+    }
+
+    *kvEntries(): IterableIterator<[[number], EL]> {
+        for (const [id, el] of this.entries()) {
+            yield [[id], el];
+        }
     }
 
     *[Symbol.iterator]() {

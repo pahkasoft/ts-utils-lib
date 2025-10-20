@@ -9,6 +9,15 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
     constructor(entries: Iterable<[KEY1, VALUE]>)
     constructor(entries?: Map1<KEY1, VALUE> | Iterable<[KEY1, VALUE]>) {
         this.map1 = entries instanceof Map1 ? new Map(entries.map1) : new Map(entries);
+
+        /*
+        this.keys = this.keys.bind(this);
+        this.values = this.values.bind(this);
+        this.entries = this.entries.bind(this);
+        this.kvKeys = this.kvKeys.bind(this);
+        this.kvValues = this.kvValues.bind(this);
+        this.kvEntries = this.kvEntries.bind(this);
+        */
     }
 
     has(key1: KEY1): boolean {
@@ -53,24 +62,20 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
         return this.map1.size;
     }
 
+    isEmpty(): boolean {
+        return this.size === 0;
+    }
+
     forEach(callbackfn: (value: VALUE, key1: KEY1, map1: Map1<KEY1, VALUE>) => void, thisArg?: any): void {
         this.map1.forEach((value, key1) => callbackfn.call(thisArg, value, key1, this));
     }
 
-    keys(): IterableIterator<KEY1> {
-        return this.map1.keys();
+    *keys(): IterableIterator<KEY1> {
+        yield* this.map1.keys();
     }
 
-    keysArray(): KEY1[] {
-        return [...this.keys()];
-    }
-
-    values(): IterableIterator<VALUE> {
-        return this.map1.values();
-    }
-
-    valuesArray(): VALUE[] {
-        return [...this.values()];
+    *values(): IterableIterator<VALUE> {
+        yield* this.map1.values();
     }
 
     *entries(): IterableIterator<[KEY1, VALUE]> {
@@ -78,8 +83,34 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
             yield [key1, value];
     }
 
+    keysArray(): KEY1[] {
+        return [...this.keys()];
+    }
+
+    valuesArray(): VALUE[] {
+        return [...this.values()];
+    }
+
     entriesArray(): [KEY1, VALUE][] {
         return [...this.entries()];
+    }
+
+    *kvKeys(): IterableIterator<[KEY1]> {
+        for (const key of this.keys()) {
+            yield [key];
+        }
+    }
+
+    *kvValues(): IterableIterator<VALUE> {
+        for (const el of this.values()) {
+            yield el;
+        }
+    }
+
+    *kvEntries(): IterableIterator<[[KEY1], VALUE]> {
+        for (const [key, el] of this.entries()) {
+            yield [[key], el];
+        }
     }
 
     *[Symbol.iterator]() {
@@ -175,6 +206,15 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
                 this.set(key1, key2, value);
             }
         }
+
+        /*
+        this.keys = this.keys.bind(this);
+        this.values = this.values.bind(this);
+        this.entries = this.entries.bind(this);
+        this.kvKeys = this.kvKeys.bind(this);
+        this.kvValues = this.kvValues.bind(this);
+        this.kvEntries = this.kvEntries.bind(this);
+        */
     }
 
     has(key1: KEY1, key2: KEY2): boolean {
@@ -229,34 +269,24 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
         return count;
     }
 
+    isEmpty(): boolean {
+        return this.size === 0;
+    }
+
     forEach(callbackfn: (value: VALUE, key1: KEY1, key2: KEY2, map2: Map2<KEY1, KEY2, VALUE>) => void, thisArg?: any): void {
         this.map1.forEach((map2, key1) => map2.forEach((value, key2) => callbackfn.call(thisArg, value, key1, key2, this)));
     }
 
-    keys(): IterableIterator<[KEY1, KEY2]> {
-        function* gen(map1: Map<KEY1, Map<KEY2, VALUE>>): IterableIterator<[KEY1, KEY2]> {
-            for (const [key1, map2] of map1)
-                for (const key2 of map2.keys())
-                    yield [key1, key2];
-        }
-        return gen(this.map1);
+    *keys(): IterableIterator<[KEY1, KEY2]> {
+        for (const [key1, map2] of this.map1)
+            for (const key2 of map2.keys())
+                yield [key1, key2];
     }
 
-    keysArray(): [KEY1, KEY2][] {
-        return [...this.keys()];
-    }
-
-    values(): IterableIterator<VALUE> {
-        function* gen(map1: Map<KEY1, Map<KEY2, VALUE>>): IterableIterator<VALUE> {
-            for (const map2 of map1.values())
-                for (const value of map2.values())
-                    yield value;
-        }
-        return gen(this.map1);
-    }
-
-    valuesArray(): VALUE[] {
-        return [...this.values()];
+    *values(): IterableIterator<VALUE> {
+        for (const map2 of this.map1.values())
+            for (const value of map2.values())
+                yield value;
     }
 
     *entries(): IterableIterator<[KEY1, KEY2, VALUE]> {
@@ -265,8 +295,31 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
                 yield [key1, key2, value];
     }
 
+    keysArray(): [KEY1, KEY2][] {
+        return [...this.keys()];
+    }
+
+    valuesArray(): VALUE[] {
+        return [...this.values()];
+    }
+
     entriesArray(): [KEY1, KEY2, VALUE][] {
         return [...this.entries()];
+    }
+
+    *kvKeys(): IterableIterator<[KEY1, KEY2]> {
+        for (const [key1, key2] of this.keys())
+            yield [key1, key2];
+    }
+
+    *kvValues(): IterableIterator<VALUE> {
+        for (const el of this.values())
+            yield el;
+    }
+
+    *kvEntries(): IterableIterator<[[KEY1, KEY2], VALUE]> {
+        for (const [key1, key2, el] of this.entries())
+            yield [[key1, key2], el];
     }
 
     *[Symbol.iterator]() {
@@ -388,6 +441,15 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, K
                 this.set(key1, key2, key3, value);
             }
         }
+
+        /*
+        this.keys = this.keys.bind(this);
+        this.values = this.values.bind(this);
+        this.entries = this.entries.bind(this);
+        this.kvKeys = this.kvKeys.bind(this);
+        this.kvValues = this.kvValues.bind(this);
+        this.kvEntries = this.kvEntries.bind(this);
+        */
     }
 
     has(key1: KEY1, key2: KEY2, key3: KEY3): boolean {
@@ -456,36 +518,26 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, K
         return count;
     }
 
+    isEmpty(): boolean {
+        return this.size === 0;
+    }
+
     forEach(callbackfn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, map2: Map3<KEY1, KEY2, KEY3, VALUE>) => void, thisArg?: any): void {
         this.map1.forEach((map2, key1) => map2.forEach((map3, key2) => map3.forEach((value, key3) => callbackfn.call(thisArg, value, key1, key2, key3, this))));
     }
 
-    keys(): IterableIterator<[KEY1, KEY2, KEY3]> {
-        function* gen(map1: Map<KEY1, Map<KEY2, Map<KEY3, VALUE>>>): IterableIterator<[KEY1, KEY2, KEY3]> {
-            for (const [key1, map2] of map1)
-                for (const [key2, map3] of map2)
-                    for (const key3 of map3.keys())
-                        yield [key1, key2, key3];
-        }
-        return gen(this.map1);
+    *keys(): IterableIterator<[KEY1, KEY2, KEY3]> {
+        for (const [key1, map2] of this.map1)
+            for (const [key2, map3] of map2)
+                for (const key3 of map3.keys())
+                    yield [key1, key2, key3];
     }
 
-    keysArray(): [KEY1, KEY2, KEY3][] {
-        return [...this.keys()];
-    }
-
-    values(): IterableIterator<VALUE> {
-        function* gen(map1: Map<KEY1, Map<KEY2, Map<KEY3, VALUE>>>): IterableIterator<VALUE> {
-            for (const map2 of map1.values())
-                for (const map3 of map2.values())
-                    for (const value of map3.values())
-                        yield value;
-        }
-        return gen(this.map1);
-    }
-
-    valuesArray(): VALUE[] {
-        return [...this.values()];
+    *values(): IterableIterator<VALUE> {
+        for (const map2 of this.map1.values())
+            for (const map3 of map2.values())
+                for (const value of map3.values())
+                    yield value;
     }
 
     *entries(): IterableIterator<[KEY1, KEY2, KEY3, VALUE]> {
@@ -495,8 +547,31 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, K
                     yield [key1, key2, key3, value];
     }
 
+    keysArray(): [KEY1, KEY2, KEY3][] {
+        return [...this.keys()];
+    }
+
+    valuesArray(): VALUE[] {
+        return [...this.values()];
+    }
+
     entriesArray(): [KEY1, KEY2, KEY3, VALUE][] {
         return [...this.entries()];
+    }
+
+    *kvKeys(): IterableIterator<[KEY1, KEY2, KEY3]> {
+        for (const [key1, key2, key3] of this.keys())
+            yield [key1, key2, key3];
+    }
+
+    *kvValues(): IterableIterator<VALUE> {
+        for (const el of this.values())
+            yield el;
+    }
+
+    *kvEntries(): IterableIterator<[[KEY1, KEY2, KEY3], VALUE]> {
+        for (const [key1, key2, key3, el] of this.entries())
+            yield [[key1, key2, key3], el];
     }
 
     *[Symbol.iterator]() {

@@ -1,7 +1,22 @@
 import { KVComponent } from "./kv-container";
 
 export class MultiContainer<K extends any[], V> {
-    constructor(private readonly base: KVComponent<K, V[]>) { }
+    constructor(private readonly base: KVComponent<K, V[]>) {
+        /*
+        this.keys = this.keys.bind(this);
+        this.values = this.values.bind(this);
+        this.entries = this.entries.bind(this);
+        this.iterAll = this.iterAll.bind(this);
+        */
+    }
+
+    isEmpty(): boolean {
+        return this.base.isEmpty();
+    }
+
+    clear(): void {
+        this.base.clear?.();
+    }
 
     add(...keysAndValue: [...K, V]): V {
         const keys = keysAndValue.slice(0, -1) as K;
@@ -28,14 +43,48 @@ export class MultiContainer<K extends any[], V> {
     }
 
     *iterAll(...keys: K): IterableIterator<V> {
-        const arr = this.getAll(...keys);
-        for (const v of arr) {
-            yield v;
+        yield* this.getAll(...keys);
+    }
+
+    *values(): IterableIterator<V> {
+        for (const keys of this.keys()) {
+            yield* this.getAll(...keys);
         }
     }
 
-    clear(): void {
-        this.base.clear?.();
+    *keys(): IterableIterator<K> {
+        for (const keys of this.base.kvKeys()) {
+            yield keys;
+        }
+    }
+
+    *entries(): IterableIterator<[K, V[]]> {
+        for (const keys of this.keys()) {
+            const arr = this.getAll(...keys);
+            if (arr.length > 0) yield [keys, arr];
+        }
+    }
+
+    [Symbol.iterator](): IterableIterator<[K, V[]]> {
+        return this.entries();
+    }
+
+    toString(): string {
+        const entries: string[] = [];
+
+        for (const keys of this.keys()) {
+            const arr = this.getAll(...keys);
+            // Ensure keys is treated as an array
+            const keyStr = Array.isArray(keys)
+                ? `[${keys.map(k => JSON.stringify(k)).join(', ')}]`
+                : `[${JSON.stringify(keys)}]`;
+            const valuesStr = Array.isArray(arr)
+                ? `[${arr.map(v => JSON.stringify(v)).join(', ')}]`
+                : '[]';
+            entries.push(`${keyStr} => ${valuesStr}`);
+        }
+
+        return `MultiContainer{ ${entries.join(', ')} }`;
     }
 }
 
