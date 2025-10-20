@@ -97,6 +97,6 @@ export class MultiContainer<K extends any[], V> {
  * @param base 
  * @returns 
  */
-export function asMulti<K extends any[], EL>(base: KVComponent<K, EL[]>): MultiContainer<K, EL> {
+export function asMulti<K extends any[], VALUE>(base: KVComponent<K, VALUE[]>): MultiContainer<K, VALUE> {
     return new MultiContainer(base);
 }

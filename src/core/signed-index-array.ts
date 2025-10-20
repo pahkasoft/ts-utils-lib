@@ -4,7 +4,7 @@ import { KVComponent } from "./kv-container";
 /**
  * An array-like structure for signed indexes, including negatives.
  */
-export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
+export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
     private static toNegIndex(id: number): number {
         return -id - 1;
     }
@@ -14,36 +14,38 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         return id;
     }
 
-    // for indexes >= 0
-    private posEl: EL[];
+    // For indexes >= 0
+    private posVal: VALUE[];
     private hasPos: boolean[];
-    // for indexes < 0
-    private negEl: EL[];
+
+    // For indexes < 0
+    private negVal: VALUE[];
     private hasNeg: boolean[];
-    // number of elems
-    private elCount: number;
+
+    // Number of values
+    private valCount: number;
 
     constructor();
-    constructor(arr: SignedIndexArray<EL>)
-    constructor(entries: Iterable<[number, EL]>)
-    constructor(entries?: SignedIndexArray<EL> | Iterable<[number, EL]>) {
+    constructor(arr: SignedIndexArray<VALUE>)
+    constructor(entries: Iterable<[number, VALUE]>)
+    constructor(entries?: SignedIndexArray<VALUE> | Iterable<[number, VALUE]>) {
         if (entries instanceof SignedIndexArray) {
-            this.negEl = entries.negEl.slice();
+            this.negVal = entries.negVal.slice();
             this.hasNeg = entries.hasNeg.slice();
-            this.posEl = entries.posEl.slice();
+            this.posVal = entries.posVal.slice();
             this.hasPos = entries.hasPos.slice();
-            this.elCount = entries.elCount;
+            this.valCount = entries.valCount;
         }
         else {
-            this.negEl = [];
+            this.negVal = [];
             this.hasNeg = [];
-            this.posEl = [];
+            this.posVal = [];
             this.hasPos = [];
-            this.elCount = 0;
+            this.valCount = 0;
 
             if (entries) {
-                for (const [id, el] of entries) {
-                    this.set(id, el);
+                for (const [id, value] of entries) {
+                    this.set(id, value);
                 }
             }
         }
@@ -59,7 +61,7 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
     }
 
     get size(): number {
-        return this.elCount;
+        return this.valCount;
     }
 
     isEmpty(): boolean {
@@ -85,41 +87,41 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
-    set(id: number, el: EL): void {
+    set(id: number, value: VALUE): void {
         SignedIndexArray.validateIndex(id);
 
         if (id >= 0) {
-            if (this.hasPos[id] !== true) this.elCount++;
-            this.posEl[id] = el;
+            if (this.hasPos[id] !== true) this.valCount++;
+            this.posVal[id] = value;
             this.hasPos[id] = true;
         }
         else {
             let negId = SignedIndexArray.toNegIndex(id);
-            if (this.hasNeg[negId] !== true) this.elCount++;
-            this.negEl[negId] = el;
+            if (this.hasNeg[negId] !== true) this.valCount++;
+            this.negVal[negId] = value;
             this.hasNeg[negId] = true;
         }
     }
 
-    get(id: number): EL | undefined {
+    get(id: number): VALUE | undefined {
         SignedIndexArray.validateIndex(id);
 
         if (id >= 0) {
-            return this.hasPos[id] ? this.posEl[id] : undefined;
+            return this.hasPos[id] ? this.posVal[id] : undefined;
         }
         else {
             let negId = SignedIndexArray.toNegIndex(id);
-            return this.hasNeg[negId] ? this.negEl[negId] : undefined;
+            return this.hasNeg[negId] ? this.negVal[negId] : undefined;
         }
     }
 
-    getOrDefault(id: number, defaultValue: EL): EL {
+    getOrDefault(id: number, defaultValue: VALUE): VALUE {
         return this.get(id) ?? defaultValue;
     }
 
-    getOrCreate(id: number, value: EL): EL;
-    getOrCreate(id: number, creator: () => EL): EL;
-    getOrCreate(id: number, creatorOrValue: EL | (() => EL)): EL {
+    getOrCreate(id: number, value: VALUE): VALUE;
+    getOrCreate(id: number, creator: () => VALUE): VALUE;
+    getOrCreate(id: number, creatorOrValue: VALUE | (() => VALUE)): VALUE {
         if (!this.has(id)) {
             const value = isFunction(creatorOrValue)
                 ? creatorOrValue()
@@ -134,7 +136,7 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         SignedIndexArray.validateIndex(id);
 
         const isPos = id >= 0;
-        const arr = isPos ? this.posEl : this.negEl;
+        const arr = isPos ? this.posVal : this.negVal;
         const has = isPos ? this.hasPos : this.hasNeg;
         const idx = isPos ? id : SignedIndexArray.toNegIndex(id);
 
@@ -142,21 +144,21 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
 
         arr[idx] = undefined!;
         has[idx] = false;
-        this.elCount--;
+        this.valCount--;
         return true;
     }
 
     clear(): void {
-        this.negEl = [];
+        this.negVal = [];
         this.hasNeg = [];
-        this.posEl = [];
+        this.posVal = [];
         this.hasPos = [];
-        this.elCount = 0;
+        this.valCount = 0;
     }
 
-    forEach(callbackfn: (el: EL, id: number, arr: SignedIndexArray<EL>) => void, thisArg?: any): void {
-        for (const [id, el] of this.entries()) {
-            callbackfn.call(thisArg, el, id, this);
+    forEach(callbackfn: (value: VALUE, id: number, arr: SignedIndexArray<VALUE>) => void, thisArg?: any): void {
+        for (const [id, value] of this.entries()) {
+            callbackfn.call(thisArg, value, id, this);
         }
     }
 
@@ -169,21 +171,21 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
-    *values(): IterableIterator<EL> {
+    *values(): IterableIterator<VALUE> {
         for (let id = this.negLen - 1; id >= 0; id--) {
-            if (this.hasNeg[id]) yield this.negEl[id];
+            if (this.hasNeg[id]) yield this.negVal[id];
         }
         for (let id = 0; id < this.posLen; id++) {
-            if (this.hasPos[id]) yield this.posEl[id];
+            if (this.hasPos[id]) yield this.posVal[id];
         }
     }
 
-    *entries(): IterableIterator<[number, EL]> {
+    *entries(): IterableIterator<[number, VALUE]> {
         for (let id = this.negLen - 1; id >= 0; id--) {
-            if (this.hasNeg[id]) yield [SignedIndexArray.toNegIndex(id), this.negEl[id]];
+            if (this.hasNeg[id]) yield [SignedIndexArray.toNegIndex(id), this.negVal[id]];
         }
         for (let id = 0; id < this.posLen; id++) {
-            if (this.hasPos[id]) yield [id, this.posEl[id]];
+            if (this.hasPos[id]) yield [id, this.posVal[id]];
         }
     }
 
@@ -191,11 +193,11 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         return [...this.indices()];
     }
 
-    valuesArray(): EL[] {
+    valuesArray(): VALUE[] {
         return [...this.values()];
     }
 
-    entriesArray(): [number, EL][] {
+    entriesArray(): [number, VALUE][] {
         return [...this.entries()];
     }
 
@@ -205,15 +207,15 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
-    *kvValues(): IterableIterator<EL> {
-        for (const el of this.values()) {
-            yield el;
+    *kvValues(): IterableIterator<VALUE> {
+        for (const value of this.values()) {
+            yield value;
         }
     }
 
-    *kvEntries(): IterableIterator<[[number], EL]> {
-        for (const [id, el] of this.entries()) {
-            yield [[id], el];
+    *kvEntries(): IterableIterator<[[number], VALUE]> {
+        for (const [id, value] of this.entries()) {
+            yield [[id], value];
         }
     }
 
@@ -221,11 +223,11 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         yield* this.entries();
     }
 
-    clone(): SignedIndexArray<EL> {
+    clone(): SignedIndexArray<VALUE> {
         return new SignedIndexArray(this);
     }
 
-    merge(other: SignedIndexArray<EL>, conflictResolver?: (oldValue: EL, newValue: EL, id: number) => EL): this {
+    merge(other: SignedIndexArray<VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, id: number) => VALUE): this {
         for (const [id, value] of other.entries()) {
             if (this.has(id) && conflictResolver) {
                 this.set(id, conflictResolver(this.get(id)!, value, id));
@@ -237,31 +239,31 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         return this;
     }
 
-    some(fn: (el: EL, id: number) => boolean): boolean {
-        for (const [id, el] of this.entries()) {
-            if (fn(el, id)) return true;
+    some(fn: (value: VALUE, id: number) => boolean): boolean {
+        for (const [id, value] of this.entries()) {
+            if (fn(value, id)) return true;
         }
         return false;
     }
 
-    every(fn: (value: EL, key1: number) => boolean): boolean {
-        for (const [id, el] of this.entries()) {
-            if (!fn(el, id)) return false;
+    every(fn: (value: VALUE, key1: number) => boolean): boolean {
+        for (const [id, value] of this.entries()) {
+            if (!fn(value, id)) return false;
         }
         return true;
     }
 
-    filter(fn: (value: EL, key1: number) => boolean): SignedIndexArray<EL> {
-        let result = new SignedIndexArray<EL>();
-        for (const [id, el] of this.entries()) {
-            if (fn(el, id)) result.set(id, el);
+    filter(fn: (value: VALUE, key1: number) => boolean): SignedIndexArray<VALUE> {
+        let result = new SignedIndexArray<VALUE>();
+        for (const [id, value] of this.entries()) {
+            if (fn(value, id)) result.set(id, value);
         }
         return result;
     }
 
-    reduce(fn: (acc: EL, el: EL, id: number) => EL): EL;
-    reduce<R>(fn: (acc: R, el: EL, id: number) => R, init: R): R;
-    reduce<R>(fn: (acc: R, el: EL, id: number) => R, init?: R): R {
+    reduce(fn: (acc: VALUE, value: VALUE, id: number) => VALUE): VALUE;
+    reduce<R>(fn: (acc: R, value: VALUE, id: number) => R, init: R): R;
+    reduce<R>(fn: (acc: R, value: VALUE, id: number) => R, init?: R): R {
         let iterator = this.entries();
         let first = iterator.next();
 
@@ -273,7 +275,7 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         }
 
         let acc: any;
-        let start: IteratorResult<[number, EL]>;
+        let start: IteratorResult<[number, VALUE]>;
 
         if (arguments.length < 2) {
             // no init → use first entry as accumulator
@@ -285,32 +287,32 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
         }
 
         for (let current = start; !current.done; current = iterator.next()) {
-            const [id, el] = current.value;
-            acc = fn(acc, el, id);
+            const [id, value] = current.value;
+            acc = fn(acc, value, id);
         }
 
         return acc;
     }
 
-    mapToArray<R>(fn: (value: EL, key1: number) => R): R[] {
+    mapToArray<R>(fn: (value: VALUE, key1: number) => R): R[] {
         let result: R[] = [];
-        for (const [id, el] of this.entries()) {
-            result.push(fn(el, id));
+        for (const [id, value] of this.entries()) {
+            result.push(fn(value, id));
         }
         return result;
     }
 
-    map<R = EL>(fn: (value: EL, key1: number) => R): SignedIndexArray<R> {
+    map<R = VALUE>(fn: (value: VALUE, key1: number) => R): SignedIndexArray<R> {
         let result = new SignedIndexArray<R>();
-        for (const [id, el] of this.entries()) {
-            result.set(id, fn(el, id));
+        for (const [id, value] of this.entries()) {
+            result.set(id, fn(value, id));
         }
         return result;
     }
 
-    equals(other: SignedIndexArray<EL>): boolean;
-    equals(other: SignedIndexArray<EL>, eq: (a: EL, b: EL) => boolean): boolean;
-    equals(other: SignedIndexArray<EL>, eq?: (a: EL, b: EL) => boolean): boolean {
+    equals(other: SignedIndexArray<VALUE>): boolean;
+    equals(other: SignedIndexArray<VALUE>, eq: (a: VALUE, b: VALUE) => boolean): boolean;
+    equals(other: SignedIndexArray<VALUE>, eq?: (a: VALUE, b: VALUE) => boolean): boolean {
         if (this.size !== other.size) return false;
 
         eq ??= (a, b) => a === b;
@@ -320,7 +322,7 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
             const hasA = this.hasPos[i];
             const hasB = other.hasPos[i];
             if (hasA !== hasB) return false;
-            if (hasA && !eq(this.posEl[i], other.posEl[i])) return false;
+            if (hasA && !eq(this.posVal[i], other.posVal[i])) return false;
         }
 
         const negLen = Math.max(this.negLen, other.negLen);
@@ -328,7 +330,7 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
             const hasA = this.hasNeg[i];
             const hasB = other.hasNeg[i];
             if (hasA !== hasB) return false;
-            if (hasA && !eq(this.negEl[i], other.negEl[i])) return false;
+            if (hasA && !eq(this.negVal[i], other.negVal[i])) return false;
         }
 
         return true;
@@ -336,7 +338,7 @@ export class SignedIndexArray<EL> implements KVComponent<[number], EL> {
 
     toString(): string {
         if (this.size === 0) return `SignedIndexArray[ ]`;
-        const entries = this.entriesArray().map(([id, el]) => `${id}: ${el}`).join(', ');
+        const entries = this.entriesArray().map(([id, value]) => `${id}: ${value}`).join(', ');
         return `SignedIndexArray[ ${entries} ]`;
     }
 }

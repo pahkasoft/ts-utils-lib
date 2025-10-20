@@ -1,18 +1,18 @@
 
-export interface KVComponent<K extends any[], EL> {
+export interface KVComponent<K extends any[], VALUE> {
     get size(): number;
     isEmpty(): boolean;
     has(...keys: K): boolean;
-    get(...keys: K): EL | undefined;
-    getOrDefault(...keysAndDefault: [...K, EL]): EL;
-    getOrCreate(...keysAndCreator: [...K, EL]): EL;
-    set(...keysAndValue: [...K, EL]): void;
+    get(...keys: K): VALUE | undefined;
+    getOrDefault(...keysAndDefault: [...K, VALUE]): VALUE;
+    getOrCreate(...keysAndCreator: [...K, VALUE]): VALUE;
+    set(...keysAndValue: [...K, VALUE]): void;
     delete(...keys: K): boolean;
     clear?(): void;
     toString(): string;
 
     // Iterators for KVComponent.
-    kvValues(): IterableIterator<EL>;
+    kvValues(): IterableIterator<VALUE>;
     kvKeys(): IterableIterator<K>;
-    kvEntries(): IterableIterator<[K, EL]>;
+    kvEntries(): IterableIterator<[K, VALUE]>;
 }

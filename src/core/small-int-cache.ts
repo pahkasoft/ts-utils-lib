@@ -19,18 +19,18 @@ import { isInteger } from "../utils/is";
  * console.log(cache.get(-2)); // 'A'
  * ```
  * 
- * @deprecated - Same functionality an more is available now in SignedIndexArray<EL> and IndexArray<EL> containers.
+ * @deprecated - Same functionality an more is available now in SignedIndexArray<VALUE> and IndexArray<VALUE> containers.
  */
-export class SmallIntCache<V> {
-    private pos: V[]; // for keys >= 0
-    private neg: V[]; // for keys < 0
+export class SmallIntCache<VALUE> {
+    private pos: VALUE[]; // for keys >= 0
+    private neg: VALUE[]; // for keys < 0
 
     constructor() {
         this.pos = [];
         this.neg = [];
     }
 
-    set(key: number, value: V): void {
+    set(key: number, value: VALUE): void {
         if (!isInteger(key)) {
             throw new Error("Key must be an integer");
         }
@@ -42,7 +42,7 @@ export class SmallIntCache<V> {
         }
     }
 
-    get(key: number): V | undefined {
+    get(key: number): VALUE | undefined {
         if (!isInteger(key)) {
             throw new Error("Key must be an integer");
         }

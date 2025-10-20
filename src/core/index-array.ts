@@ -4,39 +4,35 @@ import { KVComponent } from "./kv-container";
 /**
  * An array-like structure for non-negative indexes.
  */
-export class IndexArray<EL> implements KVComponent<[number], EL> {
-    private static toNegIndex(id: number): number {
-        return -id - 1;
-    }
-
+export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
     private static validateIndex(id: number): number {
         if (!isIntegerGte(id, 0)) throw new Error(`Invalid index ${id} - must be an integer >= 0!`);
         return id;
     }
 
-    // for indexes >= 0
-    private posEl: EL[];
+    private posVal: VALUE[];
     private hasPos: boolean[];
-    // number of elems
-    private elCount: number;
+
+    // Number of values
+    private valCount: number;
 
     constructor();
-    constructor(arr: IndexArray<EL>)
-    constructor(entries: Iterable<[number, EL]>)
-    constructor(entries?: IndexArray<EL> | Iterable<[number, EL]>) {
+    constructor(arr: IndexArray<VALUE>)
+    constructor(entries: Iterable<[number, VALUE]>)
+    constructor(entries?: IndexArray<VALUE> | Iterable<[number, VALUE]>) {
         if (entries instanceof IndexArray) {
-            this.posEl = entries.posEl.slice();
+            this.posVal = entries.posVal.slice();
             this.hasPos = entries.hasPos.slice();
-            this.elCount = entries.elCount;
+            this.valCount = entries.valCount;
         }
         else {
-            this.posEl = [];
+            this.posVal = [];
             this.hasPos = [];
-            this.elCount = 0;
+            this.valCount = 0;
 
             if (entries) {
-                for (const [id, el] of entries) {
-                    this.set(id, el);
+                for (const [id, value] of entries) {
+                    this.set(id, value);
                 }
             }
         }
@@ -56,7 +52,7 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
     }
 
     get size(): number {
-        return this.elCount;
+        return this.valCount;
     }
 
     isEmpty(): boolean {
@@ -69,27 +65,27 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         return this.hasPos[id] === true;
     }
 
-    set(id: number, el: EL): void {
+    set(id: number, value: VALUE): void {
         IndexArray.validateIndex(id);
 
-        if (this.hasPos[id] !== true) this.elCount++;
-        this.posEl[id] = el;
+        if (this.hasPos[id] !== true) this.valCount++;
+        this.posVal[id] = value;
         this.hasPos[id] = true;
     }
 
-    get(id: number): EL | undefined {
+    get(id: number): VALUE | undefined {
         IndexArray.validateIndex(id);
 
-        return this.hasPos[id] ? this.posEl[id] : undefined;
+        return this.hasPos[id] ? this.posVal[id] : undefined;
     }
 
-    getOrDefault(id: number, defaultValue: EL): EL {
+    getOrDefault(id: number, defaultValue: VALUE): VALUE {
         return this.get(id) ?? defaultValue;
     }
 
-    getOrCreate(id: number, value: EL): EL;
-    getOrCreate(id: number, creator: () => EL): EL;
-    getOrCreate(id: number, creatorOrValue: EL | (() => EL)): EL {
+    getOrCreate(id: number, value: VALUE): VALUE;
+    getOrCreate(id: number, creator: () => VALUE): VALUE;
+    getOrCreate(id: number, creatorOrValue: VALUE | (() => VALUE)): VALUE {
         if (!this.has(id)) {
             const value = isFunction(creatorOrValue)
                 ? creatorOrValue()
@@ -104,21 +100,21 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         IndexArray.validateIndex(id);
 
         if (!this.hasPos[id]) return false;
-        this.posEl[id] = undefined!;
+        this.posVal[id] = undefined!;
         this.hasPos[id] = false;
-        this.elCount--;
+        this.valCount--;
         return true;
     }
 
     clear(): void {
-        this.posEl = [];
+        this.posVal = [];
         this.hasPos = [];
-        this.elCount = 0;
+        this.valCount = 0;
     }
 
-    forEach(callbackfn: (el: EL, id: number, arr: IndexArray<EL>) => void, thisArg?: any): void {
-        for (const [id, el] of this.entries()) {
-            callbackfn.call(thisArg, el, id, this);
+    forEach(callbackfn: (value: VALUE, id: number, arr: IndexArray<VALUE>) => void, thisArg?: any): void {
+        for (const [id, value] of this.entries()) {
+            callbackfn.call(thisArg, value, id, this);
         }
     }
 
@@ -128,15 +124,15 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
-    *values(): IterableIterator<EL> {
+    *values(): IterableIterator<VALUE> {
         for (let id = 0; id < this.posLen; id++) {
-            if (this.hasPos[id]) yield this.posEl[id];
+            if (this.hasPos[id]) yield this.posVal[id];
         }
     }
 
-    *entries(): IterableIterator<[number, EL]> {
+    *entries(): IterableIterator<[number, VALUE]> {
         for (let id = 0; id < this.posLen; id++) {
-            if (this.hasPos[id]) yield [id, this.posEl[id]];
+            if (this.hasPos[id]) yield [id, this.posVal[id]];
         }
     }
 
@@ -144,11 +140,11 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         return [...this.indices()];
     }
 
-    valuesArray(): EL[] {
+    valuesArray(): VALUE[] {
         return [...this.values()];
     }
 
-    entriesArray(): [number, EL][] {
+    entriesArray(): [number, VALUE][] {
         return [...this.entries()];
     }
 
@@ -158,15 +154,15 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         }
     }
 
-    *kvValues(): IterableIterator<EL> {
-        for (const el of this.values()) {
-            yield el;
+    *kvValues(): IterableIterator<VALUE> {
+        for (const value of this.values()) {
+            yield value;
         }
     }
 
-    *kvEntries(): IterableIterator<[[number], EL]> {
-        for (const [id, el] of this.entries()) {
-            yield [[id], el];
+    *kvEntries(): IterableIterator<[[number], VALUE]> {
+        for (const [id, value] of this.entries()) {
+            yield [[id], value];
         }
     }
 
@@ -174,11 +170,11 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         yield* this.entries();
     }
 
-    clone(): IndexArray<EL> {
+    clone(): IndexArray<VALUE> {
         return new IndexArray(this);
     }
 
-    merge(other: IndexArray<EL>, conflictResolver?: (oldValue: EL, newValue: EL, id: number) => EL): this {
+    merge(other: IndexArray<VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, id: number) => VALUE): this {
         for (const [id, value] of other.entries()) {
             if (this.has(id) && conflictResolver) {
                 this.set(id, conflictResolver(this.get(id)!, value, id));
@@ -190,31 +186,31 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         return this;
     }
 
-    some(fn: (el: EL, id: number) => boolean): boolean {
-        for (const [id, el] of this.entries()) {
-            if (fn(el, id)) return true;
+    some(fn: (value: VALUE, id: number) => boolean): boolean {
+        for (const [id, value] of this.entries()) {
+            if (fn(value, id)) return true;
         }
         return false;
     }
 
-    every(fn: (value: EL, key1: number) => boolean): boolean {
-        for (const [id, el] of this.entries()) {
-            if (!fn(el, id)) return false;
+    every(fn: (value: VALUE, key1: number) => boolean): boolean {
+        for (const [id, value] of this.entries()) {
+            if (!fn(value, id)) return false;
         }
         return true;
     }
 
-    filter(fn: (value: EL, key1: number) => boolean): IndexArray<EL> {
-        let result = new IndexArray<EL>();
-        for (const [id, el] of this.entries()) {
-            if (fn(el, id)) result.set(id, el);
+    filter(fn: (value: VALUE, key1: number) => boolean): IndexArray<VALUE> {
+        let result = new IndexArray<VALUE>();
+        for (const [id, value] of this.entries()) {
+            if (fn(value, id)) result.set(id, value);
         }
         return result;
     }
 
-    reduce(fn: (acc: EL, el: EL, id: number) => EL): EL;
-    reduce<R>(fn: (acc: R, el: EL, id: number) => R, init: R): R;
-    reduce<R>(fn: (acc: R, el: EL, id: number) => R, init?: R): R {
+    reduce(fn: (acc: VALUE, value: VALUE, id: number) => VALUE): VALUE;
+    reduce<R>(fn: (acc: R, value: VALUE, id: number) => R, init: R): R;
+    reduce<R>(fn: (acc: R, value: VALUE, id: number) => R, init?: R): R {
         let iterator = this.entries();
         let first = iterator.next();
 
@@ -226,7 +222,7 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         }
 
         let acc: any;
-        let start: IteratorResult<[number, EL]>;
+        let start: IteratorResult<[number, VALUE]>;
 
         if (arguments.length < 2) {
             // no init → use first entry as accumulator
@@ -238,32 +234,32 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
         }
 
         for (let current = start; !current.done; current = iterator.next()) {
-            const [id, el] = current.value;
-            acc = fn(acc, el, id);
+            const [id, value] = current.value;
+            acc = fn(acc, value, id);
         }
 
         return acc;
     }
 
-    mapToArray<R>(fn: (value: EL, key1: number) => R): R[] {
+    mapToArray<R>(fn: (value: VALUE, key1: number) => R): R[] {
         let result: R[] = [];
-        for (const [id, el] of this.entries()) {
-            result.push(fn(el, id));
+        for (const [id, value] of this.entries()) {
+            result.push(fn(value, id));
         }
         return result;
     }
 
-    map<R = EL>(fn: (value: EL, key1: number) => R): IndexArray<R> {
+    map<R = VALUE>(fn: (value: VALUE, key1: number) => R): IndexArray<R> {
         let result = new IndexArray<R>();
-        for (const [id, el] of this.entries()) {
-            result.set(id, fn(el, id));
+        for (const [id, value] of this.entries()) {
+            result.set(id, fn(value, id));
         }
         return result;
     }
 
-    equals(other: IndexArray<EL>): boolean;
-    equals(other: IndexArray<EL>, eq: (a: EL, b: EL) => boolean): boolean;
-    equals(other: IndexArray<EL>, eq?: (a: EL, b: EL) => boolean): boolean {
+    equals(other: IndexArray<VALUE>): boolean;
+    equals(other: IndexArray<VALUE>, eq: (a: VALUE, b: VALUE) => boolean): boolean;
+    equals(other: IndexArray<VALUE>, eq?: (a: VALUE, b: VALUE) => boolean): boolean {
         if (this.size !== other.size) return false;
 
         eq ??= (a, b) => a === b;
@@ -273,7 +269,7 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
             const hasA = this.hasPos[i];
             const hasB = other.hasPos[i];
             if (hasA !== hasB) return false;
-            if (hasA && !eq(this.posEl[i], other.posEl[i])) return false;
+            if (hasA && !eq(this.posVal[i], other.posVal[i])) return false;
         }
 
         return true;
@@ -281,7 +277,7 @@ export class IndexArray<EL> implements KVComponent<[number], EL> {
 
     toString(): string {
         if (this.size === 0) return `IndexArray[ ]`;
-        const entries = this.entriesArray().map(([id, el]) => `${id}: ${el}`).join(', ');
+        const entries = this.entriesArray().map(([id, value]) => `${id}: ${value}`).join(', ');
         return `IndexArray[ ${entries} ]`;
     }
 }

@@ -66,7 +66,8 @@ describe(Map1.name, () => {
         expect(new Map1([["a", 2], ["c", 3]]).filter((v) => v === 2)).toEqual(new Map1([["a", 2]]));
 
         // reduce
-        expect(new Map1([["a", 2], ["b", 3]]).reduce((acc, v, k1) => (acc + k1), "")).toEqual("ab");
+        expect(new Map1([["a", 2], ["b", 3]]).reduce((acc, v, k1) => (acc + k1), "x-")).toEqual("x-ab");
+        expect(new Map1([["a", 2], ["b", 3]]).reduce((acc, v, k1) => (acc + v))).toEqual(5);
 
         // mapEntries
         expect(new Map1([["a", 2], ["b", 3]]).mapEntries((v, k1) => k1 + v)).toEqual(["a2", "b3"]);
@@ -147,6 +148,7 @@ describe(Map2.name, () => {
 
         // reduce
         expect(new Map2([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v), "X")).toEqual("XYZ");
+        expect(new Map2([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v))).toEqual("YZ");
 
         // mapEntries
         expect(new Map2([["a", "b", 2], ["a", "c", 3]]).mapEntries((v, k1, k2) => [k1])).toEqual([["a"], ["a"]]);
@@ -228,7 +230,8 @@ describe(Map3.name, () => {
         expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).filter((v, k1, k2, k3) => k3 === "c")).toEqual(new Map3([["a", "b", "c", 2]]));
 
         // reduce
-        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v), 0)).toEqual(5);
+        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v), 10)).toEqual(15);
+        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v))).toEqual(5);
 
         // mapEntries
         expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).mapEntries((v, k1, k2, k3) => [k1])).toEqual([["a"], ["a"]]);

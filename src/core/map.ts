@@ -155,11 +155,36 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
         return result;
     }
 
-    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1) => R, init: R): R {
-        let acc = init;
-        for (const [key1, value] of this.map1) {
+    reduce(fn: (acc: VALUE, value: VALUE, key1: KEY1) => VALUE): VALUE;
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1) => R, init: R): R;
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1) => R, init?: R): R {
+        let iterator = this.entries();
+        let first = iterator.next();
+
+        if (first.done) {
+            if (arguments.length < 2) {
+                throw new TypeError("Reduce of empty Map3 with no initial value!");
+            }
+            return init!;
+        }
+
+        let acc: any;
+        let start: IteratorResult<[KEY1, VALUE]>;
+
+        if (arguments.length < 2) {
+            // no init → use first entry as accumulator
+            acc = first.value[1]; // [key1, value]
+            start = iterator.next();
+        } else {
+            acc = init;
+            start = first;
+        }
+
+        for (let current = start; !current.done; current = iterator.next()) {
+            const [key1, value] = current.value;
             acc = fn(acc, value, key1);
         }
+
         return acc;
     }
 
@@ -370,13 +395,36 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
         return result;
     }
 
-    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1, key2: KEY2) => R, init: R): R {
-        let acc = init;
-        for (const [key1, map2] of this.map1) {
-            for (const [key2, value] of map2) {
-                acc = fn(acc, value, key1, key2);
+    reduce(fn: (acc: VALUE, value: VALUE, key1: KEY1, key2: KEY2) => VALUE): VALUE;
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1, key2: KEY2) => R, init: R): R;
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1, key2: KEY2) => R, init?: R): R {
+        let iterator = this.entries();
+        let first = iterator.next();
+
+        if (first.done) {
+            if (arguments.length < 2) {
+                throw new TypeError("Reduce of empty Map3 with no initial value!");
             }
+            return init!;
         }
+
+        let acc: any;
+        let start: IteratorResult<[KEY1, KEY2, VALUE]>;
+
+        if (arguments.length < 2) {
+            // no init → use first entry as accumulator
+            acc = first.value[2]; // [key1, key2, value]
+            start = iterator.next();
+        } else {
+            acc = init;
+            start = first;
+        }
+
+        for (let current = start; !current.done; current = iterator.next()) {
+            const [key1, key2, value] = current.value;
+            acc = fn(acc, value, key1, key2);
+        }
+
         return acc;
     }
 
@@ -628,15 +676,36 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, K
         return result;
     }
 
-    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => R, init: R): R {
-        let acc = init;
-        for (const [key1, map2] of this.map1) {
-            for (const [key2, map3] of map2) {
-                for (const [key3, value] of map3) {
-                    acc = fn(acc, value, key1, key2, key3);
-                }
+    reduce(fn: (acc: VALUE, value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => VALUE): VALUE;
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => R, init: R): R;
+    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => R, init?: R): R {
+        let iterator = this.entries();
+        let first = iterator.next();
+
+        if (first.done) {
+            if (arguments.length < 2) {
+                throw new TypeError("Reduce of empty Map3 with no initial value!");
             }
+            return init!;
         }
+
+        let acc: any;
+        let start: IteratorResult<[KEY1, KEY2, KEY3, VALUE]>;
+
+        if (arguments.length < 2) {
+            // no init → use first entry as accumulator
+            acc = first.value[3]; // [key1, key2, key3, value]
+            start = iterator.next();
+        } else {
+            acc = init;
+            start = first;
+        }
+
+        for (let current = start; !current.done; current = iterator.next()) {
+            const [key1, key2, key3, value] = current.value;
+            acc = fn(acc, value, key1, key2, key3);
+        }
+
         return acc;
     }
 
