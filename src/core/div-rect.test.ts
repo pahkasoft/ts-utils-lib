@@ -106,6 +106,9 @@ describe("DivRect", () => {
         const a = new DivRect(0, 5, 10, 0, 5, 10);
         const b = new DivRect(0, 5, 10, 0, 5, 10);
         const c = new DivRect(0, 6, 10, 0, 5, 10);
+        expect(a.equals(b)).toBe(true);
+        expect(a.equals(c)).toBe(false);
+        expect(DivRect.equals(a, b)).toBe(true);
         expect(DivRect.equals(a, b)).toBe(true);
         expect(DivRect.equals(a, c)).toBe(false);
         expect(DivRect.equals(a, null)).toBe(false);
@@ -117,6 +120,8 @@ describe("DivRect", () => {
         const a = new DivRect(0, 5, 10, 0, 5, 10);
         const b = new DivRect(0, 6, 10, 0, 7, 10);
         const c = new DivRect(1, 5, 10, 0, 5, 10);
+        expect(a.equalsEdges(b)).toBe(true);
+        expect(a.equalsEdges(c)).toBe(false);
         expect(DivRect.equalsEdges(a, b)).toBe(true);
         expect(DivRect.equalsEdges(a, c)).toBe(false);
     });
