@@ -254,6 +254,6 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
             const inner = [...map2].map(([key2, v]) => `${key2} => ${v}`).join(', ');
             entries.push(`${key1} => { ${inner} }`);
         }
-        return `Map2(${this.size}) { ${entries.join(', ')} }`;
+        return entries.length === 0 ? `Map2(0){ }` : `Map2(${this.size}){ ${entries} }`;
     }
 }

@@ -213,6 +213,6 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
 
     toString(): string {
         const entries = [...this.map1].map(([k, v]) => `${k} => ${v}`).join(', ');
-        return `Map1(${this.map1.size}) { ${entries} }`;
+        return entries.length === 0 ? `Map1(0){ }` : `Map1(${this.size}){ ${entries} }`;
     }
 }

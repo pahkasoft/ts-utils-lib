@@ -289,6 +289,6 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, K
                 entries.push(`${key1} => ${key2} => { ${inner} }`);
             }
         }
-        return `Map3(${this.size}) { ${entries.join(', ')} }`;
+        return entries.length === 0 ? `Map3(0){ }` : `Map3(${this.size}){ ${entries.join(', ')} }`;
     }
 }

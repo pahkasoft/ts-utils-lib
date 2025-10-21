@@ -2,7 +2,7 @@ import { asMulti } from "./multi-container";
 import { SignedIndexArray as Arr, SignedIndexArray } from "./signed-index-array";
 
 describe(Arr.name, () => {
-    it("should work", () => {
+    it("should add(), getAll(), remove() isEmpty(), toString() and clear()", () => {
         const multi = asMulti(new SignedIndexArray<string[]>());
 
         multi.add(0, "a");
