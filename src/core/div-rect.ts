@@ -70,7 +70,7 @@ export class DivRect {
      * 
      * @param left - Left coordinate.
      * @param top - Top coordinate.
-     * @param width - With.
+     * @param width - Width.
      * @param height - Height.
      * @returns - DivRect.
      */
@@ -88,7 +88,14 @@ export class DivRect {
      * @returns - DivRect.
      */
     static createCentered(centerX: number, centerY: number, width: number, height: number): DivRect {
-        return new DivRect(centerX - width / 2, centerX + width / 2, centerY - height / 2, centerY + height / 2);
+        return new DivRect(
+            centerX - width / 2,
+            centerX,
+            centerX + width / 2,
+            centerY - height / 2,
+            centerY,
+            centerY + height / 2
+        );
     }
 
     /**
