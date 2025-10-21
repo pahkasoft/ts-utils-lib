@@ -264,6 +264,11 @@ export class DivRect {
         return DivRect.equalsEdges(this, other);
     }
 
+    /** @deprecated - Use `DivRect.equalsEdges()` instead. */
+    static equalsFrame(a: DivRect | null | undefined, b: DivRect | null | undefined): boolean {
+        return DivRect.equalsEdges(a,b);
+    }
+
     /**
      * Created duplicate of this Rect.
      * 
