@@ -6,15 +6,18 @@ describe("DivRect", () => {
     it("constructor with no args creates zero rect", () => {
         const r = new DivRect();
         expect(r.left).toBe(0);
-        expect(r.centerX).toBe(0);
+        expect(r.anchorX).toBe(0);
         expect(r.right).toBe(0);
         expect(r.top).toBe(0);
-        expect(r.centerY).toBe(0);
+        expect(r.anchorY).toBe(0);
         expect(r.bottom).toBe(0);
     });
 
-    it("constructor with 4 args computes centers correctly", () => {
+    it("constructor with 4 args computes anchor correctly", () => {
         const r = new DivRect(0, 10, 0, 20);
+        expect(r.anchorX).toBe(5);
+        expect(r.anchorY).toBe(10);
+        // deprecated
         expect(r.centerX).toBe(5);
         expect(r.centerY).toBe(10);
     });
@@ -22,10 +25,10 @@ describe("DivRect", () => {
     it("constructor with 6 args sets fields directly", () => {
         const r = new DivRect(1, 2, 3, 4, 5, 6);
         expect(r.left).toBe(1);
-        expect(r.centerX).toBe(2);
+        expect(r.anchorX).toBe(2);
         expect(r.right).toBe(3);
         expect(r.top).toBe(4);
-        expect(r.centerY).toBe(5);
+        expect(r.anchorY).toBe(5);
         expect(r.bottom).toBe(6);
     });
 
@@ -37,8 +40,8 @@ describe("DivRect", () => {
         expect(r.right).toBe(40);
         expect(r.top).toBe(20);
         expect(r.bottom).toBe(60);
-        expect(r.centerX).toBe(25);
-        expect(r.centerY).toBe(40);
+        expect(r.anchorX).toBe(25);
+        expect(r.anchorY).toBe(40);
     });
 
     it("createCentered() builds from center, width, height", () => {
@@ -47,17 +50,17 @@ describe("DivRect", () => {
         expect(r.right).toBe(60);
         expect(r.top).toBe(45);
         expect(r.bottom).toBe(55);
-        expect(r.centerX).toBe(50);
-        expect(r.centerY).toBe(50);
+        expect(r.anchorX).toBe(50);
+        expect(r.anchorY).toBe(50);
     });
 
     it("createSections() builds from section widths/heights", () => {
         const r = DivRect.createSections(2, 3, 4, 5);
         expect(r.left).toBe(-2);
-        expect(r.centerX).toBe(0);
+        expect(r.anchorX).toBe(0);
         expect(r.right).toBe(3);
         expect(r.top).toBe(-4);
-        expect(r.centerY).toBe(0);
+        expect(r.anchorY).toBe(0);
         expect(r.bottom).toBe(5);
     });
 
@@ -116,7 +119,7 @@ describe("DivRect", () => {
         expect(DivRect.equals(undefined, undefined)).toBe(true);
     });
 
-    it("equalsEdges() ignores center coords", () => {
+    it("equalsEdges() ignores anchor coords", () => {
         const a = new DivRect(0, 5, 10, 0, 5, 10);
         const b = new DivRect(0, 6, 10, 0, 7, 10);
         const c = new DivRect(1, 5, 10, 0, 5, 10);
@@ -139,10 +142,10 @@ describe("DivRect", () => {
         const r = new DivRect(0, 5, 10, 0, 5, 10);
         r.offsetInPlace(10, 20);
         expect(r.left).toBe(10);
-        expect(r.centerX).toBe(15);
+        expect(r.anchorX).toBe(15);
         expect(r.right).toBe(20);
         expect(r.top).toBe(20);
-        expect(r.centerY).toBe(25);
+        expect(r.anchorY).toBe(25);
         expect(r.bottom).toBe(30);
     });
 
@@ -179,8 +182,8 @@ describe("DivRect", () => {
         expect(a.top).toBe(2);
         expect(a.right).toBe(7);
         expect(a.bottom).toBe(7);
-        expect(a.centerX).toBeGreaterThanOrEqual(a.left);
-        expect(a.centerX).toBeLessThanOrEqual(a.right);
+        expect(a.anchorX).toBeGreaterThanOrEqual(a.left);
+        expect(a.anchorX).toBeLessThanOrEqual(a.right);
     });
 
     it("clipCopy() returns clipped copy, original unchanged", () => {
@@ -191,13 +194,13 @@ describe("DivRect", () => {
         expect(a.left).toBe(0);
     });
 
-    it("scaleInPlace() scales from center correctly", () => {
+    it("scaleInPlace() scales from anchor correctly", () => {
         const r = DivRect.createCentered(0, 0, 10, 10);
         r.scaleInPlace(2);
         expect(r.width).toBeCloseTo(20);
         expect(r.height).toBeCloseTo(20);
-        expect(r.centerX).toBe(0);
-        expect(r.centerY).toBe(0);
+        expect(r.anchorX).toBe(0);
+        expect(r.anchorY).toBe(0);
     });
 
     it("scaleCopy() returns scaled copy, original unchanged", () => {

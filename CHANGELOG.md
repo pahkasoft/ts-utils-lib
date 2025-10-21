@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.18.0] - 2025-10-
+### Changed
+- Deprecated `DivRect` properties `centerX` and `centerY`, replaced with `anchorX` and `anchorY`.
+  Added getters and setters for `centerX` and `centerY`.
+
 ## [1.17.0] - 2025-10-21
 ### Added
 - Vec class.
