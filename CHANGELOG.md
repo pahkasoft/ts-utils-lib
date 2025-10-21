@@ -3,6 +3,7 @@
 ## [1.17.0] - 2025-10-
 ### Added
 - Vec class.
+- DivRect class.
 
 ### Fixed
 - Map1, Map2 and Map3.reduce without init value.
