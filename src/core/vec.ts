@@ -1,3 +1,4 @@
+import { isFinite } from "../utils/is";
 
 /**
  * Vector class.
@@ -24,11 +25,11 @@ export class Vec {
         this.coords = coords;
     }
 
-    static vec2(x: number, y: number) {
+    static vec2(x: number, y: number): Vec {
         return new Vec(x, y);
     }
 
-    static vec3(x: number, y: number, z: number) {
+    static vec3(x: number, y: number, z: number): Vec {
         return new Vec(x, y, z);
     }
 
@@ -39,8 +40,16 @@ export class Vec {
         return new Vec(...Array(dim).fill(0));
     }
 
+    get dim(): number {
+        return this.coords.length;
+    }
+
     get length(): number {
         return Math.hypot(...this.coords);
+    }
+
+    magnitude(): number {
+        return this.length;
     }
 
     get x(): number {
@@ -114,6 +123,47 @@ export class Vec {
             throw new TypeError("Cannot normalize zero-length vector!");
         }
         return this.div(len);
+    }
+
+    static lerp(a: Vec, b: Vec, t: number): Vec {
+        if (a.coords.length !== b.coords.length) {
+            throw new TypeError("Coordinate length mismatch!");
+        }
+        if (!isFinite(t)) {
+            throw new TypeError("Lerp t is not finite!");
+        }
+        return a.add(b.sub(a).mul(t));
+    }
+
+    toLength(len: number): Vec {
+        const mag = this.length;
+        return mag === 0 ? this : this.mul(len / mag);
+    }
+
+    clamp(minLength?: number, maxLength?: number, defaultDir?: Vec): Vec {
+        const mag = this.length;
+
+        if (mag === 0) {
+            if (minLength !== undefined) {
+                if (defaultDir && defaultDir.coords.length !== this.coords.length)
+                    throw new TypeError("Coordinate length mismatch!");
+                const dir = defaultDir && defaultDir.length !== 0 ? defaultDir.normalize() : new Vec(1, ...Array(this.coords.length - 1).fill(0));
+                return dir.mul(minLength);
+            }
+            return this; // zero vector stays zero
+        }
+
+        // If maxLength is defined and vector is too long
+        if (maxLength !== undefined && mag > maxLength) {
+            return this.normalize().mul(maxLength);
+        }
+
+        // If minLength is defined and vector is too short
+        if (minLength !== undefined && mag < minLength) {
+            return this.normalize().mul(minLength);
+        }
+
+        return this;
     }
 
     equals(other: Vec): boolean {

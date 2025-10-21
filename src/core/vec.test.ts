@@ -188,4 +188,69 @@ describe("Vec", () => {
         expect(y).toBe(8);
         expect(z).toBe(9);
     });
+
+    // Example assumes Jest or similar test framework
+
+    it("lerp between two vectors", () => {
+        const a = new Vec(0, 0, 0);
+        const b = new Vec(10, 10, 10);
+
+        expect(Vec.lerp(a, b, 0).coords).toEqual([0, 0, 0]);
+        expect(Vec.lerp(a, b, 1).coords).toEqual([10, 10, 10]);
+        expect(Vec.lerp(a, b, 0.5).coords).toEqual([5, 5, 5]);
+        expect(Vec.lerp(a, b, 2).coords).toEqual([20, 20, 20]); // extrapolation
+    });
+
+    it("toLength scales vector correctly", () => {
+        const v = new Vec(3, 4); // length 5
+        const scaled = v.toLength(10);
+        expect(scaled.length).toBeCloseTo(10);
+        expect(scaled.coords[0] / scaled.coords[1]).toBeCloseTo(3 / 4);
+
+        const zero = new Vec(0, 0);
+        expect(zero.toLength(5).coords).toEqual([0, 0]); // zero vector stays zero
+    });
+
+    const v = new Vec(3, 4); // length 5
+
+    it("clamp maxLength only", () => {
+        expect(v.clamp(undefined, 10).coords).toEqual([3, 4]); // already < max
+        const clamped = v.clamp(undefined, 3);
+        expect(clamped.length).toBeCloseTo(3);
+    });
+
+    it("clamp minLength only", () => {
+        expect(v.clamp(3).coords).toEqual([3, 4]); // already > min
+        const small = new Vec(1, 1);
+        const clamped = small.clamp(3);
+        expect(clamped.length).toBeCloseTo(3);
+    });
+
+    it("clamp minLength and maxLength", () => {
+        const short = new Vec(1, 0); // length 1
+        const medium = short.clamp(2, 5);
+        expect(medium.length).toBeCloseTo(2);
+
+        const long = new Vec(10, 0); // length 10
+        const clamped = long.clamp(2, 5);
+        expect(clamped.length).toBeCloseTo(5);
+    });
+
+    it("clamp zero vector with minLength and defaultDir", () => {
+        const zero = new Vec(0, 0, 0);
+        const clamped = zero.clamp(5, undefined, new Vec(0, 1, 0));
+        expect(clamped.coords).toEqual([0, 5, 0]);
+    });
+
+    it("clamp zero vector without defaultDir", () => {
+        const zero = new Vec(0, 0);
+        const clamped = zero.clamp(5);
+        // falls back to x-axis
+        expect(clamped.coords).toEqual([5, 0]);
+    });
+
+    it("clamp zero vector when minLength undefined", () => {
+        const zero = new Vec(0, 0);
+        expect(zero.clamp(undefined, 10).coords).toEqual([0, 0]);
+    });
 });
