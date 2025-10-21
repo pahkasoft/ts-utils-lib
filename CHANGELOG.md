@@ -4,6 +4,7 @@
 ### Added
 - Vec class.
 - DivRect class.
+- Map1, Map2 and Map3 into own files.
 
 ### Fixed
 - Map1, Map2 and Map3.reduce without init value.
