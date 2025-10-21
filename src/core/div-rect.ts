@@ -187,7 +187,7 @@ export class DivRect {
     }
 
     /**
-     * Check if this Rect equals with given Rect.
+     * Check if given rects are equal.
      * @param a - DivRect a.
      * @param b - DivRect b.
      * @returns - True/false.
@@ -206,7 +206,16 @@ export class DivRect {
     }
 
     /**
-     * Check if edges of this Rect equals with given Rect, ignoring centerX and centerY.
+     * Check if this rect equals with another rect.
+     * @param other - The other rect.
+     * @returns - True/false.
+     */
+    equals(other: DivRect): boolean {
+        return DivRect.equals(this, other);
+    }
+
+    /**
+     * Check if edges of given rects are equal, ignoring centerX and centerY.
      * 
      * @param a - DivRect a.
      * @param b - DivRect b.
@@ -223,6 +232,16 @@ export class DivRect {
         else {
             return a === b || a.left === b.left && a.right === b.right && a.top === b.top && a.bottom === b.bottom;
         }
+    }
+
+    /**
+     * Check if edges of this Rect equals with given Rect, ignoring centerX and centerY.
+     * 
+     * @param other - The other DivRect.
+     * @returns - True/false.
+     */
+    equalsEdges(other: DivRect): boolean {
+        return DivRect.equalsEdges(this, other);
     }
 
     /**
