@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.17.0] - 2025-10-
+## [1.17.0] - 2025-10-21
 ### Added
 - Vec class.
 - DivRect class.
