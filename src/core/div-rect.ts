@@ -206,13 +206,13 @@ export class DivRect {
     }
 
     /**
-     * Check if frame of this Rect equals with given Rect, ignoring center x- and center y-coordinates.
+     * Check if edges of this Rect equals with given Rect, ignoring centerX and centerY.
      * 
      * @param a - DivRect a.
      * @param b - DivRect b.
      * @returns - True/false.
      */
-    static equalsFrame(a: DivRect | null | undefined, b: DivRect | null | undefined): boolean {
+    static equalsEdges(a: DivRect | null | undefined, b: DivRect | null | undefined): boolean {
         if (a == null && b == null) {
             // handles null and undefined
             return true;

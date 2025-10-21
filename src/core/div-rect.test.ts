@@ -113,12 +113,12 @@ describe("DivRect", () => {
         expect(DivRect.equals(undefined, undefined)).toBe(true);
     });
 
-    it("equalsFrame() ignores center coords", () => {
+    it("equalsEdges() ignores center coords", () => {
         const a = new DivRect(0, 5, 10, 0, 5, 10);
         const b = new DivRect(0, 6, 10, 0, 7, 10);
         const c = new DivRect(1, 5, 10, 0, 5, 10);
-        expect(DivRect.equalsFrame(a, b)).toBe(true);
-        expect(DivRect.equalsFrame(a, c)).toBe(false);
+        expect(DivRect.equalsEdges(a, b)).toBe(true);
+        expect(DivRect.equalsEdges(a, c)).toBe(false);
     });
 
     // --- Copy / Mutations --------------------------------------------------
