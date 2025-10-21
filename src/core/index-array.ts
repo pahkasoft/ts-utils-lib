@@ -1,5 +1,8 @@
 import { isFunction, isIntegerGte } from "../utils/is";
 import { KVComponent } from "./kv-container";
+import { SmallIntCache } from "./small-int-cache";
+import { Stack } from "./stack";
+import { Vec2 } from "./vec2";
 
 /**
  * An array-like structure for non-negative indexes.
@@ -200,10 +203,13 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
         return true;
     }
 
-    filter(fn: (value: VALUE, key1: number) => boolean): IndexArray<VALUE> {
-        let result = new IndexArray<VALUE>();
+    filter<S extends VALUE>(predicate: (value: VALUE, index: number, array: IndexArray<VALUE>) => value is S): IndexArray<S>;
+    filter(predicate: (value: VALUE, index: number, array: IndexArray<VALUE>) => unknown): IndexArray<VALUE>;
+    filter(predicate: (value: VALUE, index: number, array: IndexArray<VALUE>) => unknown) {
+        // Preserve subclass type using the constructor
+        const result = new (this.constructor as { new(): IndexArray<VALUE> })();
         for (const [id, value] of this.entries()) {
-            if (fn(value, id)) result.set(id, value);
+            if (predicate(value, id, this)) result.set(id, value);
         }
         return result;
     }

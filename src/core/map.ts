@@ -147,10 +147,13 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
         return true;
     }
 
-    filter(fn: (value: VALUE, key1: KEY1) => boolean): Map1<KEY1, VALUE> {
-        let result = new Map1<KEY1, VALUE>();
+    filter<S extends VALUE>(predicate: (value: VALUE, key1: KEY1, array: Map1<KEY1, VALUE>) => value is S): Map1<KEY1, S>;
+    filter(predicate: (value: VALUE, key1: KEY1, array: Map1<KEY1, VALUE>) => unknown): Map1<KEY1, VALUE>;
+    filter(predicate: (value: VALUE, key1: KEY1, array: Map1<KEY1, VALUE>) => unknown) {
+        // Preserve subclass type using the constructor
+        const result = new (this.constructor as { new(): Map1<KEY1, VALUE> })();
         for (const [key1, value] of this.map1) {
-            if (fn(value, key1)) result.set(key1, value);
+            if (predicate(value, key1, this)) result.set(key1, value);
         }
         return result;
     }
@@ -385,11 +388,14 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
         return true;
     }
 
-    filter(fn: (value: VALUE, key1: KEY1, key2: KEY2) => boolean): Map2<KEY1, KEY2, VALUE> {
-        let result = new Map2<KEY1, KEY2, VALUE>();
+    filter<S extends VALUE>(predicate: (value: VALUE, key1: KEY1, key2: KEY2, array: Map2<KEY1, KEY2, VALUE>) => value is S): Map2<KEY1, KEY2, S>;
+    filter(predicate: (value: VALUE, key1: KEY1, key2: KEY2, array: Map2<KEY1, KEY2, VALUE>) => unknown): Map2<KEY1, KEY2, VALUE>;
+    filter(predicate: (value: VALUE, key1: KEY1, key2: KEY2, array: Map2<KEY1, KEY2, VALUE>) => unknown) {
+        // Preserve subclass type using the constructor
+        const result = new (this.constructor as { new(): Map2<KEY1, KEY2, VALUE> })();
         for (const [key1, map2] of this.map1) {
             for (const [key2, value] of map2) {
-                if (fn(value, key1, key2)) result.set(key1, key2, value);
+                if (predicate(value, key1, key2, this)) result.set(key1, key2, value);
             }
         }
         return result;
@@ -664,12 +670,15 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, K
         return true;
     }
 
-    filter(fn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => boolean): Map3<KEY1, KEY2, KEY3, VALUE> {
-        let result = new Map3<KEY1, KEY2, KEY3, VALUE>();
+    filter<S extends VALUE>(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: Map3<KEY1, KEY2, KEY3, VALUE>) => value is S): Map3<KEY1, KEY2, KEY3, S>;
+    filter(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: Map3<KEY1, KEY2, KEY3, VALUE>) => unknown): Map3<KEY1, KEY2, KEY3, VALUE>;
+    filter(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: Map3<KEY1, KEY2, KEY3, VALUE>) => unknown) {
+        // Preserve subclass type using the constructor
+        const result = new (this.constructor as { new(): Map3<KEY1, KEY2, KEY3, VALUE> })();
         for (const [key1, map2] of this.map1) {
             for (const [key2, map3] of map2) {
                 for (const [key3, value] of map3) {
-                    if (fn(value, key1, key2, key3)) result.set(key1, key2, key3, value);
+                    if (predicate(value, key1, key2, key3, this)) result.set(key1, key2, key3, value);
                 }
             }
         }

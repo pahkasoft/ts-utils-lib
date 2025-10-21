@@ -89,6 +89,12 @@ describe(Arr.name, () => {
 
         // filter
         expect(new Arr([[2, "a"], [3, "c"]]).filter((v) => v === "a")).toEqual(new Arr([[2, "a"]]));
+        class A { a = 1; }; class B { b = 2; };
+        let fltr = new Arr<A | B>([[0, new A()], [1, new B()]]);
+        let fltrA = fltr.filter(v => v instanceof A);
+        let fltrB = fltr.filter(v => v instanceof B);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
 
         // reduce
         expect(new Arr([[2, "a"], [3, "b"]]).reduce((acc, v, id) => (acc + v), "x-")).toEqual("x-ab");

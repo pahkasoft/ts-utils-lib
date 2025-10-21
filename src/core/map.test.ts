@@ -64,6 +64,13 @@ describe(Map1.name, () => {
 
         // filter
         expect(new Map1([["a", 2], ["c", 3]]).filter((v) => v === 2)).toEqual(new Map1([["a", 2]]));
+        class A { a = 1; }; class B { b = 2; };
+        let fltr = new Map1<number, A | B>([[0, new A()], [1, new B()]]);
+        let fltrA = fltr.filter(v => v instanceof A);
+        let fltrB = fltr.filter(v => v instanceof B);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
+
 
         // reduce
         expect(new Map1([["a", 2], ["b", 3]]).reduce((acc, v, k1) => (acc + k1), "x-")).toEqual("x-ab");
@@ -145,6 +152,12 @@ describe(Map2.name, () => {
 
         // filter
         expect(new Map2([["a", "c", 2], ["a", "d", 3]]).filter((v, k1, k2) => k2 === "c")).toEqual(new Map2([["a", "c", 2]]));
+        class A { a = 1; }; class B { b = 2; };
+        let fltr = new Map2<number, string,  A | B>([[0, "a", new A()], [1, "b", new B()]]);
+        let fltrA = fltr.filter(v => v instanceof A);
+        let fltrB = fltr.filter(v => v instanceof B);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
 
         // reduce
         expect(new Map2([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v), "X")).toEqual("XYZ");
@@ -228,6 +241,12 @@ describe(Map3.name, () => {
 
         // filter
         expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).filter((v, k1, k2, k3) => k3 === "c")).toEqual(new Map3([["a", "b", "c", 2]]));
+        class A { a = 1; }; class B { b = 2; };
+        let fltr = new Map3<number, string, boolean,  A | B>([[0, "a", true, new A()], [1, "b", false, new B()]]);
+        let fltrA = fltr.filter(v => v instanceof A);
+        let fltrB = fltr.filter(v => v instanceof B);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
 
         // reduce
         expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v), 10)).toEqual(15);

@@ -253,10 +253,13 @@ export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
         return true;
     }
 
-    filter(fn: (value: VALUE, key1: number) => boolean): SignedIndexArray<VALUE> {
-        let result = new SignedIndexArray<VALUE>();
+    filter<S extends VALUE>(predicate: (value: VALUE, index: number, array: SignedIndexArray<VALUE>) => value is S): SignedIndexArray<S>;
+    filter(predicate: (value: VALUE, index: number, array: SignedIndexArray<VALUE>) => unknown): SignedIndexArray<VALUE>;
+    filter(predicate: (value: VALUE, index: number, array: SignedIndexArray<VALUE>) => unknown) {
+        // Preserve subclass type using the constructor
+        const result = new (this.constructor as { new(): SignedIndexArray<VALUE> })();
         for (const [id, value] of this.entries()) {
-            if (fn(value, id)) result.set(id, value);
+            if (predicate(value, id, this)) result.set(id, value);
         }
         return result;
     }
