@@ -1,0 +1,130 @@
+import { Vec } from "./vec";
+
+describe("Vec", () => {
+
+    // --- Construction ---
+    it("creates a 2D vector", () => {
+        const v = new Vec(1, 2);
+        expect(v.coords).toEqual([1, 2]);
+        expect(v.x).toBe(1);
+        expect(v.y).toBe(2);
+    });
+
+    it("throws when fewer than 2 coords", () => {
+        expect(() => new Vec(1)).toThrowError(TypeError);
+    });
+
+    it("creates a 3D vector", () => {
+        const v = new Vec(1, 2, 3);
+        expect(v.coords).toEqual([1, 2, 3]);
+        expect(v.x).toBe(1);
+        expect(v.y).toBe(2);
+        expect(v.z).toBe(3);
+    });
+
+    it("throws when accessing z on 2D vector", () => {
+        const v = new Vec(1, 2);
+        expect(() => v.z).toThrowError(TypeError);
+    });
+
+    // --- Basic math ---
+    it("adds two vectors", () => {
+        const v = new Vec(1, 2).add(new Vec(3, 4));
+        expect(v.coords).toEqual([4, 6]);
+        expect(v.toString()).toBe("Vec(4, 6)");
+    });
+
+    it("adds coordinate list", () => {
+        const v = new Vec(1, 2).add(3, 4);
+        expect(v.coords).toEqual([4, 6]);
+    });
+
+    it("throws when adding different dimensions", () => {
+        const a = new Vec(1, 2);
+        const b = new Vec(1, 2, 3);
+        expect(() => a.add(b)).toThrowError(TypeError);
+    });
+
+    it("subtracts two vectors", () => {
+        const v = new Vec(5, 7).sub(new Vec(2, 3));
+        expect(v.coords).toEqual([3, 4]);
+        expect(v.toString()).toBe("Vec(3, 4)");
+    });
+
+    it("subtracts coordinate list", () => {
+        const v = new Vec(5, 7).sub(2, 3);
+        expect(v.coords).toEqual([3, 4]);
+    });
+
+    it("multiplies by scalar", () => {
+        const v = new Vec(2, 3).mul(2);
+        expect(v.coords).toEqual([4, 6]);
+    });
+
+    it("divides by scalar", () => {
+        const v = new Vec(4, 6).div(2);
+        expect(v.coords).toEqual([2, 3]);
+    });
+
+    // --- Length ---
+    it("computes vector length", () => {
+        const v = new Vec(3, 4);
+        expect(v.length).toBe(5);
+    });
+
+    it("computes length for 3D vector", () => {
+        const v = new Vec(1, 2, 2);
+        expect(v.length).toBe(3);
+    });
+
+    // --- Utility methods ---
+    it("clones vector", () => {
+        const v = new Vec(1, 2);
+        const c = v.clone();
+        expect(c.coords).toEqual([1, 2]);
+        expect(c).not.toBe(v);
+    });
+
+    it("compares equality (true)", () => {
+        const a = new Vec(1, 2, 3);
+        const b = new Vec(1, 2, 3);
+        expect(a.equals(b)).toBeTrue();
+    });
+
+    it("compares equality (false)", () => {
+        const a = new Vec(1, 2);
+        const b = new Vec(2, 1);
+        expect(a.equals(b)).toBeFalse();
+    });
+
+    it("toString returns readable format", () => {
+        expect(new Vec(1, 2).toString()).toEqual("Vec(1, 2)");
+        expect(new Vec(3, 4, 5).toString()).toEqual("Vec(3, 4, 5)");
+    });
+
+    // --- Static constructors ---
+    it("creates Vec2 using static helper", () => {
+        const v = Vec.vec2(9, 8);
+        expect(v.coords).toEqual([9, 8]);
+    });
+
+    it("creates Vec3 using static helper", () => {
+        const v = Vec.vec3(1, 2, 3);
+        expect(v.coords).toEqual([1, 2, 3]);
+    });
+
+    // --- Immutability ---
+    it("does not mutate original vector on add/sub/mul/div", () => {
+        const a = new Vec(1, 2);
+        const b = a.add(2, 3);
+        const c = a.sub(2, 3);
+        const d = a.mul(3);
+        const e = a.div(2);
+
+        expect(a.coords).toEqual([1, 2]);
+        expect(b.coords).toEqual([3, 5]);
+        expect(c.coords).toEqual([-1, -1]);
+        expect(d.coords).toEqual([3, 6]);
+        expect(e.coords).toEqual([0.5, 1]);
+    });
+});

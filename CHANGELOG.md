@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.16.1] - 2025-10-
+## [1.17.0] - 2025-10-
+### Added
+- Vec class.
+
 ### Fixed
 - Map1, Map2 and Map3.reduce without init value.
 - Improved filter functions.
