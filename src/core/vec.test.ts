@@ -102,7 +102,6 @@ describe("Vec", () => {
         expect(new Vec(3, 4, 5).toString()).toEqual("Vec(3, 4, 5)");
     });
 
-    // --- Static constructors ---
     it("creates Vec2 using static helper", () => {
         const v = Vec.vec2(9, 8);
         expect(v.coords).toEqual([9, 8]);
@@ -113,7 +112,6 @@ describe("Vec", () => {
         expect(v.coords).toEqual([1, 2, 3]);
     });
 
-    // --- Immutability ---
     it("does not mutate original vector on add/sub/mul/div", () => {
         const a = new Vec(1, 2);
         const b = a.add(2, 3);
@@ -126,5 +124,68 @@ describe("Vec", () => {
         expect(c.coords).toEqual([-1, -1]);
         expect(d.coords).toEqual([3, 6]);
         expect(e.coords).toEqual([0.5, 1]);
+    });
+
+    it("computes dot product", () => {
+        const a = new Vec(1, 2, 3);
+        const b = new Vec(4, -5, 6);
+        expect(a.dot(b)).toBe(12); // 1*4 + 2*-5 + 3*6 = 12
+    });
+
+    it("throws when dot product dimensions differ", () => {
+        const a = new Vec(1, 2);
+        const b = new Vec(1, 2, 3);
+        expect(() => a.dot(b)).toThrowError(TypeError);
+    });
+
+    it("computes distance between vectors", () => {
+        const a = new Vec(1, 2);
+        const b = new Vec(4, 6);
+        expect(a.distance(b)).toBe(5); // 3-4-5 triangle
+    });
+
+    it("throws when distance dimensions differ", () => {
+        const a = new Vec(1, 2);
+        const b = new Vec(1, 2, 3);
+        expect(() => a.distance(b)).toThrowError(TypeError);
+    });
+
+    it("normalizes vector correctly", () => {
+        const v = new Vec(3, 4);
+        const n = v.normalize();
+        expect(n.length).toBeCloseTo(1, 10);
+        expect(n.coords).toEqual([0.6, 0.8]);
+    });
+
+    it("throws when normalizing zero vector", () => {
+        const v = Vec.zero(2);
+        expect(() => v.normalize()).toThrowError(TypeError);
+    });
+
+    it("creates zero vector", () => {
+        const z2 = Vec.zero(2);
+        const z3 = Vec.zero(3);
+        expect(z2.coords).toEqual([0, 0]);
+        expect(z3.coords).toEqual([0, 0, 0]);
+    });
+
+    it("throws when Vec.zero has too small dim", () => {
+        expect(() => Vec.zero(1)).toThrowError(TypeError);
+    });
+
+    it("supports destructuring {x,y,z}", () => {
+        const v = new Vec(1, 2, 3);
+        const { x, y, z } = v;
+        expect(x).toBe(1);
+        expect(y).toBe(2);
+        expect(z).toBe(3);
+    });
+
+    it("supports destructuring [x,y,z]", () => {
+        const v = new Vec(7, 8, 9);
+        const [x, y, z] = v;
+        expect(x).toBe(7);
+        expect(y).toBe(8);
+        expect(z).toBe(9);
     });
 });

@@ -32,6 +32,13 @@ export class Vec {
         return new Vec(x, y, z);
     }
 
+    static zero(dim: number): Vec {
+        if (dim < 2) {
+            throw new TypeError("Vec.zero requires dimension >= 2");
+        }
+        return new Vec(...Array(dim).fill(0));
+    }
+
     get length(): number {
         return Math.hypot(...this.coords);
     }
@@ -87,6 +94,28 @@ export class Vec {
         return new Vec(...this.coords.map(coord => coord / scalar));
     }
 
+    dot(other: Vec): number {
+        if (this.coords.length !== other.coords.length) {
+            throw new TypeError("Coordinate length mismatch!");
+        }
+        return this.coords.reduce((sum, c, i) => sum + c * other.coords[i], 0);
+    }
+
+    distance(other: Vec): number {
+        if (this.coords.length !== other.coords.length) {
+            throw new TypeError("Coordinate length mismatch!");
+        }
+        return Math.hypot(...this.coords.map((c, i) => c - other.coords[i]));
+    }
+
+    normalize(): Vec {
+        const len = this.length;
+        if (len === 0) {
+            throw new TypeError("Cannot normalize zero-length vector!");
+        }
+        return this.div(len);
+    }
+
     equals(other: Vec): boolean {
         return this.coords.length === other.coords.length &&
             this.coords.every((v, i) => v === other.coords[i]);
@@ -94,6 +123,14 @@ export class Vec {
 
     clone(): Vec {
         return new Vec(...this.coords);
+    }
+
+    toObject() {
+        return { x: this.x, y: this.y, z: this.z }
+    }
+
+    [Symbol.iterator]() {
+        return this.coords[Symbol.iterator]();
     }
 
     toString() {
