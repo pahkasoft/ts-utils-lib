@@ -3,6 +3,7 @@
 ## [1.16.1] - 2025-10-
 ### Fixed
 - Map1, Map2 and Map3.reduce without init value.
+- Improved filter functions.
 
 
 ## [1.16.0] - 2025-10-20
