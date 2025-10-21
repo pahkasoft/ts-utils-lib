@@ -1,4 +1,4 @@
-# @tspro/ts-utils-lib
+# TS Utils Lib
 
 ## About
 A small collection of TypeScript functions, containers, etc. used in my personal projects.
