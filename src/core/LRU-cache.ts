@@ -1,7 +1,5 @@
 /**
  * LRUCache class: Least Recently Used cache with a fixed capacity
- * 
- * Provided by ChatGPT.
  */
 export class LRUCache<K extends string, V> {
     private cache: Record<K, V>;   // Stores the actual key-value pairs

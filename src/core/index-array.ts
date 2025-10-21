@@ -1,8 +1,5 @@
 import { isFunction, isIntegerGte } from "../utils/is";
 import { KVComponent } from "./kv-container";
-import { SmallIntCache } from "./small-int-cache";
-import { Stack } from "./stack";
-import { Vec2 } from "./vec2";
 
 /**
  * An array-like structure for non-negative indexes.

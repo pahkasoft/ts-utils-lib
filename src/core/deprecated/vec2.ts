@@ -1,5 +1,6 @@
 /**
  * Vec2 class.
+ * 
  * @deprecated - Use Vec instead, has more functionality.
  */
 export class Vec2 {
