@@ -4,6 +4,7 @@
         "./src/index.ts"
     ],
     "out": "docs/",
+    "readme": "./README.md",
     "disableSources": true,
     "excludePrivate": true,
     "excludeProtected": true
