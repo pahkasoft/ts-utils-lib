@@ -1,3 +1,4 @@
+import * as Is from "../utils/is";
 import { getEnumValues } from "../utils/enum";
 
 export namespace Assert {
@@ -12,14 +13,6 @@ export namespace Assert {
 
     function throwError(errorMsg: string, userMsg?: string): never {
         throw new errorConstructor("Assertion Error: " + errorMsg + (userMsg ? " " + userMsg : ""));
-    }
-
-    function is_int(a: unknown): a is number {
-        return typeof a === "number" && isFinite(a) && a === Math.trunc(a);
-    }
-
-    function is_number(a: unknown): a is number {
-        return typeof a === "number";
     }
 
     export function assert<T>(a: T, userMsg?: string) {
@@ -39,7 +32,7 @@ export namespace Assert {
     }
 
     export function int(a: unknown, userMsg?: string): number {
-        if (!is_int(a)) {
+        if (!Is.isInteger(a)) {
             throwError(`Expected ${a} to be integer.`, userMsg);
         }
         return a;
@@ -53,56 +46,56 @@ export namespace Assert {
     }
 
     export function int_eq(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(is_int(a) && is_number(b) && a === b)) {
+        if (!(Is.isNumber(b) && Is.isIntegerEq(a, b))) {
             throwError(`Expected ${a} to be integer equal to ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_lt(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(is_int(a) && is_number(b) && a < b)) {
+        if (!(Is.isNumber(b) && Is.isIntegerLt(a, b))) {
             throwError(`Expected ${a} to be integer less than ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_lte(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(is_int(a) && is_number(b) && a <= b)) {
+        if (!(Is.isNumber(b) && Is.isIntegerLte(a, b))) {
             throwError(`Expected ${a} to be integer less than or equal to ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_gt(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(is_int(a) && is_number(b) && a > b)) {
+        if (!(Is.isNumber(b) && Is.isIntegerGt(a, b))) {
             throwError(`Expected ${a} to be integer greater than ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_gte(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(is_int(a) && is_number(b) && a >= b)) {
+        if (!(Is.isNumber(b) && Is.isIntegerGte(a, b))) {
             throwError(`Expected ${a} to be integer greater than or equal to ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_between(a: unknown, min: unknown, max: unknown, userMsg?: string): number {
-        if (!(is_int(a) && is_number(min) && is_number(max) && a >= min && a <= max)) {
+        if (!(Is.isNumber(min) && Is.isNumber(max) && Is.isIntegerBetween(a, min, max))) {
             throwError(`Expected ${a} to be integer between ${min} and ${max}.`, userMsg);
         }
         return a;
     }
 
     export function odd(a: unknown, userMsg?: string): number {
-        if (!(is_int(a) && a % 2 === 1)) {
+        if (!Is.isOddNumber(a)) {
             throwError(`Expected ${a} to be odd number.`, userMsg);
         }
         return a;
     }
 
     export function even(a: unknown, userMsg?: string): number {
-        if (!(is_int(a) && a % 2 === 0)) {
+        if (!Is.isEvenNumber(a)) {
             throwError(`Expected ${a} to be even number.`, userMsg);
         }
         return a;
@@ -117,14 +110,14 @@ export namespace Assert {
     }
 
     export function finite(a: unknown, userMsg?: string): number {
-        if (!(is_number(a) && isFinite(a))) {
+        if (!Is.isFinite(a)) {
             throwError(`Expected ${a} to be finite number.`, userMsg);
         }
         return a;
     }
 
     export function array_id<T>(arr: Readonly<T[]>, id: unknown, userMsg?: string): number {
-        if (!(is_int(id) && id >= 0 && id < arr.length)) {
+        if (!(Is.isInteger(id) && Is.isArray(arr) && id >= 0 && id < arr.length)) {
             throwError(`Expected ${id} to be array index in bounds [0..${arr.length - 1}].`, userMsg);
         }
         return id;
