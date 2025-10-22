@@ -273,4 +273,14 @@ describe("Is", () => {
         expect(Is.isInteger(E.Str)).toEqual(false);
         expect(Is.isInteger(E.Num7)).toEqual(true);
     });
+
+    it("isOddNumber", () => {
+        expect(Is.isOddNumber(3)).toBeTrue();
+        expect(Is.isOddNumber(4)).toBeFalse();
+    });
+
+    it("isEvenNumber", () => {
+        expect(Is.isEvenNumber(3)).toBeFalse();
+        expect(Is.isEvenNumber(4)).toBeTrue();
+    });
 });

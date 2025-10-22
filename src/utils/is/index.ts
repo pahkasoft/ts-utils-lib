@@ -151,3 +151,11 @@ export function isPosInfinity(value: unknown): value is number {
 export function isNegInfinity(value: unknown): value is number {
     return typeof value === "number" && value === -Infinity;
 }
+
+export function isOddNumber(value: unknown): value is number {
+    return isInteger(value) && value % 2 === 1;
+}
+
+export function isEvenNumber(value: unknown): value is number {
+    return isInteger(value) && value % 2 === 0;
+}
