@@ -71,7 +71,14 @@ describe("Assert namespace", () => {
         });
         it("should validate between", () => {
             expect(Assert.int_between(5, 1, 10)).toBe(5);
+            expect(Assert.int_between(1, 1, 10)).toBe(1);
+            expect(Assert.int_between(10, 1, 10)).toBe(10);
             expect(() => Assert.int_between(11, 1, 10)).toThrowError(/between/);
+        });
+        it("should validate between exclusive", () => {
+            expect(Assert.int_between_exclusive(5, 1, 10)).toBe(5);
+            expect(() => Assert.int_between_exclusive(1, 1, 10)).toThrowError(/between/);
+            expect(() => Assert.int_between_exclusive(10, 1, 10)).toThrowError(/between/);
         });
     });
 

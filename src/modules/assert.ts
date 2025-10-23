@@ -1,8 +1,7 @@
 import * as Is from "../utils/is";
-import { getEnumValues } from "../utils/enum";
+import { EnumObject } from "../utils/enum";
 
 export namespace Assert {
-
     export type ErrorConstructor = new (msg: string) => Error;
 
     let errorConstructor: ErrorConstructor = Error;
@@ -21,14 +20,23 @@ export namespace Assert {
         }
     }
 
-    export function assertEnum<E extends Record<string, string | number>>(value: unknown, enumObj: E, name = "value"): asserts value is E[keyof E] {
-        if (!getEnumValues(enumObj).some(v => v === value)) {
-            throw new TypeError(`Invalid ${name} enum value: ${value}`);
+    export function interrupt(userMsg?: string): never {
+        throwError(userMsg ?? "Interrupted!");
+    }
+
+    export function require<T>(arg: T, userMsg?: string): NonNullable<T> {
+        if (arg === undefined) {
+            throwError("Required value is undefined.", userMsg);
+        }
+        else {
+            return arg!;
         }
     }
 
-    export function interrupt(userMsg?: string): never {
-        throwError(userMsg ?? "Interrupted!");
+    export function assertEnum<E extends EnumObject>(enumVal: unknown, enumObj: E, name = "value"): asserts enumVal is E[keyof E] {
+        if (!Is.isEnumValue(enumVal, enumObj)) {
+            throw new TypeError(`Invalid enum value: ${enumVal}`);
+        }
     }
 
     export function int(a: unknown, userMsg?: string): number {
@@ -46,43 +54,50 @@ export namespace Assert {
     }
 
     export function int_eq(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(Is.isNumber(b) && Is.isIntegerEq(a, b))) {
+        if (!Is.isIntegerEq(a, b)) {
             throwError(`Expected ${a} to be integer equal to ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_lt(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(Is.isNumber(b) && Is.isIntegerLt(a, b))) {
+        if (!Is.isIntegerLt(a, b)) {
             throwError(`Expected ${a} to be integer less than ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_lte(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(Is.isNumber(b) && Is.isIntegerLte(a, b))) {
+        if (!Is.isIntegerLte(a, b)) {
             throwError(`Expected ${a} to be integer less than or equal to ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_gt(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(Is.isNumber(b) && Is.isIntegerGt(a, b))) {
+        if (!Is.isIntegerGt(a, b)) {
             throwError(`Expected ${a} to be integer greater than ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_gte(a: unknown, b: unknown, userMsg?: string): number {
-        if (!(Is.isNumber(b) && Is.isIntegerGte(a, b))) {
+        if (!Is.isIntegerGte(a, b)) {
             throwError(`Expected ${a} to be integer greater than or equal to ${b}.`, userMsg);
         }
         return a;
     }
 
     export function int_between(a: unknown, min: unknown, max: unknown, userMsg?: string): number {
-        if (!(Is.isNumber(min) && Is.isNumber(max) && Is.isIntegerBetween(a, min, max))) {
-            throwError(`Expected ${a} to be integer between ${min} and ${max}.`, userMsg);
+        if (!Is.isIntegerBetween(a, min, max)) {
+            throwError(`Expected integer between ${min} <= ${a} <= ${max}.`, userMsg);
+        }
+        return a;
+    }
+
+    export function int_between_exclusive(a: unknown, min: unknown, max: unknown, userMsg?: string): number {
+        if (!Is.isIntegerBetweenExclusive(a, min, max)) {
+            throwError(`Expected integer between ${min} < ${a} < ${max}.`, userMsg);
         }
         return a;
     }
@@ -125,14 +140,5 @@ export namespace Assert {
 
     export function array_elem<T>(arr: Readonly<T[]>, id: number, userMsg?: string): T {
         return arr[array_id(arr, id, userMsg)];
-    }
-
-    export function require<T>(arg: T, userMsg?: string): NonNullable<T> {
-        if (arg === undefined) {
-            throwError("Required value is undefined.", userMsg);
-        }
-        else {
-            return arg!;
-        }
     }
 }

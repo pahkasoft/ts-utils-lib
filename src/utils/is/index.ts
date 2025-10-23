@@ -112,28 +112,32 @@ export function isIntegerOrUndefined(n: unknown): n is number | undefined {
     return typeof n === "number" && isFinite(n) && n === Math.trunc(n) || n === undefined;
 }
 
-export function isIntegerEq(value: unknown, compareTo: number): value is number {
+export function isIntegerEq(value: unknown, compareTo: unknown): value is number {
     return isInteger(value) && value === compareTo;
 }
 
-export function isIntegerGt(value: unknown, compareTo: number): value is number {
-    return isInteger(value) && value > compareTo;
+export function isIntegerGt(value: unknown, compareTo: unknown): value is number {
+    return isInteger(value) && isNumber(compareTo) && value > compareTo;
 }
 
-export function isIntegerGte(value: unknown, compareTo: number): value is number {
-    return isInteger(value) && value >= compareTo;
+export function isIntegerGte(value: unknown, compareTo: unknown): value is number {
+    return isInteger(value) && isNumber(compareTo) && value >= compareTo;
 }
 
-export function isIntegerLt(value: unknown, compareTo: number): value is number {
-    return isInteger(value) && value < compareTo;
+export function isIntegerLt(value: unknown, compareTo: unknown): value is number {
+    return isInteger(value) && isNumber(compareTo) && value < compareTo;
 }
 
-export function isIntegerLte(value: unknown, compareTo: number): value is number {
-    return isInteger(value) && value <= compareTo;
+export function isIntegerLte(value: unknown, compareTo: unknown): value is number {
+    return isInteger(value) && isNumber(compareTo) && value <= compareTo;
 }
 
-export function isIntegerBetween(value: unknown, min: number, max: number): value is number {
-    return isInteger(value) && value >= min && value <= max;
+export function isIntegerBetween(value: unknown, min: unknown, max: unknown): value is number {
+    return isInteger(value) && isNumber(min) && isNumber(max) && value >= min && value <= max;
+}
+
+export function isIntegerBetweenExclusive(value: unknown, min: unknown, max: unknown): value is number {
+    return isInteger(value) && isNumber(min) && isNumber(max) && value > min && value < max;
 }
 
 export function isNaNValue(value: unknown): value is number {
