@@ -5,13 +5,13 @@
 - Deprecated `DivRect` properties `centerX` and `centerY`, replaced with `anchorX` and `anchorY`.
   Added getters and setters for `centerX` and `centerY`.
 - isIntegerXxx() compareTo argument from number to unknown.
+- Reorganise folder structure.
+- Deprecate Utils.Is, added Guard to use instead.
 
 ### Added
 - Utils.Is.isIntegerBetweenExclusive().
 - Assert.int_between_exclusive().
-
-### Added
-- Some Vec operations.
+- More Vec operations.
 
 ## [1.17.0] - 2025-10-21
 ### Added
