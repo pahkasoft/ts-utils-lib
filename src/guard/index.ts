@@ -215,3 +215,12 @@ export function isThrowing(throwTestFn: () => void): boolean {
     try { throwTestFn(); return false; }
     catch (err) { return true; }
 }
+
+export function tryOr<TRY_RVAL, OR_RVAL>(tryFn: () => TRY_RVAL, orVal: OR_RVAL | (() => OR_RVAL)): TRY_RVAL | OR_RVAL {
+    try {
+        return tryFn();
+    }
+    catch (err) {
+        return isFunction(orVal) ? orVal() : orVal;
+    }
+}
