@@ -1,4 +1,4 @@
-import { isObject } from "../is";
+import { isObject } from "../../guard";
 
 export { isObject }
 

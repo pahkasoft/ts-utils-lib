@@ -1,5 +1,5 @@
-import { deepEqual } from "../obj";
-import { getEnumValues } from "../enum";
+import { deepEqual } from "../utils/obj";
+import { getEnumValues } from "../utils/enum";
 
 export function isEqual(value1: unknown, value2: unknown): boolean {
     return value1 === value2;

@@ -1,9 +1,9 @@
-import { Assert } from "./assert";
+import { Assert } from "..";
 
-describe("Assert namespace", () => {
+describe("Assert (deprecated)", () => {
 
     describe("setErrorClass()", () => {
-        class CustomError extends Error {}
+        class CustomError extends Error { }
         it("should change error class used by assertions", () => {
             Assert.setErrorClass(CustomError);
             expect(() => Assert.assert(false)).toThrowError(CustomError);
@@ -26,7 +26,7 @@ describe("Assert namespace", () => {
             expect(() => Assert.assertEnum("a", MyEnum)).not.toThrow();
         });
         it("should throw for invalid enum", () => {
-            expect(() => Assert.assertEnum("x", MyEnum)).toThrowError(TypeError);
+            expect(() => Assert.assertEnum("x", MyEnum)).toThrowError(Error);
         });
     });
 
@@ -128,7 +128,7 @@ describe("Assert namespace", () => {
             expect(Assert.require("val")).toBe("val");
         });
         it("should throw when undefined", () => {
-            expect(() => Assert.require(undefined)).toThrowError(/Required/);
+            expect(() => Assert.require(undefined)).toThrowError(/not to be nullish/);
         });
     });
 });

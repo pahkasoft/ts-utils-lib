@@ -1,4 +1,4 @@
-import { Assert } from "./assert";
+import { Assert } from "..";
 
 describe("Assert", () => {
 
@@ -17,13 +17,14 @@ describe("Assert", () => {
             }
         }
     }
+
     describe("Basic", () => {
         it("assert() should not throw on truthy", () => {
             expect(() => Assert.assert(true)).not.toThrow();
         });
 
         it("assert() should throw on falsy", () => {
-            expectThrow(() => Assert.assert(false), "Assertion failed");
+            expectThrow(() => Assert.assert(false), "Assertion Failed!");
         });
 
         it("require() should return value if defined", () => {
@@ -32,13 +33,13 @@ describe("Assert", () => {
         });
 
         it("require() should throw on null or undefined", () => {
-            expectThrow(() => Assert.require(null), "Required value");
-            expectThrow(() => Assert.require(undefined), "Required value");
+            expectThrow(() => Assert.require(null), "not to be nullish");
+            expectThrow(() => Assert.require(undefined), "not to be nullish");
         });
 
         it("requireDefined() should throw only on undefined", () => {
             expect(() => Assert.requireDefined("a")).not.toThrow();
-            expectThrow(() => Assert.requireDefined(undefined), "undefined");
+            expectThrow(() => Assert.requireDefined(undefined), "not to be undefined");
         });
 
         it("fail() always throws", () => {

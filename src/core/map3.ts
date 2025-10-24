@@ -1,4 +1,4 @@
-import { isFunction } from "../utils/is";
+import { isFunction } from "../guard";
 import { KVComponent } from "./kv-container";
 
 export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {

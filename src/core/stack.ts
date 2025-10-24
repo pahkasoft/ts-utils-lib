@@ -1,4 +1,4 @@
-import { Assert } from "../modules/assert";
+import { Assert } from "..";
 
 export class Stack<T> {
     private readonly list: T[] = [];

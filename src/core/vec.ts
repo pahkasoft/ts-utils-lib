@@ -1,4 +1,4 @@
-import { isFinite } from "../utils/is";
+import { isFinite } from "../guard";
 
 /**
  * Vector class.

@@ -1,4 +1,4 @@
-import { Assert } from "./assert";
+import { Assert } from "..";
 
 export namespace Device {
     function getDPI(): number {

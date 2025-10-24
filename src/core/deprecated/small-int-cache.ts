@@ -1,4 +1,4 @@
-import { isInteger } from "../../utils/is";
+import { isInteger } from "../../guard";
 
 /**
  * A cache-like structure optimized for small-range integer keys, including negatives.

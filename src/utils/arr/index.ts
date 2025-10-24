@@ -1,4 +1,4 @@
-import { isInteger, isArray } from "../is";
+import { isInteger, isArray } from "../../guard";
 
 export { isArray }
 

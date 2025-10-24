@@ -1,4 +1,4 @@
-import { isInteger, isNumber } from "../is";
+import { isInteger, isNumber } from "../../guard";
 
 export { isInteger, isNumber }
 

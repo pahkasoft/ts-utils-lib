@@ -1,3 +1,5 @@
 export * as Utils from "./utils";
-export * from "./modules";
+export * as Assert from "./assert"
+export * as Guard from "./guard"
+export * from "./web";
 export * from "./core";

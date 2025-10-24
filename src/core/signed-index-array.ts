@@ -1,4 +1,4 @@
-import { isFunction, isInteger } from "../utils/is";
+import { isFunction, isInteger } from "../guard";
 import { KVComponent } from "./kv-container";
 
 /**
