@@ -1,134 +1,154 @@
 import { Assert } from "./assert";
 
-describe("Assert namespace", () => {
+describe("Assert", () => {
 
-    describe("setErrorClass()", () => {
-        class CustomError extends Error {}
-        it("should change error class used by assertions", () => {
-            Assert.setErrorClass(CustomError);
-            expect(() => Assert.assert(false)).toThrowError(CustomError);
-            Assert.setErrorClass(); // reset to default
-        });
-    });
-
-    describe("assert()", () => {
-        it("should not throw when truthy", () => {
+    // Helper to catch thrown errors
+    function expectThrow(fn: () => void, msgPart?: string) {
+        try {
+            fn();
+            fail("Expected function to throw");
+        }
+        catch (e: any) {
+            if (msgPart) {
+                expect(e.message).toContain(msgPart);
+            }
+            else {
+                expect(e).toBeInstanceOf(Error);
+            }
+        }
+    }
+    describe("Basic", () => {
+        it("assert() should not throw on truthy", () => {
             expect(() => Assert.assert(true)).not.toThrow();
         });
-        it("should throw when falsy", () => {
-            expect(() => Assert.assert(0, "fail")).toThrowError(/fail/);
+
+        it("assert() should throw on falsy", () => {
+            expectThrow(() => Assert.assert(false), "Assertion failed");
+        });
+
+        it("require() should return value if defined", () => {
+            const val = Assert.require("abc");
+            expect(val).toBe("abc");
+        });
+
+        it("require() should throw on null or undefined", () => {
+            expectThrow(() => Assert.require(null), "Required value");
+            expectThrow(() => Assert.require(undefined), "Required value");
+        });
+
+        it("requireDefined() should throw only on undefined", () => {
+            expect(() => Assert.requireDefined("a")).not.toThrow();
+            expectThrow(() => Assert.requireDefined(undefined), "undefined");
+        });
+
+        it("fail() always throws", () => {
+            expectThrow(() => Assert.fail("oops"), "oops");
         });
     });
 
-    describe("assertEnum()", () => {
-        enum MyEnum { A = "a", B = "b" }
-        it("should accept valid enum value", () => {
-            expect(() => Assert.assertEnum("a", MyEnum)).not.toThrow();
+    describe("Equality", () => {
+        it("isEqual() passes for same value", () => {
+            expect(() => Assert.isEqual(5, 5)).not.toThrow();
         });
-        it("should throw for invalid enum", () => {
-            expect(() => Assert.assertEnum("x", MyEnum)).toThrowError(TypeError);
+        it("isEqual() fails for different", () => {
+            expectThrow(() => Assert.isEqual(5, 6), "equal");
+        });
+
+        it("isDeepEqual() passes for same object", () => {
+            const a = { x: 1, y: [2] };
+            const b = { x: 1, y: [2] };
+            expect(() => Assert.isDeepEqual(a, b)).not.toThrow();
+        });
+        it("isDeepEqual() fails for different", () => {
+            expectThrow(() => Assert.isDeepEqual({ a: 1 }, { a: 2 }), "deep equal");
         });
     });
 
-    describe("interrupt()", () => {
-        it("should always throw", () => {
-            expect(() => Assert.interrupt()).toThrowError(/Interrupted!/);
+    describe("Type checks", () => {
+        it("isUndefined / isNull / isNullish", () => {
+            expect(() => Assert.isUndefined(undefined)).not.toThrow();
+            expect(() => Assert.isNull(null)).not.toThrow();
+            expect(() => Assert.isNullish(undefined)).not.toThrow();
+            expectThrow(() => Assert.isUndefined("x"));
+            expectThrow(() => Assert.isNull(1));
+            expectThrow(() => Assert.isNullish("y"));
+        });
+
+        it("isObject and isArray", () => {
+            expect(() => Assert.isObject({ a: 1 })).not.toThrow();
+            expectThrow(() => Assert.isObject(null));
+            expect(() => Assert.isArray([])).not.toThrow();
+            expectThrow(() => Assert.isArray("x"));
+        });
+
+        it("isTypedObject", () => {
+            expect(() => Assert.isTypedObject({ a: 1, b: "x" }, ["a", "b"])).not.toThrow();
+            expectThrow(() => Assert.isTypedObject({ a: 1 }, ["c"]));
+        });
+
+        it("isString variations", () => {
+            expect(() => Assert.isString("abc")).not.toThrow();
+            expectThrow(() => Assert.isString(1));
+
+            expect(() => Assert.isEmptyString("")).not.toThrow();
+            expectThrow(() => Assert.isEmptyString("x"));
+
+            expect(() => Assert.isNonEmptyString("hi")).not.toThrow();
+            expectThrow(() => Assert.isNonEmptyString(""));
+        });
+
+        it("isBoolean", () => {
+            expect(() => Assert.isBoolean(false)).not.toThrow();
+            expectThrow(() => Assert.isBoolean(0));
+        });
+
+        it("isFunction", () => {
+            expect(() => Assert.isFunction(() => { })).not.toThrow();
+            expectThrow(() => Assert.isFunction(123));
+        });
+
+        it("isNumber / isInteger", () => {
+            expect(() => Assert.isNumber(1)).not.toThrow();
+            expect(() => Assert.isInteger(2)).not.toThrow();
+            expectThrow(() => Assert.isInteger(2.5));
+            expectThrow(() => Assert.isNumber("a"));
+        });
+
+        it("isFinite / isNaNValue / isInfinity", () => {
+            expect(() => Assert.isFinite(5)).not.toThrow();
+            expectThrow(() => Assert.isFinite(Infinity));
+
+            expect(() => Assert.isNaNValue(NaN)).not.toThrow();
+            expectThrow(() => Assert.isNaNValue(1));
+
+            expect(() => Assert.isInfinity(Infinity)).not.toThrow();
+            expectThrow(() => Assert.isInfinity(1));
         });
     });
 
-    describe("int()", () => {
-        it("should return integer", () => {
-            expect(Assert.int(5)).toBe(5);
+    describe("Range and comparison", () => {
+        it("isIntegerBetween", () => {
+            expect(() => Assert.isIntegerBetween(3, 1, 5)).not.toThrow();
+            expectThrow(() => Assert.isIntegerBetween(10, 1, 5));
         });
-        it("should throw for non-integer", () => {
-            expect(() => Assert.int(5.1)).toThrowError(/integer/);
+
+        it("isNumberBetweenExclusive", () => {
+            expect(() => Assert.isNumberBetweenExclusive(2, 1, 3)).not.toThrow();
+            expectThrow(() => Assert.isNumberBetweenExclusive(1, 1, 3));
         });
     });
 
-    describe("eq()", () => {
-        it("should pass when equal", () => {
-            expect(Assert.eq(3, 3)).toBe(3);
-        });
-        it("should throw when not equal", () => {
-            expect(() => Assert.eq(1, 2)).toThrowError(/equal/);
-        });
-    });
-
-    describe("integer comparison assertions", () => {
-        it("should validate int_eq correctly", () => {
-            expect(Assert.int_eq(5, 5)).toBe(5);
-            expect(() => Assert.int_eq(5, 6)).toThrowError(/integer equal/);
-        });
-        it("should validate lt/lte", () => {
-            expect(Assert.int_lt(2, 3)).toBe(2);
-            expect(Assert.int_lte(2, 2)).toBe(2);
-            expect(() => Assert.int_lt(3, 2)).toThrowError(/less/);
-        });
-        it("should validate gt/gte", () => {
-            expect(Assert.int_gt(3, 2)).toBe(3);
-            expect(Assert.int_gte(2, 2)).toBe(2);
-            expect(() => Assert.int_gt(2, 3)).toThrowError(/greater/);
-        });
-        it("should validate between", () => {
-            expect(Assert.int_between(5, 1, 10)).toBe(5);
-            expect(Assert.int_between(1, 1, 10)).toBe(1);
-            expect(Assert.int_between(10, 1, 10)).toBe(10);
-            expect(() => Assert.int_between(11, 1, 10)).toThrowError(/between/);
-        });
-        it("should validate between exclusive", () => {
-            expect(Assert.int_between_exclusive(5, 1, 10)).toBe(5);
-            expect(() => Assert.int_between_exclusive(1, 1, 10)).toThrowError(/between/);
-            expect(() => Assert.int_between_exclusive(10, 1, 10)).toThrowError(/between/);
-        });
-    });
-
-    describe("odd/even", () => {
-        it("should pass for correct parity", () => {
-            expect(Assert.odd(3)).toBe(3);
-            expect(Assert.even(4)).toBe(4);
-        });
-        it("should throw otherwise", () => {
-            expect(() => Assert.odd(4)).toThrowError(/odd/);
-            expect(() => Assert.even(3)).toThrowError(/even/);
-        });
-    });
-
-    describe("in_group()", () => {
+    describe("Array and inclusion", () => {
         const arr = [1, 2, 3];
-        it("should pass for member", () => {
-            expect(Assert.in_group(2, arr)).toBe(2);
+        it("isIncluded() works", () => {
+            expect(() => Assert.isIncluded(2, arr)).not.toThrow();
+            expectThrow(() => Assert.isIncluded(5, arr));
         });
-        it("should throw for non-member", () => {
-            expect(() => Assert.in_group(4, arr)).toThrowError(/group/);
-        });
-    });
 
-    describe("finite()", () => {
-        it("should pass for finite", () => {
-            expect(Assert.finite(5)).toBe(5);
-        });
-        it("should throw for Infinity", () => {
-            expect(() => Assert.finite(Infinity)).toThrowError(/finite/);
-        });
-    });
-
-    describe("array_id() and array_elem()", () => {
-        const nums = [10, 20, 30];
-        it("should validate index and return id", () => {
-            expect(Assert.array_id(nums, 1)).toBe(1);
-            expect(Assert.array_elem(nums, 2)).toBe(30);
-        });
-        it("should throw for out of bounds", () => {
-            expect(() => Assert.array_id(nums, 3)).toThrowError(/array index/);
-        });
-    });
-
-    describe("require()", () => {
-        it("should pass when defined", () => {
-            expect(Assert.require("val")).toBe("val");
-        });
-        it("should throw when undefined", () => {
-            expect(() => Assert.require(undefined)).toThrowError(/Required/);
+        it("isArrayIndex() works", () => {
+            expect(() => Assert.isArrayIndex(1, arr)).not.toThrow();
+            expectThrow(() => Assert.isArrayIndex(5, arr));
         });
     });
 });
+

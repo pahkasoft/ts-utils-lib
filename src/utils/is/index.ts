@@ -1,4 +1,13 @@
+import { deepEqual } from "../obj";
 import { getEnumValues } from "../enum";
+
+export function isEqual(value1: unknown, value2: unknown): boolean {
+    return value1 === value2;
+}
+
+export function isDeepEqual(value1: unknown, value2: unknown): boolean {
+    return deepEqual(value1, value2);
+}
 
 export function isUndefined(value: unknown): value is undefined {
     return value === undefined;
@@ -18,6 +27,12 @@ export function isObject(value: unknown): value is Record<string, unknown> {
 
 export function isObjectOrUndefined(value: unknown): value is Record<string, unknown> | undefined {
     return value === undefined || isObject(value);
+}
+
+export type HasProps<T extends object> = T extends Record<string, unknown> ? T : never;
+
+export function isTypedObject<T extends object>(obj: unknown, keys: (keyof T)[]): obj is HasProps<T> {
+    return isObject(obj) && keys.every(k => k in obj);
 }
 
 export function isArray<T>(a: T[] | unknown): a is T[] {
@@ -74,6 +89,22 @@ export function isBoolean(value: unknown): value is boolean {
 
 export function isBooleanOrUndefined(value: unknown): value is boolean | undefined {
     return value === undefined || typeof value === "boolean";
+}
+
+export function isTrue(value: unknown): value is true {
+    return value === true;
+}
+
+export function isTrueOrUndefined(value: unknown): value is true {
+    return value === true || value === undefined;
+}
+
+export function isFalse(value: unknown): value is false {
+    return value === false;
+}
+
+export function isFalseOrUndefined(value: unknown): value is false {
+    return value === false || value === undefined;
 }
 
 export function isFunction(value: unknown): value is Function {
@@ -140,6 +171,14 @@ export function isIntegerBetweenExclusive(value: unknown, min: unknown, max: unk
     return isInteger(value) && isNumber(min) && isNumber(max) && value > min && value < max;
 }
 
+export function isNumberBetween(value: unknown, min: unknown, max: unknown): value is number {
+    return isNumber(value) && isNumber(min) && isNumber(max) && value >= min && value <= max;
+}
+
+export function isNumberBetweenExclusive(value: unknown, min: unknown, max: unknown): value is number {
+    return isNumber(value) && isNumber(min) && isNumber(max) && value > min && value < max;
+}
+
 export function isNaNValue(value: unknown): value is number {
     return typeof value === "number" && Number.isNaN(value);
 }
@@ -162,4 +201,17 @@ export function isOddNumber(value: unknown): value is number {
 
 export function isEvenNumber(value: unknown): value is number {
     return isInteger(value) && value % 2 === 0;
+}
+
+export function isIncluded<T>(value: T, array: ReadonlyArray<T>): value is T {
+    return array.includes(value);
+}
+
+export function isArrayIndex<T>(index: unknown, array: ReadonlyArray<T>): index is number {
+    return isInteger(index) && isArray(array) && index >= 0 && index < array.length;
+}
+
+export function isThrowing(throwTestFn: () => void): boolean {
+    try { throwTestFn(); return false; }
+    catch (err) { return true; }
 }
