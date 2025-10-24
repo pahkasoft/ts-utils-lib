@@ -1,4 +1,4 @@
-import { Device } from "../../web/device";
+import { Device } from "../..";
 
 export interface CSSProperties {
     // Declare necessary css properties
