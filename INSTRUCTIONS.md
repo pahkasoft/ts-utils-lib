@@ -17,9 +17,9 @@ npm run docs
 git log --pretty="- %s"
 
 # Update version
-npm version major
-npm version minor
-npm version patch
+- Update version in package.json
+- `git commit -a -m "v1.18.0"`
+- `git tag v1.18.0`
 
 # Build production version
 npm run build
