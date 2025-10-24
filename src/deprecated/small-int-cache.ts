@@ -1,6 +1,8 @@
-import { isInteger } from "../../guard";
+import { Guard } from "..";
 
 /**
+ * @deprecated - Use {@link SignedIndexArray} or {@link IndexArray} instead, they have way more functions.
+ * 
  * A cache-like structure optimized for small-range integer keys, including negatives.
  *
  * Internally implemented using two sparse arrays: one for non-negative keys,
@@ -18,8 +20,6 @@ import { isInteger } from "../../guard";
  * cache.set(3, 'B');
  * console.log(cache.get(-2)); // 'A'
  * ```
- * 
- * @deprecated - Same functionality an more is available now in SignedIndexArray<VALUE> and IndexArray<VALUE> containers.
  */
 export class SmallIntCache<VALUE> {
     private pos: VALUE[]; // for keys >= 0
@@ -31,7 +31,7 @@ export class SmallIntCache<VALUE> {
     }
 
     set(key: number, value: VALUE): void {
-        if (!isInteger(key)) {
+        if (!Guard.isInteger(key)) {
             throw new Error("Key must be an integer");
         }
         else if (key >= 0) {
@@ -43,7 +43,7 @@ export class SmallIntCache<VALUE> {
     }
 
     get(key: number): VALUE | undefined {
-        if (!isInteger(key)) {
+        if (!Guard.isInteger(key)) {
             throw new Error("Key must be an integer");
         }
         else if (key >= 0) {
@@ -55,7 +55,7 @@ export class SmallIntCache<VALUE> {
     }
 
     has(key: number): boolean {
-        if (!isInteger(key)) {
+        if (!Guard.isInteger(key)) {
             return false;
         }
         else if (key >= 0) {
@@ -67,7 +67,7 @@ export class SmallIntCache<VALUE> {
     }
 
     delete(key: number): void {
-        if (!isInteger(key)) {
+        if (!Guard.isInteger(key)) {
             return;
         }
         else if (key >= 0) {

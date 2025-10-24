@@ -9,7 +9,3 @@ export { Map1 } from "./map1";
 export { Map2 } from "./map2";
 export { Map3 } from "./map3";
 export { MultiContainer, asMulti } from "./multi-container";
-
-// Deprecated
-export { Vec2 } from "./deprecated/vec2";
-export { SmallIntCache } from "./deprecated/small-int-cache";

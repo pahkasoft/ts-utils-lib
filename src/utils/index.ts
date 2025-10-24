@@ -9,6 +9,6 @@ export * as Str from "./str";
 import * as Guard from "../guard";
 
 /**
- * @deprecated Use `Guard` instead.
+ * @deprecated Use {@link Guard} instead.
  */
 export const Is = Guard;
