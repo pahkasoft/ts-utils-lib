@@ -25,127 +25,111 @@ export namespace Assert {
 
     /** @deprecated */
     export function assertEnum<E extends EnumObject>(enumVal: unknown, enumObj: E, name = "value"): asserts enumVal is E[keyof E] {
-        if (!Is.isEnumValue(enumVal, enumObj)) {
+        if (!Is.isEnumValue(enumVal, enumObj))
             _fail(`Invalid enum value ${enumVal}.`);
-        }
     }
 
     /** @deprecated */
-    export function int(a: unknown, msg?: string): number {
-        if (!Is.isInteger(a)) {
-            _fail(`Expected ${a} to be integer.`, msg);
-        }
-        return a;
+    export function int(value: unknown, msg?: string): number {
+        if (!Is.isInteger(value))
+            _fail(`Expected ${value} to be integer.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function eq<T>(a: T, b: T, msg?: string): T {
-        if (a !== b) {
-            _fail(`Expected ${a} to equal ${b}.`, msg);
-        }
-        return a;
+    export function eq<T>(value1: T, value2: T, msg?: string): T {
+        if (value1 !== value2)
+            _fail(`Expected ${value1} to equal ${value2}.`, msg);
+        return value1;
     }
 
     /** @deprecated */
-    export function int_eq(a: unknown, b: unknown, msg?: string): number {
-        if (!Is.isIntegerEq(a, b)) {
-            _fail(`Expected ${a} to be integer equal to ${b}.`, msg);
-        }
-        return a;
+    export function int_eq(value: unknown, compareTo: unknown, msg?: string): number {
+        if (!Is.isIntegerEq(value, compareTo))
+            _fail(`Expected ${value} to be integer equal to ${compareTo}.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function int_lt(a: unknown, b: unknown, msg?: string): number {
-        if (!Is.isIntegerLt(a, b)) {
-            _fail(`Expected ${a} to be integer less than ${b}.`, msg);
-        }
-        return a;
+    export function int_lt(value: unknown, compareTo: unknown, msg?: string): number {
+        if (!Is.isIntegerLt(value, compareTo))
+            _fail(`Expected ${value} to be integer less than ${compareTo}.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function int_lte(a: unknown, b: unknown, msg?: string): number {
-        if (!Is.isIntegerLte(a, b)) {
-            _fail(`Expected ${a} to be integer less than or equal to ${b}.`, msg);
-        }
-        return a;
+    export function int_lte(value: unknown, compareTo: unknown, msg?: string): number {
+        if (!Is.isIntegerLte(value, compareTo))
+            _fail(`Expected ${value} to be integer less than or equal to ${compareTo}.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function int_gt(a: unknown, b: unknown, msg?: string): number {
-        if (!Is.isIntegerGt(a, b)) {
-            _fail(`Expected ${a} to be integer greater than ${b}.`, msg);
-        }
-        return a;
+    export function int_gt(value: unknown, compareTo: unknown, msg?: string): number {
+        if (!Is.isIntegerGt(value, compareTo))
+            _fail(`Expected ${value} to be integer greater than ${compareTo}.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function int_gte(a: unknown, b: unknown, msg?: string): number {
-        if (!Is.isIntegerGte(a, b)) {
-            _fail(`Expected ${a} to be integer greater than or equal to ${b}.`, msg);
-        }
-        return a;
+    export function int_gte(value: unknown, compareTo: unknown, msg?: string): number {
+        if (!Is.isIntegerGte(value, compareTo))
+            _fail(`Expected ${value} to be integer greater than or equal to ${compareTo}.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function int_between(a: unknown, min: unknown, max: unknown, msg?: string): number {
-        if (!Is.isIntegerBetween(a, min, max)) {
-            _fail(`Expected integer between ${min} <= ${a} <= ${max}.`, msg);
-        }
-        return a;
+    export function int_between(value: unknown, min: unknown, max: unknown, msg?: string): number {
+        if (!Is.isIntegerBetween(value, min, max))
+            _fail(`Expected integer between ${min} <= ${value} <= ${max}.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function int_between_exclusive(a: unknown, min: unknown, max: unknown, msg?: string): number {
-        if (!Is.isIntegerBetweenExclusive(a, min, max)) {
-            _fail(`Expected integer between ${min} < ${a} < ${max}.`, msg);
-        }
-        return a;
+    export function int_between_exclusive(value: unknown, min: unknown, max: unknown, msg?: string): number {
+        if (!Is.isIntegerBetweenExclusive(value, min, max))
+            _fail(`Expected integer between ${min} < ${value} < ${max}.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function odd(a: unknown, msg?: string): number {
-        if (!Is.isOddNumber(a)) {
-            _fail(`Expected ${a} to be odd number.`, msg);
-        }
-        return a;
+    export function odd(value: unknown, msg?: string): number {
+        if (!Is.isOddNumber(value))
+            _fail(`Expected ${value} to be odd number.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function even(a: unknown, msg?: string): number {
-        if (!Is.isEvenNumber(a)) {
-            _fail(`Expected ${a} to be even number.`, msg);
-        }
-        return a;
+    export function even(value: unknown, msg?: string): number {
+        if (!Is.isEvenNumber(value))
+            _fail(`Expected ${value} to be even number.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function in_group<T>(a: T, group: ReadonlyArray<T>, msg?: string): T {
-        if (!(group.some(e => e === a))) {
-            let strGroup = group.map(v => String(v)).join(", ");
-            _fail(`Expected ${a} to be in group [${strGroup}].`, msg);
-        }
-        return a;
+    export function in_group<T>(value: T, group: ReadonlyArray<T>, msg?: string): T {
+        if (!(group.some(e => e === value)))
+            _fail(`Expected ${value} to be in group [${group.map(v => String(v)).join(", ")}].`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function finite(a: unknown, msg?: string): number {
-        if (!Is.isFinite(a)) {
-            _fail(`Expected ${a} to be finite number.`, msg);
-        }
-        return a;
+    export function finite(value: unknown, msg?: string): number {
+        if (!Is.isFinite(value))
+            _fail(`Expected ${value} to be finite number.`, msg);
+        return value;
     }
 
     /** @deprecated */
-    export function array_id<T>(arr: Readonly<T[]>, id: unknown, msg?: string): number {
-        if (!(Is.isInteger(id) && Is.isArray(arr) && id >= 0 && id < arr.length)) {
-            _fail(`Expected ${id} to be array index in bounds [0..${arr.length - 1}].`, msg);
-        }
-        return id;
+    export function array_id<T>(array: Readonly<T[]>, index: unknown, msg?: string): number {
+        if (!Is.isInteger(index) || !Is.isArray(array) || index < 0 || index >= array.length)
+            _fail(`Expected ${index} to be array index in bounds [0..${array.length - 1}].`, msg);
+        return index;
     }
 
     /** @deprecated */
-    export function array_elem<T>(arr: Readonly<T[]>, id: number, msg?: string): T {
-        return arr[array_id(arr, id, msg)];
+    export function array_elem<T>(array: Readonly<T[]>, index: number, msg?: string): T {
+        return array[array_id(array, index, msg)];
     }
 
     //--------------------------------------------------------------------------------------------------------
