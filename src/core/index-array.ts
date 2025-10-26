@@ -1,4 +1,5 @@
 import { isFunction, isIntegerGte } from "../guard";
+import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 /**
@@ -294,8 +295,9 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     toString(): string {
-        if (this.size === 0) return `IndexArray[ ]`;
-        const entries = this.entriesArray().map(([id, value]) => `${id}: ${value}`).join(', ');
-        return `IndexArray[ ${entries} ]`;
+        const formatEntries = () => this.entriesArray().map(([id, v]) => `${id}: ${formatValue(v)}`).join(', ');
+        return this.size === 0
+            ? `IndexArray[ ]`
+            : `IndexArray[ ${formatEntries()} ]`;
     }
 }

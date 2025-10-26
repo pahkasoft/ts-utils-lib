@@ -1,4 +1,5 @@
-import { isFunction } from "../guard";
+import { isDeepEqual, isFunction } from "../guard";
+import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 /**
@@ -6,14 +7,11 @@ import { KVComponent } from "./kv-container";
  * Methods like get(), set(), and getOrCreate() exist only for interface compatibility.
  * Use add(), has(), delete(), etc., for normal Set behavior.
  */
-export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
-    private data: Set<VALUE>;
+export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> implements KVComponent<[VALUE], VALUE> {
+    protected data: Set<VALUE>;
 
-    constructor();
-    constructor(set: Set1<VALUE>)
-    constructor(entries: Iterable<VALUE>)
-    constructor(entries?: Set1<VALUE> | Iterable<VALUE>) {
-        this.data = new Set(entries);
+    constructor(entries?: Iterable<VALUE>) {
+        this.data = new Set(entries ?? []);
 
         /*
         this.keys = this.keys.bind(this);
@@ -25,25 +23,30 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
         */
     }
 
+    protected abstract valueEquals(a: VALUE, b: VALUE): boolean;
+    protected abstract createEmpty<R = VALUE>(): SetBase<R, any>;
+    protected abstract getName(): string;
+
     has(value: VALUE): boolean {
-        return this.data.has(value);
+        return this.some(v => this.valueEquals(v, value));
     }
 
     add(value: VALUE): VALUE {
-        this.data.add(value);
+        if (!this.has(value))
+            this.data.add(value);
         return value;
     }
 
     /** @internal - This method exists only for interface `KVComponent` compatibility.*/
     set(key: VALUE, value: VALUE): void {
-        if (key !== value)
-            throw new TypeError("Set1.set() requires key === value.");
+        if (!this.valueEquals(key, value))
+            throw new TypeError("SetBase.set() requires key === value.");
         this.add(value);
     }
 
     /** @internal - This method exists only for interface `KVComponent` compatibility.*/
     get(key: VALUE): VALUE | undefined {
-        return this.data.has(key) ? key : undefined;
+        return this.has(key) ? key : undefined;
     }
 
     /** @internal - This method exists only for interface `KVComponent` compatibility.*/
@@ -67,7 +70,14 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     }
 
     delete(value: VALUE): boolean {
-        return this.data.delete(value);
+        if (!this.has(value)) return false;
+        for (const v of this.values()) {
+            if (this.valueEquals(v, value)) {
+                this.data.delete(v);
+                return true;
+            }
+        }
+        return false;
     }
 
     clear(): void {
@@ -82,7 +92,7 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
         return this.size === 0;
     }
 
-    forEach(callbackfn: (value: VALUE, set1: Set1<VALUE>) => void, thisArg?: any): void {
+    forEach(callbackfn: (value: VALUE, set1: SetBase<VALUE>) => void, thisArg?: any): void {
         this.data.forEach(value => callbackfn.call(thisArg, value, this));
     }
 
@@ -120,11 +130,13 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
         yield* this.values();
     }
 
-    clone(): Set1<VALUE> {
-        return new Set1(this);
+    clone(): SetBase<VALUE> {
+        const result = this.createEmpty();
+        for (const v of this.values()) result.add(v);
+        return result;
     }
 
-    merge(other: Set1<VALUE>): this {
+    merge(other: SetBase<VALUE>): this {
         for (const value of other.values()) {
             this.add(value);
         }
@@ -145,26 +157,24 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
         return true;
     }
 
-    filter<S extends VALUE>(predicate: (value: VALUE, set1: Set1<VALUE>) => value is S): Set1<S>;
-    filter(predicate: (value: VALUE, set1: Set1<VALUE>) => unknown): Set1<VALUE>;
-    filter(predicate: (value: VALUE, set1: Set1<VALUE>) => unknown) {
-        // Preserve subclass type using the constructor
-        const result = new (this.constructor as { new(): Set1<VALUE> })();
-        for (const value of this.data) {
+    filter<R extends VALUE>(predicate: (value: VALUE, set1: SetBase<VALUE, any>) => value is R): SetBase<R, any>;
+    filter(predicate: (value: VALUE, set1: SetBase<VALUE>) => unknown): SetBase<VALUE, any>;
+    filter(predicate: (value: VALUE, set1: SetBase<VALUE>) => unknown) {
+        const result = this.createEmpty();
+        for (const value of this.data)
             if (predicate(value, this)) result.add(value);
-        }
         return result;
     }
 
     reduce(fn: (acc: VALUE, value: VALUE) => VALUE): VALUE;
-    reduce<R>(fn: (acc: R, value: VALUE) => R, init: R): R;
-    reduce<R>(fn: (acc: R, value: VALUE) => R, init?: R): R {
+    reduce<R = VALUE>(fn: (acc: R, value: VALUE) => R, init: R): R;
+    reduce<R = VALUE>(fn: (acc: R, value: VALUE) => R, init?: R): R {
         let iterator = this.values();
         let first = iterator.next();
 
         if (first.done) {
             if (arguments.length < 2) {
-                throw new TypeError("Reduce of empty Set1 with no initial value!");
+                throw new TypeError("Reduce of empty SetBase with no initial value!");
             }
             return init!;
         }
@@ -189,15 +199,15 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
         return acc;
     }
 
-    mapValues<R = VALUE>(fn: (value: VALUE) => R): Set1<R> {
-        let result = new Set1<R>();
+    mapValues<R = VALUE>(fn: (value: VALUE) => R): SetBase<R, any> {
+        let result = this.createEmpty<R>();
         for (const value of this.data) {
             result.add(fn(value));
         }
         return result;
     }
 
-    mapToArray<R>(fn: (value: VALUE) => R): R[] {
+    mapToArray<R = VALUE>(fn: (value: VALUE) => R): R[] {
         let result: R[] = [];
         for (const value of this.values()) {
             result.push(fn(value));
@@ -205,8 +215,8 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
         return result;
     }
 
-    map<R = VALUE>(fn: (value: VALUE) => R): Set1<R> {
-        let result = new Set1<R>();
+    map<R = VALUE>(fn: (value: VALUE) => R): SetBase<R, any> {
+        let result = this.createEmpty<R>();
         for (const value of this.values()) {
             result.add(fn(value));
         }
@@ -222,8 +232,50 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     }
 
     toString(): string {
-        if (this.size === 0) return `Set1(0)[ ]`;
-        const values = [...this.data].map(v => `${v}`).join(', ');
-        return `Set1(${this.size})[ ${values} ]`;
+        return this.size === 0
+            ? `${this.getName()}(0)[ ]`
+            : `${this.getName()}(${this.size})${formatValue([...this.data])}`;
+    }
+}
+
+export class Set1<VALUE> extends SetBase<VALUE, Set1<VALUE>> {
+    constructor();
+    constructor(set: SetBase<VALUE>)
+    constructor(entries: Iterable<VALUE>)
+    constructor(entries?: SetBase<VALUE> | Iterable<VALUE>) {
+        super(entries);
+    }
+
+    protected createEmpty<R = VALUE>(): Set1<R> {
+        return new Set1<R>();
+    }
+
+    protected valueEquals(a: VALUE, b: VALUE): boolean {
+        return a === b;
+    }
+
+    protected getName(): string {
+        return "Set1";
+    }
+}
+
+export class DeepSet<VALUE> extends SetBase<VALUE, DeepSet<VALUE>> {
+    constructor();
+    constructor(set: SetBase<VALUE>)
+    constructor(entries: Iterable<VALUE>)
+    constructor(entries?: SetBase<VALUE> | Iterable<VALUE>) {
+        super(entries);
+    }
+
+    protected createEmpty<R = VALUE>(): DeepSet<R> {
+        return new DeepSet<R>();
+    }
+
+    protected valueEquals(a: VALUE, b: VALUE): boolean {
+        return isDeepEqual(a, b);
+    }
+
+    protected getName(): string {
+        return "DeepSet";
     }
 }

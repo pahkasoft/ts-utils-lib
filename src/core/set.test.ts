@@ -1,26 +1,43 @@
-import { Set1 } from "./set1";
+import { DeepSet, Set1 } from "./set";
 
 describe("Set1", () => {
     let set: Set1<string>;
+    let deep: DeepSet<string[]>;
 
     beforeEach(() => {
-        set = new Set1<string>();
+        set = new Set1();
+        deep = new DeepSet();
     });
 
-    it("adds and checks values", () => {
+    it("adds to Set1 and checks values", () => {
         expect(set.size).toBe(0);
         set.add("a");
         expect(set.size).toBe(1);
         expect(set.has("a")).toBeTrue();
     });
 
-    it("does not add duplicate values", () => {
+    it("adds to DeepSet and checks values", () => {
+        expect(deep.size).toBe(0);
+        deep.add(["a"]);
+        expect(deep.size).toBe(1);
+        expect(deep.has([])).toBeFalse();
+        expect(deep.has(["a"])).toBeTrue();
+        expect(deep.has(["a", "b"])).toBeFalse();
+    });
+
+    it("Set1 does not add duplicate values", () => {
         set.add("x");
         set.add("x");
         expect(set.size).toBe(1);
     });
 
-    it("deletes values", () => {
+    it("DeepSet does not add duplicate values", () => {
+        deep.add(["x", "y"]);
+        deep.add(["x", "y"]);
+        expect(deep.size).toBe(1);
+    });
+
+    it("Set1 deletes values", () => {
         set.add("a");
         set.add("b");
         expect(set.delete("a")).toBeTrue();
@@ -28,12 +45,20 @@ describe("Set1", () => {
         expect(set.size).toBe(1);
     });
 
+    it("DeepSet deletes values", () => {
+        deep.add(["a"]);
+        deep.add(["b"]);
+        expect(deep.delete(["a"])).toBeTrue();
+        expect(deep.has(["a"])).toBeFalse();
+        expect(deep.size).toBe(1);
+    });
+
     it("clears all values", () => {
         set.add("a");
         set.add("b");
         set.clear();
         expect(set.size).toBe(0);
-        expect([...set.values()]).toEqual([]);
+        expect(set.toArray()).toEqual([]);
     });
 
     it("iterates over values", () => {
@@ -68,11 +93,18 @@ describe("Set1", () => {
         expect(seen).toContain("b");
     });
 
-    it("maps values", () => {
+    it("Set1 maps values", () => {
         set.add("1");
         set.add("2");
         const mapped = set.map(v => v + v);
         expect([...mapped]).toEqual(["11", "22"]);
+    });
+
+    it("DeepSet maps values", () => {
+        deep.add(["1a"]);
+        deep.add(["2b"]);
+        const mapped = deep.map(v => "" + v + v);
+        expect([...mapped]).toEqual(["1a1a", "2b2b"]);
     });
 
     it("mapToArray() transforms values into an array", () => {
@@ -100,11 +132,18 @@ describe("Set1", () => {
         expect(mapped.has("same")).toBeTrue();
     });
 
-    it("filters values", () => {
+    it("Set1 filters values", () => {
         set.add("a");
         set.add("b");
         const filtered = set.filter(v => v === "a");
         expect([...filtered]).toEqual(["a"]);
+    });
+
+    it("DeepSet filters values", () => {
+        deep.add(["a"]);
+        deep.add(["BB"]);
+        const filtered = deep.filter(v => v.length === 1 && v[0] === "a");
+        expect([...filtered]).toEqual([["a"]]);
     });
 
     it("reduces values", () => {
@@ -116,7 +155,7 @@ describe("Set1", () => {
     });
 
     it("reduce throws if empty and no initial value", () => {
-        expect(() => set.reduce(() => 0 as any)).toThrowError(TypeError);
+        expect(() => deep.reduce(() => [""])).toThrowError(TypeError);
     });
 
     it("toArray() returns an array copy", () => {
@@ -154,5 +193,21 @@ describe("Set1", () => {
         const created = set.getOrCreate("new", () => "new");
         expect(created).toBe("new");
         expect(set.has("new")).toBeTrue();
+    });
+
+    it("Set1 returns correct string", () => {
+        expect(set.toString()).toBe(`Set1(0)[ ]`);
+        set.add("a");
+        set.add("b");
+        set.add("c");
+        expect(set.toString()).toBe(`Set1(3)[ "a", "b", "c" ]`);
+    });
+
+    it("DeepSet returns correct string", () => {
+        expect(deep.toString()).toBe(`DeepSet(0)[ ]`);
+        deep.add(["a"]);
+        deep.add(["bb"]);
+        deep.add(["c", "c"]);
+        expect(deep.toString()).toBe(`DeepSet(3)[ [ "a" ], [ "bb" ], [ "c", "c" ] ]`);
     });
 });

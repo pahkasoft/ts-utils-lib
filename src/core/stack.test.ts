@@ -96,4 +96,10 @@ describe(Stack.name, () => {
         s.clear();
         expect(s.toArray()).toEqual([]);
     });
+
+    it("toString()", () => {
+        expect(s.toString()).toEqual("Stack(4)[ 0, 1, 2, 3 ]");
+        s.clear();
+        expect(s.toString()).toEqual("Stack(0)[ ]");
+    });
 });

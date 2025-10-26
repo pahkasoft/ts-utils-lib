@@ -1,4 +1,5 @@
 import { isFunction } from "../guard";
+import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {
@@ -283,12 +284,14 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, K
 
     toString(): string {
         const entries: string[] = [];
+
         for (const [key1, map2] of this.map1) {
             for (const [key2, map3] of map2) {
-                const inner = [...map3].map(([key3, v]) => `${key3} => ${v}`).join(', ');
-                entries.push(`${key1} => ${key2} => { ${inner} }`);
+                const inner = [...map3].map(([key3, v]) => `${formatValue(key3)} => ${formatValue(v)}`).join(', ');
+                entries.push(`${formatValue(key1)} => ${formatValue(key2)} => { ${inner} }`);
             }
         }
+
         return entries.length === 0 ? `Map3(0){ }` : `Map3(${this.size}){ ${entries.join(', ')} }`;
     }
 }

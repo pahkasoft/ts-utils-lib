@@ -104,7 +104,7 @@ describe("Map2", () => {
     });
 
     it("should toString()", () => {
-        expect(new Map2().toString()).toEqual("Map2(0){ }");
-        expect(new Map2([["a", "b", "x"], ["a", "c", "y"]]).toString()).toEqual("Map2(2){ a => { b => x, c => y } }");
+        expect(new Map2().toString()).toEqual(`Map2(0){ }`);
+        expect(new Map2([["a", "b", "x"], ["a", "c", "y"]]).toString()).toEqual(`Map2(2){ "a" => { "b" => "x", "c" => "y" } }`);
     });
 });

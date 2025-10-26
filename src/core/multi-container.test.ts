@@ -17,7 +17,7 @@ describe(Arr.name, () => {
         expect(multi.getAll(1)).toEqual(["c"]);
         expect(multi.isEmpty()).toEqual(false);
 
-        expect(multi.toString()).toEqual(`MultiContainer{ [0] => ["a"], [1] => ["c"] }`);
+        expect(multi.toString()).toEqual(`MultiContainer{ [ 0 ] => [ "a" ], [ 1 ] => [ "c" ] }`);
 
         multi.clear();
 

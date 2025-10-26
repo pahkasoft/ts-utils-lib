@@ -133,8 +133,8 @@ describe("IndexArray", () => {
     });
 
     it("should toString()", () => {
-        expect(new Arr().toString()).toEqual("IndexArray[ ]");
-        expect(new Arr([[17, "a"], [2, "b"]]).toString()).toEqual("IndexArray[ 2: b, 17: a ]");
+        expect(new Arr().toString()).toEqual(`IndexArray[ ]`);
+        expect(new Arr([[17, "a"], [2, "b"]]).toString()).toEqual(`IndexArray[ 2: "b", 17: "a" ]`);
     });
 
     it("should trim length on delete()", () => {

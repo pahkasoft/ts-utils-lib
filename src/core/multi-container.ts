@@ -1,3 +1,4 @@
+import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 export class MultiContainer<K extends any[], V> {
@@ -74,13 +75,8 @@ export class MultiContainer<K extends any[], V> {
 
         for (const keys of this.keys()) {
             const arr = this.getAll(...keys);
-            // Ensure keys is treated as an array
-            const keyStr = Array.isArray(keys)
-                ? `[${keys.map(k => JSON.stringify(k)).join(', ')}]`
-                : `[${JSON.stringify(keys)}]`;
-            const valuesStr = Array.isArray(arr)
-                ? `[${arr.map(v => JSON.stringify(v)).join(', ')}]`
-                : '[]';
+            const keyStr = Array.isArray(keys) ? formatValue(keys) : '[ ]';
+            const valuesStr = Array.isArray(arr) ? formatValue(arr) : '[ ]';
             entries.push(`${keyStr} => ${valuesStr}`);
         }
 

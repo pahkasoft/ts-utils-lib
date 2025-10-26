@@ -1,4 +1,5 @@
 import { isFunction } from "../guard";
+import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
@@ -256,8 +257,9 @@ export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     toString(): string {
-        if (this.size === 0) return `DefaultArray[ ]`;
-        const entries = this.entriesArray().map(([id, value]) => `${id}: ${value}`).join(', ');
-        return `DefaultArray[ ${entries} ]`;
+        const formatEntries = () => this.entriesArray().map(([id, v]) => `${id}: ${formatValue(v)}`).join(', ');
+        return this.size === 0
+            ? `DefaultArray[ ]`
+            : `DefaultArray[ ${formatEntries()} ]`;
     }
 }

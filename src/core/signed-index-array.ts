@@ -1,4 +1,5 @@
 import { isFunction, isInteger } from "../guard";
+import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 /**
@@ -344,8 +345,9 @@ export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     toString(): string {
-        if (this.size === 0) return `SignedIndexArray[ ]`;
-        const entries = this.entriesArray().map(([id, value]) => `${id}: ${value}`).join(', ');
-        return `SignedIndexArray[ ${entries} ]`;
+        const formatEntries = () => this.entriesArray().map(([id, v]) => `${id}: ${formatValue(v)}`).join(', ');
+        return this.size === 0
+            ? `SignedIndexArray[ ]`
+            : `SignedIndexArray[ ${formatEntries()} ]`;
     }
 }

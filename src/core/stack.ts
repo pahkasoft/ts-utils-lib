@@ -1,5 +1,6 @@
 import { isFunction } from "../guard";
 import { Assert } from "..";
+import { formatValue } from "./format-value";
 
 export class Stack<T> {
     private readonly data: T[] = [];
@@ -83,5 +84,9 @@ export class Stack<T> {
 
     clear() {
         this.data.length = 0;
+    }
+
+    toString() {
+        return `Stack(${this.length})${formatValue(this.data)}`;
     }
 }
