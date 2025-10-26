@@ -86,7 +86,7 @@ export class Stack<T> {
         this.data.length = 0;
     }
 
-    toString() {
+    toString(): string {
         return `Stack(${this.length})${formatValue(this.data)}`;
     }
 }

@@ -295,9 +295,7 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     toString(): string {
-        const formatEntries = () => this.entriesArray().map(([id, v]) => `${id}: ${formatValue(v)}`).join(', ');
-        return this.size === 0
-            ? `IndexArray[ ]`
-            : `IndexArray[ ${formatEntries()} ]`;
+        const entries = this.entriesArray().map(([id, v]) => `${formatValue(id)}: ${formatValue(v)}`).join(', ');
+        return `IndexArray[ ${entries} ]`.replaceAll("  ", " ");
     }
 }

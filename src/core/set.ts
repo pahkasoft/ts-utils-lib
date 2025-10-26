@@ -232,9 +232,7 @@ export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> impl
     }
 
     toString(): string {
-        return this.size === 0
-            ? `${this.getName()}(0)[ ]`
-            : `${this.getName()}(${this.size})${formatValue([...this.data])}`;
+        return `${this.getName()}(${this.size})${formatValue([...this.data])}`.replaceAll("  ", " ");
     }
 }
 

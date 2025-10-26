@@ -72,15 +72,13 @@ export class MultiContainer<K extends any[], V> {
 
     toString(): string {
         const entries: string[] = [];
-
         for (const keys of this.keys()) {
             const arr = this.getAll(...keys);
             const keyStr = Array.isArray(keys) ? formatValue(keys) : '[ ]';
             const valuesStr = Array.isArray(arr) ? formatValue(arr) : '[ ]';
             entries.push(`${keyStr} => ${valuesStr}`);
         }
-
-        return `MultiContainer{ ${entries.join(', ')} }`;
+        return `MultiContainer{ ${entries.join(', ')} }`.replaceAll("  ", " ");
     }
 }
 

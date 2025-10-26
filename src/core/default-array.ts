@@ -257,9 +257,7 @@ export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     toString(): string {
-        const formatEntries = () => this.entriesArray().map(([id, v]) => `${id}: ${formatValue(v)}`).join(', ');
-        return this.size === 0
-            ? `DefaultArray[ ]`
-            : `DefaultArray[ ${formatEntries()} ]`;
+        const entries = this.entriesArray().map(([id, v]) => `${formatValue(id)}: ${formatValue(v)}`).join(', ');
+        return `DefaultArray[ ${entries} ]`.replaceAll("  ", " ");
     }
 }

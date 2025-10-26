@@ -183,7 +183,7 @@ export class Vec {
         return this.coords[Symbol.iterator]();
     }
 
-    toString() {
+    toString(): string {
         return `Vec(${this.coords.join(", ")})`;
     }
 }
