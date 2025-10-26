@@ -60,7 +60,7 @@ export function accept() {
 }
 
 /**
- * Decline cookies. This will reject allcookies than a single flags that cookies have been declined.
+ * Decline cookies. This will reject all cookies than a single flags that cookies have been declined.
  */
 export function decline() {
     _consent = ConsentState.Decline;
