@@ -219,7 +219,7 @@ export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
         }
     }
 
-    *[Symbol.iterator]() {
+    *[Symbol.iterator](): IterableIterator<[number, VALUE]> {
         yield* this.entries();
     }
 
@@ -337,6 +337,10 @@ export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
         }
 
         return true;
+    }
+
+    toArray(): VALUE[] {
+        return this.valuesArray();
     }
 
     toString(): string {
