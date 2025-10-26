@@ -25,31 +25,35 @@ export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
         return this.data.length;
     }
 
+    private assertId(id: number): number {
+        if (id < 0 || id >= this.data.length)
+            throw new RangeError(`DefaultArray: Index ${id} out of range`);
+        return id;
+    }
+
     isEmpty(): boolean {
         return this.size === 0;
     }
 
-    isDefault(index: number): boolean {
-        return this.data[index] === this.defaultValue;
+    isDefault(id: number): boolean {
+        return this.data[this.assertId(id)] === this.defaultValue;
     }
 
-    isSet(index: number): boolean {
-        return this.data[index] !== this.defaultValue;
+    isSet(id: number): boolean {
+        return this.data[this.assertId(id)] !== this.defaultValue;
     }
 
     /** @internal - This method exists only for interface `KVComponent` compatibility.*/
-    has(index: number): boolean {
-        return this.isSet(index);
+    has(id: number): boolean {
+        return this.isSet(id);
     }
 
-    set(index: number, value: VALUE): VALUE {
-        return this.data[index] = value;
+    set(id: number, value: VALUE): VALUE {
+        return this.data[this.assertId(id)] = value;
     }
 
-    get(index: number): VALUE {
-        if (index < 0 || index >= this.data.length)
-            throw new RangeError(`DefaultArray: Index ${index} out of range`);
-        return this.data[index];
+    get(id: number): VALUE {
+        return this.data[this.assertId(id)];
     }
 
     getOrDefault(id: number, defaultValue: VALUE): VALUE {
@@ -70,11 +74,10 @@ export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
         return this.get(id);
     }
 
-    delete(index: number): boolean {
-        if (this.data[index] === this.defaultValue)
-            return false;
-
-        this.data[index] = this.defaultValue;
+    delete(id: number): boolean {
+        this.assertId(id);
+        if (this.data[id] === this.defaultValue) return false;
+        this.data[id] = this.defaultValue;
         return true;
     }
 
@@ -174,9 +177,9 @@ export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
         return true;
     }
 
-    filter<S extends VALUE>(predicate: (value: VALUE, index: number, array: DefaultArray<VALUE>) => value is S): DefaultArray<S>;
-    filter(predicate: (value: VALUE, index: number, array: DefaultArray<VALUE>) => unknown): DefaultArray<VALUE>;
-    filter(predicate: (value: VALUE, index: number, array: DefaultArray<VALUE>) => unknown) {
+    filter<S extends VALUE>(predicate: (value: VALUE, id: number, array: DefaultArray<VALUE>) => value is S): DefaultArray<S>;
+    filter(predicate: (value: VALUE, id: number, array: DefaultArray<VALUE>) => unknown): DefaultArray<VALUE>;
+    filter(predicate: (value: VALUE, id: number, array: DefaultArray<VALUE>) => unknown) {
         // Preserve subclass type using the constructor
         const result = new (this.constructor as { new(length: number, def: VALUE): DefaultArray<VALUE> })(this.length, this.defaultValue);
         for (const [id, value] of this.entries()) {
@@ -238,13 +241,10 @@ export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
     equals(other: DefaultArray<VALUE>, eq: (a: VALUE, b: VALUE) => boolean): boolean;
     equals(other: DefaultArray<VALUE>, eq?: (a: VALUE, b: VALUE) => boolean): boolean {
         if (this.size !== other.size) return false;
-
         eq ??= (a, b) => a === b;
-
-        for (let i = 0; i < this.data.length; ++i) {
-            if (!eq(this.data[i], other.data[i])) return false;
+        for (let id = 0; id < this.data.length; ++id) {
+            if (!eq(this.data[id], other.data[id])) return false;
         }
-
         return true;
     }
 
