@@ -2,6 +2,9 @@ import { isFunction } from "../guard";
 import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
+/**
+ * A Map implementation mapping a double key to a value.
+ */
 export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE> {
     private map1 = new Map<KEY1, Map<KEY2, VALUE>>();
 

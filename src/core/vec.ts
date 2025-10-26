@@ -1,7 +1,7 @@
 import { isFinite } from "../guard";
 
 /**
- * Vector class.
+ * `Vec` is a generic vector class with two or more coordinates.
  * 
  * ```ts
  * // Example usage:

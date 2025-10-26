@@ -2,6 +2,9 @@ import { isFunction } from "../guard";
 import { Assert } from "..";
 import { formatValue } from "./format-value";
 
+/**
+ * This is a stack data structure.
+ */
 export class Stack<T> {
     private readonly data: T[] = [];
 

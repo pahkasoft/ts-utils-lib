@@ -1,7 +1,7 @@
 import { clamp } from "../utils/math";
 
 /**
- * DivRect class, left, top, right, bottom rectangle divided into four sections by anchorX, anchorY.
+ * DivRect class is a rectangle (left, top, right, bottom) with an anchor point (anchorX, anchorY).
  */
 export class DivRect {
     left: number;

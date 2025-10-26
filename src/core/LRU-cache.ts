@@ -1,5 +1,5 @@
 /**
- * LRUCache class: Least Recently Used cache with a fixed capacity
+ * LRUCache is an implementation of least recently used cache with a fixed capacity.
  */
 export class LRUCache<K extends string, V> {
     private cache: Record<K, V>;   // Stores the actual key-value pairs

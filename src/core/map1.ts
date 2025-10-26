@@ -2,6 +2,9 @@ import { isFunction } from "../guard";
 import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
+/**
+ * A Map implementation mapping a single key to a value.
+ */
 export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
     private map1: Map<KEY1, VALUE>;
 

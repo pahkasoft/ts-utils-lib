@@ -3,9 +3,7 @@ import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 /**
- * A Set-like structure that conforms to the KVComponent interface.
- * Methods like get(), set(), and getOrCreate() exist only for interface compatibility.
- * Use add(), has(), delete(), etc., for normal Set behavior.
+ * An abstract base class implementation of a Set data structure.
  */
 export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> implements KVComponent<[VALUE], VALUE> {
     protected data: Set<VALUE>;
@@ -236,6 +234,10 @@ export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> impl
     }
 }
 
+/**
+ * A simple Set data structure. Comparison of values is done
+ * using === operator (e.g. "a" = "a", but [1, 2] !== [1, 2]).
+ */
 export class Set1<VALUE> extends SetBase<VALUE, Set1<VALUE>> {
     constructor();
     constructor(set: SetBase<VALUE>)
@@ -257,6 +259,10 @@ export class Set1<VALUE> extends SetBase<VALUE, Set1<VALUE>> {
     }
 }
 
+/**
+ * A simple Set data structure, where comparison of values is done
+ * using deep equality (e.g. "a" = "a" and also [1, 2] = [1, 2]).
+ */
 export class DeepSet<VALUE> extends SetBase<VALUE, DeepSet<VALUE>> {
     constructor();
     constructor(set: SetBase<VALUE>)

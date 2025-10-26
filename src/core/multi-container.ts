@@ -1,6 +1,9 @@
 import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
+/**
+ * Wrapper class of a key-value container that contain array values.
+ */
 export class MultiContainer<K extends any[], V> {
     constructor(private readonly base: KVComponent<K, V[]>) {
         /*
@@ -83,10 +86,14 @@ export class MultiContainer<K extends any[], V> {
 }
 
 /**
+ * Create a multi-container.
+ * 
  * ```ts
  * // Usage:
  * const multi = asMulti(new Map2<string, string, number[]>());
- * multi.add("A", "B", 5);
+ * multi.add("a", "b", 5);
+ * multi.add("a", "b", 10);
+ * multi.add("a", "c", 15);
  * ```
  * @param base 
  * @returns 

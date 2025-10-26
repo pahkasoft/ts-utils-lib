@@ -3,7 +3,8 @@ import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 /**
- * An array-like structure for signed indexes, including negatives.
+ * `IndexArray` is a sparse array with positive and negative indexes. It stores
+ * values to indexes, and each index also has flag telling it has a value.
  */
 export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
     private static toNegIndex(id: number): number {

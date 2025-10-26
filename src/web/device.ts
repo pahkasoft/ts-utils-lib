@@ -82,22 +82,52 @@ type UnitType = "mm" | "cm" | "in" | "inch" | "px" | "em";
 const UnitRegExp = /^(mm|cm|in|inch|px|em)$/;
 const ValueUnitRegExp = /^([0-9\\.]+)(.*)$/;
 
+/** Devices dots per inch. */
 export const DPI = getDPI();
+
+/** Devices pixels per millimeter. */
 export const PxPerMm = DPI / 25.4;
+
+/** Browsers scroll bar width. */
 export const ScrollbarWidth = getScrollBarWidth();
+
+/** Browsers system font size. */
 export const FontSize = getSystemFontSize();
+
+/** Is touch device? */
 export const IsTouchDevice = getIsTouchDevice();
+
+/** Is mobile device? */
 export const IsMobileDevice = getIsMobileDevice();
+
+/** Host address. */
 export const HostAddress = getHostAddress();
 
+/**
+ * Convert pixels to millimeters on a device.
+ * @param px - Pixels.
+ * @returns - Millimeters.
+ */
 export function pxToMm(px: number): number {
     return px / PxPerMm;
 }
 
+/**
+ * Convert millimeters to pixels on a device.
+ * @param mm - Millimeters.
+ * @returns - Pixels.
+ */
 export function mmToPx(mm: number): number {
     return mm * PxPerMm;
 }
 
+/**
+ * Convert input to pixels on a device. Input value is in html style form containing number
+ * followed by unit (e.g. "10px"). Supported units are "mm", "cm", "in", "inch", "em" and "px".
+ * 
+ * @param input - Input value.
+ * @returns - Pixels.
+ */
 export function toPx(input: string | number): number {
     if (typeof input === "number") {
         return input;
@@ -123,7 +153,7 @@ export function toPx(input: string | number): number {
         value = parseFloat(input);
     }
 
-    Assert.finite(value, "value in function toPx");
+    Assert.isFinite(value, "value in function toPx");
 
     switch (unit) {
         case "mm":

@@ -2,6 +2,12 @@ import { isFunction } from "../guard";
 import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
+/**
+ * `DefaultArray` is an array list where every index is guaranteed to have a value.
+ * There are no undefineds unless that is part of the value type.
+ * When you create `DefaultArray` you give a default value. For example if you
+ * delete an index then that index is set to the default value.
+ */
 export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
     private data: VALUE[];
 

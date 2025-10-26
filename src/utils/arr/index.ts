@@ -10,12 +10,15 @@ export function duplicate<T>(a: T[] | undefined) {
     return a === undefined ? a : a.slice();
 }
 
-export function removeDuplicates<T>(a: T[]): T[] {
-    return a.filter((item, pos, arr) => arr.indexOf(item) === pos);
+export function removeDuplicates<T>(arr: T[], compareFn?: (a: T, b: T) => boolean): T[] {
+    return compareFn !== undefined
+        ? arr.filter((a, id, self) => id === self.findIndex(b => compareFn(a, b)))
+        : arr.filter((a, id, self) => id === self.indexOf(a));
 }
 
-export function removeDuplicatesCmp<T>(arr: ReadonlyArray<T>, cmp: (t1: T, t2: T) => boolean): T[] {
-    return arr.filter((t1, index, self) => index === self.findIndex(t2 => cmp(t1, t2)));
+/** @deprecated - Use {@removeDuplicates} with compareFn instead. */
+export function removeDuplicatesCmp<T>(arr: ReadonlyArray<T>, compareFn: (t1: T, t2: T) => boolean): T[] {
+    return arr.filter((a, id, self) => id === self.findIndex(b => compareFn(a, b)));
 }
 
 export function fillArray<T>(fillValue: T, fillCount: number): T[] {

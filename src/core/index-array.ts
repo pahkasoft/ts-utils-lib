@@ -3,7 +3,8 @@ import { formatValue } from "./format-value";
 import { KVComponent } from "./kv-container";
 
 /**
- * An array-like structure for non-negative indexes.
+ * `IndexArray` is a sparse array with non-negative indexes. It stores values
+ * to indexes, and each index also has flag telling it has a value.
  */
 export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
     private static validateIndex(id: number): number {
