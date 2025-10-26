@@ -113,7 +113,7 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
         }
     }
 
-    *[Symbol.iterator]() {
+    *[Symbol.iterator](): IterableIterator<[KEY1, VALUE]> {
         yield* this.entries();
     }
 

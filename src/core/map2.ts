@@ -134,7 +134,7 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
             yield [[key1, key2], el];
     }
 
-    *[Symbol.iterator]() {
+    *[Symbol.iterator](): IterableIterator<[KEY1, KEY2, VALUE]> {
         yield* this.entries();
     }
 
