@@ -148,6 +148,9 @@ export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     merge(other: DefaultArray<VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, id: number) => VALUE): this {
+        if (this.constructor !== other.constructor)
+            throw new Error(`Cannot merge DefaultArray: different classes (${this.constructor.name} vs ${other.constructor.name})`);
+
         if (this.defaultValue !== other.defaultValue)
             throw new Error(`Cannot merge DefaultArray: different defaultValue (${this.defaultValue} vs ${other.defaultValue})`);
 
