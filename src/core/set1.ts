@@ -7,13 +7,13 @@ import { KVComponent } from "./kv-container";
  * Use add(), has(), delete(), etc., for normal Set behavior.
  */
 export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
-    private _set: Set<VALUE>;
+    private data: Set<VALUE>;
 
     constructor();
     constructor(set: Set1<VALUE>)
     constructor(entries: Iterable<VALUE>)
     constructor(entries?: Set1<VALUE> | Iterable<VALUE>) {
-        this._set = new Set(entries);
+        this.data = new Set(entries);
 
         /*
         this.keys = this.keys.bind(this);
@@ -26,11 +26,11 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     }
 
     has(value: VALUE): boolean {
-        return this._set.has(value);
+        return this.data.has(value);
     }
 
     add(value: VALUE): VALUE {
-        this._set.add(value);
+        this.data.add(value);
         return value;
     }
 
@@ -43,7 +43,7 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
 
     /** @internal - This method exists only for interface `KVComponent` compatibility.*/
     get(key: VALUE): VALUE | undefined {
-        return this._set.has(key) ? key : undefined;
+        return this.data.has(key) ? key : undefined;
     }
 
     /** @internal - This method exists only for interface `KVComponent` compatibility.*/
@@ -67,15 +67,15 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     }
 
     delete(value: VALUE): boolean {
-        return this._set.delete(value);
+        return this.data.delete(value);
     }
 
     clear(): void {
-        this._set.clear();
+        this.data.clear();
     }
 
     get size(): number {
-        return this._set.size;
+        return this.data.size;
     }
 
     isEmpty(): boolean {
@@ -83,19 +83,19 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     }
 
     forEach(callbackfn: (value: VALUE, set1: Set1<VALUE>) => void, thisArg?: any): void {
-        this._set.forEach(value => callbackfn.call(thisArg, value, this));
+        this.data.forEach(value => callbackfn.call(thisArg, value, this));
     }
 
     *keys(): IterableIterator<VALUE> {
-        yield* this._set.keys();
+        yield* this.data.keys();
     }
 
     *values(): IterableIterator<VALUE> {
-        yield* this._set.values();
+        yield* this.data.values();
     }
 
     *entries(): IterableIterator<[VALUE, VALUE]> {
-        yield* this._set.entries();
+        yield* this.data.entries();
     }
 
     *kvKeys(): IterableIterator<[VALUE]> {
@@ -132,14 +132,14 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     }
 
     some(fn: (value: VALUE) => boolean): boolean {
-        for (const value of this._set) {
+        for (const value of this.data) {
             if (fn(value)) return true;
         }
         return false;
     }
 
     every(fn: (value: VALUE) => boolean): boolean {
-        for (const value of this._set) {
+        for (const value of this.data) {
             if (!fn(value)) return false;
         }
         return true;
@@ -150,7 +150,7 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     filter(predicate: (value: VALUE, set1: Set1<VALUE>) => unknown) {
         // Preserve subclass type using the constructor
         const result = new (this.constructor as { new(): Set1<VALUE> })();
-        for (const value of this._set) {
+        for (const value of this.data) {
             if (predicate(value, this)) result.add(value);
         }
         return result;
@@ -191,7 +191,7 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
 
     mapValues<R = VALUE>(fn: (value: VALUE) => R): Set1<R> {
         let result = new Set1<R>();
-        for (const value of this._set) {
+        for (const value of this.data) {
             result.add(fn(value));
         }
         return result;
@@ -214,7 +214,7 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     }
 
     toSet(): Set<VALUE> {
-        return new Set(this._set);
+        return new Set(this.data);
     }
 
     toArray(): VALUE[] {
@@ -222,7 +222,8 @@ export class Set1<VALUE> implements KVComponent<[VALUE], VALUE> {
     }
 
     toString(): string {
-        const values = [...this._set].map(v => `${v}`).join(', ');
-        return values.length === 0 ? `Set1(0){ }` : `Set1(${this.size}){ ${values} }`;
+        if (this.size === 0) return `Set1(0)[ ]`;
+        const values = [...this.data].map(v => `${v}`).join(', ');
+        return `Set1(${this.size})[ ${values} ]`;
     }
 }
