@@ -136,4 +136,17 @@ describe("IndexArray", () => {
         expect(new Arr().toString()).toEqual("IndexArray[ ]");
         expect(new Arr([[17, "a"], [2, "b"]]).toString()).toEqual("IndexArray[ 2: b, 17: a ]");
     });
+
+    it("should trim length on delete()", () => {
+        let arr = new Arr([[0,0],[1,1],[2,2],[5,5]]);
+        expect(arr.length).toBe(6);
+        arr.delete(5);
+        expect(arr.length).toBe(3);
+        arr.delete(2);
+        expect(arr.length).toBe(2);
+        arr.delete(1);
+        expect(arr.length).toBe(1);
+        arr.delete(0);
+        expect(arr.length).toBe(0);
+    });
 });

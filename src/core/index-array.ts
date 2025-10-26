@@ -55,6 +55,16 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
         return this.valCount;
     }
 
+    get length(): number {
+        return this.hasPos.length;
+    }
+
+    private trimRight() {
+        let newLength = this.length;
+        while (newLength > 0 && this.hasPos[newLength - 1] !== true) newLength--;
+        if (newLength < this.length) this.posVal.length = this.hasPos.length = newLength;
+    }
+
     isEmpty(): boolean {
         return this.size === 0;
     }
@@ -103,6 +113,7 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
         this.posVal[id] = undefined!;
         this.hasPos[id] = false;
         this.valCount--;
+        this.trimRight();
         return true;
     }
 
@@ -166,7 +177,7 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
         }
     }
 
-    *[Symbol.iterator]() {
+    *[Symbol.iterator](): IterableIterator<[number, VALUE]> {
         yield* this.entries();
     }
 
@@ -276,6 +287,10 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
         }
 
         return true;
+    }
+
+    toArray(): VALUE[] {
+        return this.valuesArray();
     }
 
     toString(): string {
