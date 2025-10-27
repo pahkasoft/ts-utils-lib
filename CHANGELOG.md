@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.20.0] - 2025-10-
+### Added
+- Guard.isNotThrowing(), Assert.isNotThrowing().
+
 ## [1.19.1] - 2025-10-27
 ## Fixed
 - Forgot to export `DefaultArray`, `SetBase`, `Set1` and `DeepSet`.

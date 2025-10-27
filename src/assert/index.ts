@@ -475,3 +475,9 @@ export function isThrowing(throwTestFn: () => void, msg?: string): true {
         _fail(`Expected to throw`, msg);
     return true;
 }
+
+export function isNotThrowing(throwTestFn: () => void, msg?: string): true {
+    if (!Guard.isNotThrowing(throwTestFn))
+        _fail(`Expected to throw`, msg);
+    return true;
+}

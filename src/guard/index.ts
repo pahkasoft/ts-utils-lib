@@ -216,6 +216,11 @@ export function isThrowing(throwTestFn: () => void): boolean {
     catch (err) { return true; }
 }
 
+export function isNotThrowing(throwTestFn: () => void): boolean {
+    try { throwTestFn(); return true; }
+    catch (err) { return false; }
+}
+
 export function tryOr<TRY_RVAL, OR_RVAL>(tryFn: () => TRY_RVAL, orVal: OR_RVAL | (() => OR_RVAL)): TRY_RVAL | OR_RVAL {
     try {
         return tryFn();
