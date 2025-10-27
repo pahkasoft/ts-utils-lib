@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.19.1] - 2025-10-27
+## Fixed
+- Forgot to export `DefaultArray`, `SetBase`, `Set1` and `DeepSet`.
+
 ## [1.19.0] - 2025-10-27
 ### Added
 - SignedIndexArray.toArray(), IndexArray.toArray(), IndexArray.length;
