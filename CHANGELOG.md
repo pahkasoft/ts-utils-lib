@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0] - 2025-10-27
+### Added
+- SignedIndexArray.toArray(), IndexArray.toArray(), IndexArray.length;
+- Set1 and DeepSet.
+- DefaultArray.
+- Stack functions.
+
 ## [1.18.0] - 2025-10-24
 ### Changed
 - Deprecated `DivRect` properties `centerX` and `centerY`, replaced with `anchorX` and `anchorY`.
