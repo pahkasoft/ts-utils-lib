@@ -4,6 +4,7 @@ import { BaseContainer, KVComponent } from "../core";
 
 /**
  * @deprecated - Use {@link ValueSet} instead. Will be removed in v2.0.0.
+ * @private
  * An abstract base class implementation of a Set data structure.
  */
 export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> extends BaseContainer implements KVComponent<[VALUE], VALUE> {
@@ -238,6 +239,7 @@ export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> exte
 
 /**
  * @deprecated - Use {@link ValueSet} instead. Will be removed in v2.0.0.
+ * @private
  * A simple Set data structure. Comparison of values is done
  * using === operator (e.g. "a" === "a", but [1, 2] !== [1, 2]).
  */
@@ -260,6 +262,7 @@ export class Set1<VALUE> extends SetBase<VALUE, Set1<VALUE>> {
 
 /**
  * @deprecated - Use {@link ValueSet}.createDeep() instead. Will be removed in v2.0.0.
+ * @private
  * A simple Set data structure, where comparison of values is done
  * using deep equality (e.g. "a" === "a" and also [1, 2] === [1, 2]).
  */

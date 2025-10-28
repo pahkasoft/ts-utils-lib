@@ -10,5 +10,6 @@ import * as Guard from "../guard";
 
 /**
  * @deprecated Use {@link Guard} instead. Will be removed in v2.0.0.
+ * @private
  */
 export const Is = Guard;

@@ -4,6 +4,7 @@ import { BaseContainer, KVComponent } from "../core";
 
 /**
  * @deprecated - Use {@link TriMap} instead. Will be removed in v2.0.0.
+ * @private
  * A Map implementation mapping a triple key to a value.
  */
 export class Map3<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {

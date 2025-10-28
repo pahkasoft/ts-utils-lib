@@ -2,6 +2,7 @@ import { Guard } from "..";
 
 /**
  * @deprecated - Use {@link SignedIndexArray} or {@link IndexArray} instead, they have way more functions. Will be removed in v2.0.0.
+ * @private
  * 
  * A cache-like structure optimized for small-range integer keys, including negatives.
  *

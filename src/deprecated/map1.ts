@@ -4,6 +4,7 @@ import { BaseContainer, KVComponent } from "../core";
 
 /**
  * @deprecated - Use {@link UniMap} instead. Will be removed in v2.0.0.
+ * @private
  * A Map implementation mapping a single key to a value.
  */
 export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KEY1], VALUE> {
