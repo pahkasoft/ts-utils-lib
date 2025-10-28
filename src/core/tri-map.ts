@@ -1,12 +1,13 @@
 import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
 import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
+import { UniMap } from "./uni-map";
 
 /**
  * A Map implementation mapping a triple key to a value.
  */
 export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {
-    private map1 = new Map<KEY1, Map<KEY2, Map<KEY3, VALUE>>>();
+    private map1: UniMap<KEY1, UniMap<KEY2, UniMap<KEY3, VALUE>>>;
     private valueEquals: ValueEqualsFn;
 
     constructor();
@@ -24,13 +25,14 @@ export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KV
 
         const entries = args[0] as TriMap<KEY1, KEY2, KEY3, VALUE> | Iterable<[KEY1, KEY2, KEY3, VALUE]>;
 
+        this.map1 = new UniMap(this.valueEquals);
+
         if (entries instanceof TriMap) {
             for (const [key1, map2] of entries.map1) {
-                const newMap2 = new Map<KEY2, Map<KEY3, VALUE>>();
+                const newMap2 = this.map1.set(key1, new UniMap(this.valueEquals));
                 for (const [key2, map3] of map2) {
-                    newMap2.set(key2, new Map(map3));
+                    newMap2.set(key2, new UniMap(map3, this.valueEquals));
                 }
-                this.map1.set(key1, newMap2);
             }
         }
         else if (entries) {
@@ -54,10 +56,8 @@ export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KV
     }
 
     set(key1: KEY1, key2: KEY2, key3: KEY3, value: VALUE): VALUE {
-        let map2 = this.map1.get(key1);
-        if (!map2) this.map1.set(key1, (map2 = new Map()));
-        let map3 = map2.get(key2);
-        if (!map3) map2.set(key2, (map3 = new Map()));
+        let map2 = this.map1.getOrCreate(key1, () => new UniMap<KEY2, UniMap<KEY3, VALUE>>(this.valueEquals));
+        let map3 = map2.getOrCreate(key2, () => new UniMap<KEY3, VALUE>(this.valueEquals));
         map3.set(key3, value);
         return value;
     }
@@ -176,7 +176,7 @@ export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KV
     }
 
     clone(): TriMap<KEY1, KEY2, KEY3, VALUE> {
-        return new TriMap(this);
+        return new TriMap(this, this.valueEquals);
     }
 
     merge(other: TriMap<KEY1, KEY2, KEY3, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => VALUE): this {

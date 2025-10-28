@@ -1,12 +1,13 @@
 import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
 import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
+import { UniMap } from "./uni-map";
 
 /**
  * A Map implementation mapping a double key to a value.
  */
 export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVComponent<[KEY1, KEY2], VALUE> {
-    private map1 = new Map<KEY1, Map<KEY2, VALUE>>();
+    private map1: UniMap<KEY1, UniMap<KEY2, VALUE>>;
     private valueEquals: ValueEqualsFn;
 
     constructor();
@@ -24,9 +25,11 @@ export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVCompone
 
         const entries = args[0] as BiMap<KEY1, KEY2, VALUE> | Iterable<[KEY1, KEY2, VALUE]>;
 
+        this.map1 = new UniMap(this.valueEquals);
+
         if (entries instanceof BiMap) {
             for (const [key1, inner] of entries.map1) {
-                this.map1.set(key1, new Map(inner));
+                this.map1.set(key1, new UniMap(inner, this.valueEquals));
             }
         }
         else if (entries) {
@@ -50,9 +53,7 @@ export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVCompone
     }
 
     set(key1: KEY1, key2: KEY2, value: VALUE): VALUE {
-        let map2 = this.map1.get(key1) ?? this.map1.set(key1, new Map()).get(key1)!;
-        map2.set(key2, value);
-        return value;
+        return this.map1.getOrCreate(key1, () => new UniMap<KEY2, VALUE>(this.valueEquals)).set(key2, value);
     }
 
     get(key1: KEY1, key2: KEY2): VALUE | undefined {
@@ -155,7 +156,7 @@ export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVCompone
     }
 
     clone(): BiMap<KEY1, KEY2, VALUE> {
-        return new BiMap(this);
+        return new BiMap(this, this.valueEquals);
     }
 
     merge(other: BiMap<KEY1, KEY2, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1, key2: KEY2) => VALUE): this {

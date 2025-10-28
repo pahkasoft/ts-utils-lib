@@ -44,6 +44,8 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
     }
 
     has(value: VALUE): boolean {
+        if (this.valueEquals === ValueEqualsDefaultFn)
+            return this.data.has(value);
         return this.some(v => this.valueEquals(v, value));
     }
 
@@ -86,7 +88,8 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
     }
 
     delete(value: VALUE): boolean {
-        if (!this.has(value)) return false;
+        if(this.valueEquals === ValueEqualsDefaultFn || this.data.has(value))
+            return this.data.delete(value);
         for (const v of this.values()) {
             if (this.valueEquals(v, value)) {
                 this.data.delete(v);

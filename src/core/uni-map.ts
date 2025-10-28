@@ -5,16 +5,16 @@ import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./bas
 /**
  * A Map implementation mapping a single key to a value.
  */
-export class UniMap<KEY1, VALUE> extends BaseContainer implements KVComponent<[KEY1], VALUE> {
-    private map1: Map<KEY1, VALUE>;
+export class UniMap<KEY, VALUE> extends BaseContainer implements KVComponent<[KEY], VALUE> {
+    private map: Map<KEY, VALUE>;
     private valueEquals: ValueEqualsFn;
 
     constructor();
     constructor(valueEqualsFn: ValueEqualsFn);
-    constructor(uniMap: UniMap<KEY1, VALUE>)
-    constructor(uniMmap: UniMap<KEY1, VALUE>, valueEqualsFn: ValueEqualsFn)
-    constructor(entries: Iterable<[KEY1, VALUE]>)
-    constructor(entries: Iterable<[KEY1, VALUE]>, valueEqualsFn: ValueEqualsFn)
+    constructor(uniMap: UniMap<KEY, VALUE>)
+    constructor(uniMmap: UniMap<KEY, VALUE>, valueEqualsFn: ValueEqualsFn)
+    constructor(entries: Iterable<[KEY, VALUE]>)
+    constructor(entries: Iterable<[KEY, VALUE]>, valueEqualsFn: ValueEqualsFn)
     constructor(...args: unknown[]) {
         super();
 
@@ -22,9 +22,9 @@ export class UniMap<KEY1, VALUE> extends BaseContainer implements KVComponent<[K
             ? args.pop() as ValueEqualsFn
             : ValueEqualsRef;
 
-        const entries = args[0] as UniMap<KEY1, VALUE> | Iterable<[KEY1, VALUE]>;
+        const entries = args[0] as UniMap<KEY, VALUE> | Iterable<[KEY, VALUE]>;
 
-        this.map1 = entries instanceof UniMap ? new Map(entries.map1) : new Map(entries);
+        this.map = entries instanceof UniMap ? new Map(entries.map) : new Map(entries);
 
         /*
         this.keys = this.keys.bind(this);
@@ -43,70 +43,95 @@ export class UniMap<KEY1, VALUE> extends BaseContainer implements KVComponent<[K
         return arg ? new UniMap<KEY1, VALUE>(arg, isDeepEqual) : new UniMap<KEY1, VALUE>(isDeepEqual);
     }
 
-    has(key1: KEY1): boolean {
-        return this.map1.has(key1);
+    has(key: KEY): boolean {
+        if (this.valueEquals === ValueEqualsRef || this.map.has(key))
+            return this.map.has(key);
+        for (const [k, v] of this.map)
+            if (this.valueEquals(k, key))
+                return true;
+        return false;
     }
 
-    set(key1: KEY1, value: VALUE): VALUE {
-        this.map1.set(key1, value);
+    set(key: KEY, value: VALUE): VALUE {
+        if (this.valueEquals === ValueEqualsRef || this.map.has(key)) {
+            this.map.set(key, value);
+            return value;
+        }
+        for (const key2 of this.map.keys())
+            if (this.valueEquals(key2, key)) {
+                this.map.set(key2, value);
+                return value;
+            }
+        this.map.set(key, value);
         return value;
     }
 
-    get(key1: KEY1): VALUE | undefined {
-        return this.map1.get(key1);
+    get(key: KEY): VALUE | undefined {
+        if (this.valueEquals === ValueEqualsRef || this.map.has(key))
+            return this.map.get(key);
+
+        for (const [k, v] of this.map)
+            if (this.valueEquals(k, key))
+                return v;
+
+        return undefined;
     }
 
-    getOrDefault(key1: KEY1, defaultValue: VALUE): VALUE {
-        return this.get(key1) ?? defaultValue;
+    delete(key: KEY): boolean {
+        if (this.valueEquals === ValueEqualsRef || this.map.has(key))
+            return this.map.delete(key);
+        for (const k of this.map.keys())
+            if (this.valueEquals(k, key))
+                return this.map.delete(k);
+        return this.map.delete(key);
     }
 
-    getOrCreate(key1: KEY1, value: VALUE): VALUE;
-    getOrCreate(key1: KEY1, creator: () => VALUE): VALUE;
-    getOrCreate(key1: KEY1, creatorOrValue: VALUE | (() => VALUE)): VALUE {
-        if (!this.has(key1)) {
+    getOrDefault(key: KEY, defaultValue: VALUE): VALUE {
+        return this.get(key) ?? defaultValue;
+    }
+
+    getOrCreate(key: KEY, value: VALUE): VALUE;
+    getOrCreate(key: KEY, creator: () => VALUE): VALUE;
+    getOrCreate(key: KEY, creatorOrValue: VALUE | (() => VALUE)): VALUE {
+        if (!this.has(key)) {
             const value = isFunction(creatorOrValue)
                 ? creatorOrValue()
                 : creatorOrValue;
-            this.set(key1, value);
-            return value;
+            return this.set(key, value)
         }
-        return this.get(key1)!;
-    }
-
-    delete(key1: KEY1): boolean {
-        return this.map1.delete(key1);
+        return this.get(key)!;
     }
 
     clear(): void {
-        this.map1.clear();
+        this.map.clear();
     }
 
     get size(): number {
-        return this.map1.size;
+        return this.map.size;
     }
 
     isEmpty(): boolean {
         return this.size === 0;
     }
 
-    forEach(callbackfn: (value: VALUE, key1: KEY1, map1: UniMap<KEY1, VALUE>) => void, thisArg?: any): void {
-        this.map1.forEach((value, key1) => callbackfn.call(thisArg, value, key1, this));
+    forEach(callbackfn: (value: VALUE, key: KEY, map1: UniMap<KEY, VALUE>) => void, thisArg?: any): void {
+        this.map.forEach((value, key) => callbackfn.call(thisArg, value, key, this));
     }
 
-    *keys(): IterableIterator<KEY1> {
-        yield* this.map1.keys();
+    *keys(): IterableIterator<KEY> {
+        yield* this.map.keys();
     }
 
     *values(): IterableIterator<VALUE> {
-        yield* this.map1.values();
+        yield* this.map.values();
     }
 
-    *entries(): IterableIterator<[KEY1, VALUE]> {
-        for (const [key1, value] of this.map1)
-            yield [key1, value];
+    *entries(): IterableIterator<[KEY, VALUE]> {
+        for (const [key, value] of this.map)
+            yield [key, value];
     }
 
-    keysArray(): KEY1[] {
+    keysArray(): KEY[] {
         return [...this.keys()];
     }
 
@@ -114,11 +139,11 @@ export class UniMap<KEY1, VALUE> extends BaseContainer implements KVComponent<[K
         return [...this.values()];
     }
 
-    entriesArray(): [KEY1, VALUE][] {
+    entriesArray(): [KEY, VALUE][] {
         return [...this.entries()];
     }
 
-    *kvKeys(): IterableIterator<[KEY1]> {
+    *kvKeys(): IterableIterator<[KEY]> {
         for (const key of this.keys()) {
             yield [key];
         }
@@ -130,60 +155,60 @@ export class UniMap<KEY1, VALUE> extends BaseContainer implements KVComponent<[K
         }
     }
 
-    *kvEntries(): IterableIterator<[[KEY1], VALUE]> {
+    *kvEntries(): IterableIterator<[[KEY], VALUE]> {
         for (const [key, el] of this.entries()) {
             yield [[key], el];
         }
     }
 
-    *[Symbol.iterator](): IterableIterator<[KEY1, VALUE]> {
+    *[Symbol.iterator](): IterableIterator<[KEY, VALUE]> {
         yield* this.entries();
     }
 
-    clone(): UniMap<KEY1, VALUE> {
-        return new UniMap(this);
+    clone(): UniMap<KEY, VALUE> {
+        return new UniMap(this, this.valueEquals);
     }
 
-    merge(other: UniMap<KEY1, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1) => VALUE): this {
-        for (const [key1, value] of other.entries()) {
-            if (this.has(key1) && conflictResolver) {
-                this.set(key1, conflictResolver(this.get(key1)!, value, key1));
+    merge(other: UniMap<KEY, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key: KEY) => VALUE): this {
+        for (const [key, value] of other.entries()) {
+            if (this.has(key) && conflictResolver) {
+                this.set(key, conflictResolver(this.get(key)!, value, key));
             }
             else {
-                this.set(key1, value);
+                this.set(key, value);
             }
         }
         return this;
     }
 
-    some(fn: (value: VALUE, key1: KEY1) => boolean): boolean {
-        for (const [key1, value] of this.map1) {
-            if (fn(value, key1)) return true;
+    some(fn: (value: VALUE, key: KEY) => boolean): boolean {
+        for (const [key, value] of this.map) {
+            if (fn(value, key)) return true;
         }
         return false;
     }
 
-    every(fn: (value: VALUE, key1: KEY1) => boolean): boolean {
-        for (const [key1, value] of this.map1) {
-            if (!fn(value, key1)) return false;
+    every(fn: (value: VALUE, key: KEY) => boolean): boolean {
+        for (const [key, value] of this.map) {
+            if (!fn(value, key)) return false;
         }
         return true;
     }
 
-    filter<S extends VALUE>(predicate: (value: VALUE, key1: KEY1, array: UniMap<KEY1, VALUE>) => value is S): UniMap<KEY1, S>;
-    filter(predicate: (value: VALUE, key1: KEY1, array: UniMap<KEY1, VALUE>) => unknown): UniMap<KEY1, VALUE>;
-    filter(predicate: (value: VALUE, key1: KEY1, array: UniMap<KEY1, VALUE>) => unknown) {
+    filter<S extends VALUE>(predicate: (value: VALUE, key: KEY, array: UniMap<KEY, VALUE>) => value is S): UniMap<KEY, S>;
+    filter(predicate: (value: VALUE, key: KEY, array: UniMap<KEY, VALUE>) => unknown): UniMap<KEY, VALUE>;
+    filter(predicate: (value: VALUE, key: KEY, array: UniMap<KEY, VALUE>) => unknown) {
         // Preserve subclass type using the constructor
-        const result = new (this.constructor as { new(): UniMap<KEY1, VALUE> })();
-        for (const [key1, value] of this.map1) {
-            if (predicate(value, key1, this)) result.set(key1, value);
+        const result = new (this.constructor as { new(): UniMap<KEY, VALUE> })();
+        for (const [key, value] of this.map) {
+            if (predicate(value, key, this)) result.set(key, value);
         }
         return result;
     }
 
-    reduce(fn: (acc: VALUE, value: VALUE, key1: KEY1) => VALUE): VALUE;
-    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1) => R, init: R): R;
-    reduce<R>(fn: (acc: R, value: VALUE, key1: KEY1) => R, init?: R): R {
+    reduce(fn: (acc: VALUE, value: VALUE, key: KEY) => VALUE): VALUE;
+    reduce<R>(fn: (acc: R, value: VALUE, key: KEY) => R, init: R): R;
+    reduce<R>(fn: (acc: R, value: VALUE, key: KEY) => R, init?: R): R {
         let iterator = this.entries();
         let first = iterator.next();
 
@@ -195,11 +220,11 @@ export class UniMap<KEY1, VALUE> extends BaseContainer implements KVComponent<[K
         }
 
         let acc: any;
-        let start: IteratorResult<[KEY1, VALUE]>;
+        let start: IteratorResult<[KEY, VALUE]>;
 
         if (arguments.length < 2) {
             // no init → use first entry as accumulator
-            acc = first.value[1]; // [key1, value]
+            acc = first.value[1]; // [key, value]
             start = iterator.next();
         } else {
             acc = init;
@@ -207,35 +232,35 @@ export class UniMap<KEY1, VALUE> extends BaseContainer implements KVComponent<[K
         }
 
         for (let current = start; !current.done; current = iterator.next()) {
-            const [key1, value] = current.value;
-            acc = fn(acc, value, key1);
+            const [key, value] = current.value;
+            acc = fn(acc, value, key);
         }
 
         return acc;
     }
 
-    mapEntries<R>(fn: (value: VALUE, key1: KEY1) => R): R[] {
+    mapEntries<R>(fn: (value: VALUE, key: KEY) => R): R[] {
         let result: R[] = [];
-        for (const [key1, value] of this.map1) {
-            result.push(fn(value, key1));
+        for (const [key, value] of this.map) {
+            result.push(fn(value, key));
         }
         return result;
     }
 
-    mapValues<R = VALUE>(fn: (value: VALUE, key1: KEY1) => R): UniMap<KEY1, R> {
-        let result = new UniMap<KEY1, R>();
-        for (const [key1, value] of this.map1) {
-            result.set(key1, fn(value, key1));
+    mapValues<R = VALUE>(fn: (value: VALUE, key: KEY) => R): UniMap<KEY, R> {
+        let result = new UniMap<KEY, R>();
+        for (const [key, value] of this.map) {
+            result.set(key, fn(value, key));
         }
         return result;
     }
 
-    toMap(): Map<KEY1, VALUE> {
-        return new Map(this.map1);
+    toMap(): Map<KEY, VALUE> {
+        return new Map(this.map);
     }
 
     toString(): string {
-        const entries = [...this.map1].map(([k, v]) => `${stringify(k)} => ${stringify(v)}`).join(', ');
+        const entries = [...this.map].map(([k, v]) => `${stringify(k)} => ${stringify(v)}`).join(', ');
         return entries.length === 0 ? `Map(${this.size}){ }` : `Map(${this.size}){ ${entries} }`;
     }
 }

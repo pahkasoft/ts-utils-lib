@@ -6,13 +6,25 @@ function mapArr<K, V>(m: Map<K, V>) {
 
 describe("Map1", () => {
     it("should has()", () => {
-        expect(new UniMap([["a", 2], ["b", 3]]).has("a")).toEqual(true);
-        expect(new UniMap([["a", 2], ["b", 3]]).has("c")).toEqual(false);
+        expect(new UniMap([["a", 2], ["b", 3]]).has("a")).toBeTrue();
+        expect(new UniMap([["a", 2], ["b", 3]]).has("c")).toBeFalse();
+    });
+
+    it("should deep has()", () => {
+        expect(new UniMap([[["a"], 2], [["b"], 3]]).has(["a"])).toBeFalse();
+        expect(UniMap.createDeep([[["a"], 2], [["b"], 3]]).has(["a"])).toBeTrue();
+        expect(UniMap.createDeep([[["a"], 2], [["b"], 3]]).has(["c"])).toBeFalse();
     });
 
     it("should get()", () => {
         expect(new UniMap([["a", 2], ["b", 3]]).get("a")).toEqual(2);
-        expect(new UniMap([["a", 2], ["b", 3]]).get("c")).toEqual(undefined);
+        expect(new UniMap([["a", 2], ["b", 3]]).get("c")).toBeUndefined();
+    });
+
+    it("should deep get()", () => {
+        expect(new UniMap([[["a"], 2], [["b"], 3]]).get(["a"])).toBeUndefined();
+        expect(UniMap.createDeep([[["a"], 2], [["b"], 3]]).get(["a"])).toEqual(2);
+        expect(UniMap.createDeep([[["a"], 2], [["b"], 3]]).get(["c"])).toBeUndefined();
     });
 
     it("should getOrDefault()", () => {
@@ -29,9 +41,17 @@ describe("Map1", () => {
 
     it("should delete()", () => {
         let del = new UniMap([["a", 2], ["b", 2], ["c", 3], ["d", 3], ["g", 3]]);
-        expect(del.delete("a")).toEqual(true);
+        expect(del.delete("a")).toBeTrue();
         expect(del.size).toEqual(4);
-        expect(del.delete("x")).toEqual(false);
+        expect(del.delete("x")).toBeFalse();
+        expect(del.size).toEqual(4);
+    });
+
+    it("should deep delete()", () => {
+        let del = UniMap.createDeep([[["a"], 2], [["b"], 2], [["c"], 3], [["d"], 3], [["g"], 3]]);
+        expect(del.delete(["a"])).toBeTrue();
+        expect(del.size).toEqual(4);
+        expect(del.delete(["x"])).toBeFalse();
         expect(del.size).toEqual(4);
     });
 
@@ -54,8 +74,12 @@ describe("Map1", () => {
     });
 
     it("should clone()", () => {
-        let cln = new UniMap([["a", 2], ["b", 2], ["c", 3], ["d", 3], ["g", 3]]);
-        expect(cln).toEqual(cln.clone());
+        let map1 = new UniMap([["a", 2], ["b", 2], ["c", 3], ["d", 3], ["g", 3]]);
+        let map2 = new UniMap([[["a"], 2], [["b"], 2]]);
+        let map3 = UniMap.createDeep([[["a"], 2], [["b"], 2]]);
+        expect(map1).toEqual(map1.clone());
+        expect(map2).toEqual(map2.clone());
+        expect(map3).toEqual(map3.clone());
     });
 
     it("should merge()", () => {
@@ -66,12 +90,12 @@ describe("Map1", () => {
     });
 
     it("should have some()", () => {
-        expect(new UniMap([["a", 2], ["d", 3]]).some((v) => v === 2)).toEqual(true);
-        expect(new UniMap([["a", 2], ["d", 3]]).some((v) => v === 1)).toEqual(false);
+        expect(new UniMap([["a", 2], ["d", 3]]).some((v) => v === 2)).toBeTrue();
+        expect(new UniMap([["a", 2], ["d", 3]]).some((v) => v === 1)).toBeFalse();
     });
 
     it("should have every()", () => {
-        expect(new UniMap([["a", 2], ["d", 3]]).every((v, k1) => k1 === "a")).toEqual(false);
+        expect(new UniMap([["a", 2], ["d", 3]]).every((v, k1) => k1 === "a")).toBeFalse();
     });
 
     it("should filter()", () => {
@@ -80,8 +104,8 @@ describe("Map1", () => {
         let fltr = new UniMap<number, A | B>([[0, new A()], [1, new B()]]);
         let fltrA = fltr.filter(v => v instanceof A);
         let fltrB = fltr.filter(v => v instanceof B);
-        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
-        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toBeTrue();
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toBeTrue();
     });
 
     it("should reduce()", () => {
