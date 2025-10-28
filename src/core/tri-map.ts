@@ -1,5 +1,5 @@
 import { stringify } from "../utils/str";
-import { isFunction } from "../guard";
+import { isDeepEqual, isFunction } from "../guard";
 import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
 import { UniMap } from "./uni-map";
 
@@ -49,6 +49,13 @@ export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KV
         this.kvValues = this.kvValues.bind(this);
         this.kvEntries = this.kvEntries.bind(this);
         */
+    }
+
+    static createDeep<KEY1, KEY2, KEY3, VALUE>(): TriMap<KEY1, KEY2, KEY3, VALUE>;
+    static createDeep<KEY1, KEY2, KEY3, VALUE>(set: TriMap<KEY1, KEY2, KEY3, VALUE>): TriMap<KEY1, KEY2, KEY3, VALUE>;
+    static createDeep<KEY1, KEY2, KEY3, VALUE>(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>): TriMap<KEY1, KEY2, KEY3, VALUE>;
+    static createDeep<KEY1, KEY2, KEY3, VALUE>(arg?: TriMap<KEY1, KEY2, KEY3, VALUE> | Iterable<[KEY1, KEY2, KEY3, VALUE]>) {
+        return arg ? new TriMap<KEY1, KEY2, KEY3, VALUE>(arg, isDeepEqual) : new TriMap<KEY1, KEY2, KEY3, VALUE>(isDeepEqual);
     }
 
     has(key1: KEY1, key2: KEY2, key3: KEY3): boolean {

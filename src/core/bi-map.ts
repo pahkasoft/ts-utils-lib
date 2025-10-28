@@ -1,5 +1,5 @@
 import { stringify } from "../utils/str";
-import { isFunction } from "../guard";
+import { isDeepEqual, isFunction } from "../guard";
 import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
 import { UniMap } from "./uni-map";
 
@@ -46,6 +46,13 @@ export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVCompone
         this.kvValues = this.kvValues.bind(this);
         this.kvEntries = this.kvEntries.bind(this);
         */
+    }
+
+    static createDeep<KEY1, KEY2, VALUE>(): BiMap<KEY1, KEY2, VALUE>;
+    static createDeep<KEY1, KEY2, VALUE>(set: BiMap<KEY1, KEY2, VALUE>): BiMap<KEY1, KEY2, VALUE>;
+    static createDeep<KEY1, KEY2, VALUE>(entries: Iterable<[KEY1, KEY2, VALUE]>): BiMap<KEY1, KEY2, VALUE>;
+    static createDeep<KEY1, KEY2, VALUE>(arg?: BiMap<KEY1, KEY2, VALUE> | Iterable<[KEY1, KEY2, VALUE]>) {
+        return arg ? new BiMap<KEY1, KEY2, VALUE>(arg, isDeepEqual) : new BiMap<KEY1, KEY2, VALUE>(isDeepEqual);
     }
 
     has(key1: KEY1, key2: KEY2): boolean {
