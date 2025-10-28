@@ -1,7 +1,7 @@
 /**
  * Vec2 class.
  * 
- * @deprecated - Use {@link Vec} instead.
+ * @deprecated - Use {@link Vec} instead. Will be removed in v2.0.0.
  */
 export class Vec2 {
     readonly x: number;
