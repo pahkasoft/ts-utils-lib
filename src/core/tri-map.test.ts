@@ -6,13 +6,25 @@ function mapArr<K, V>(m: Map<K, V>) {
 
 describe("Map3", () => {
     it("should has()", () => {
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "b", "c")).toEqual(true);
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "c", "d")).toEqual(false);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "b", "c")).toBeTrue();
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "c", "d")).toBeFalse();
+    });
+
+    it("should deep has()", () => {
+        expect(new TriMap([[{ a: "a" }, "b", "c", 2], [{ a: "b" }, "c", "d", 3]]).has({ a: "a" }, "b", "c")).toBeFalse();
+        expect(TriMap.createDeep([[{ a: "a" }, "b", "c", 2], [{ a: "b" }, "c", "d", 3]]).has({ a: "a" }, "b", "c")).toBeTrue();
+        expect(TriMap.createDeep([[{ a: "a" }, "b", "c", 2], [{ a: "b" }, "c", "d", 3]]).has({ a: "b" }, "b", "c")).toBeFalse();
     });
 
     it("should get()", () => {
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).get("a", "b", "c")).toEqual(2);
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).get("a", "c", "d")).toEqual(undefined);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).get("a", "b", "c")).toBe(2);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).get("a", "c", "d")).toBeUndefined();
+    });
+
+    it("should deep get()", () => {
+        expect(new TriMap([["a", ["b", 2], "c", 2], ["b", ["c", 4], "d", 3]]).get("a", ["b", 2], "c")).toBeUndefined();
+        expect(TriMap.createDeep([["a", ["b", 2], "c", 2], ["b", ["c", 4], "d", 3]]).get("a", ["b", 2], "c")).toBe(2);
+        expect(TriMap.createDeep([["a", ["b", 2], "c", 2], ["b", ["c", 4], "d", 3]]).get("a", ["b", 3], "c")).toBeUndefined();
     });
 
     it("should getOrDefault()", () => {
@@ -29,19 +41,37 @@ describe("Map3", () => {
 
     it("should delete()", () => {
         let del = new TriMap([["a", "b", "c", 2], ["a", "b", "d", 2], ["b", "c", "d", 3], ["b", "c", "e", 3], ["b", "g", "f", 3]]);
-        expect(del.delete("a")).toEqual(true);
-        expect(del.size).toEqual(3);
-        expect(del.delete("b", "c")).toEqual(true);
-        expect(del.size).toEqual(1);
-        expect(del.delete("b", "g", "x")).toEqual(false);
-        expect(del.delete("b", "g", "f")).toEqual(true);
-        expect(del.size).toEqual(0);
+        expect(del.delete("a")).toBeTrue();
+        expect(del.size).toBe(3);
+        expect(del.delete("b", "c")).toBeTrue();
+        expect(del.size).toBe(1);
+        expect(del.delete("b", "g", "x")).toBeFalse();
+        expect(del.delete("b", "g", "f")).toBeTrue();
+        expect(del.size).toBe(0);
+    });
+
+    it("should deep delete()", () => {
+        let del = TriMap.createDeep([
+            [["a"], { s: "b", i: 4 }, "c", 2],
+            [["a"], { s: "b", i: 4 }, "d", 2],
+            [["b"], { s: "c", i: 4 }, "d", 3],
+            [["b"], { s: "c", i: 4 }, "e", 3],
+            [["b"], { s: "g", i: 4 }, "f", 3]
+
+        ]);
+        expect(del.delete(["a"])).toBeTrue();
+        expect(del.size).toBe(3);
+        expect(del.delete(["b"], { s: "c", i: 4 })).toBeTrue();
+        expect(del.size).toBe(1);
+        expect(del.delete(["b"], { s: "g", i: 4 }, "x")).toBeFalse();
+        expect(del.delete(["b"], { s: "g", i: 4 }, "f")).toBeTrue();
+        expect(del.size).toBe(0);
     });
 
     it("should clear()", () => {
         let clr = new TriMap([["a", "b", "c", 2], ["a", "b", "d", 2], ["b", "c", "d", 3], ["b", "c", "e", 3], ["b", "g", "f", 3]]);
         clr.clear();
-        expect(clr.size).toEqual(0);
+        expect(clr.size).toBe(0);
     });
 
     it("should get keysArray()", () => {
@@ -61,6 +91,11 @@ describe("Map3", () => {
         expect(cln).toEqual(cln.clone());
     });
 
+    it("should deep clone()", () => {
+        let cln = TriMap.createDeep([[["a"], new Date(), "c", 2]]);
+        expect(cln).toEqual(cln.clone());
+    });
+
     it("should merge()", () => {
         expect(new TriMap([["a", "b", "c", 2]]).merge(new TriMap([["a", "b", "c", 3]]))).toEqual(new TriMap([["a", "b", "c", 3]]));
         expect(new TriMap([["a", "b", "c", 2]]).merge(new TriMap([["a", "b", "c", 3]]), (o, n) => o)).toEqual(new TriMap([["a", "b", "c", 2]]));
@@ -69,13 +104,13 @@ describe("Map3", () => {
     });
 
     it("should have some()", () => {
-        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).some((v) => v === 2)).toEqual(true);
-        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).some((v) => v === 1)).toEqual(false);
+        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).some((v) => v === 2)).toBeTrue();
+        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).some((v) => v === 1)).toBeFalse();
     });
 
     it("should have every()", () => {
-        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).every((v, k1) => k1 === "a")).toEqual(true);
-        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).every((v, k1, k2, k3) => k3 === "c")).toEqual(false);
+        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).every((v, k1) => k1 === "a")).toBeTrue();
+        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).every((v, k1, k2, k3) => k3 === "c")).toBeFalse();
     });
 
     it("should filter()", () => {
@@ -84,8 +119,8 @@ describe("Map3", () => {
         let fltr = new TriMap<number, string, boolean, A | B>([[0, "a", true, new A()], [1, "b", false, new B()]]);
         let fltrA = fltr.filter(v => v instanceof A);
         let fltrB = fltr.filter(v => v instanceof B);
-        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
-        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toBeTrue();
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toBeTrue();
     });
 
     it("should reduce()", () => {

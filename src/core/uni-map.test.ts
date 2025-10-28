@@ -76,10 +76,13 @@ describe("Map1", () => {
     it("should clone()", () => {
         let map1 = new UniMap([["a", 2], ["b", 2], ["c", 3], ["d", 3], ["g", 3]]);
         let map2 = new UniMap([[["a"], 2], [["b"], 2]]);
-        let map3 = UniMap.createDeep([[["a"], 2], [["b"], 2]]);
         expect(map1).toEqual(map1.clone());
         expect(map2).toEqual(map2.clone());
-        expect(map3).toEqual(map3.clone());
+    });
+
+    it("should deep clone()", () => {
+        let map1 = UniMap.createDeep([[["a"], 2], [["b"], 2]]);
+        expect(map1).toEqual(map1.clone());
     });
 
     it("should merge()", () => {
