@@ -3,6 +3,12 @@
 ## [1.20.0] - 2025-10-
 ### Added
 - Guard.isNotThrowing(), Assert.isNotThrowing().
+- UniMap, BiMap, TriMap, ValueSet.
+- Utils.Str.stringify().
+
+### Deprecated
+- Map1 (-> UniMap), Map2 (-> BiMap), Map3 (-> TriMap).
+- Set1 (-> ValueSet), BaseSet, DeepSet.
 
 ## [1.19.1] - 2025-10-27
 ## Fixed
