@@ -111,22 +111,22 @@ export class DivRect {
         return new DivRect(-leftw, 0, rightw, -toph, 0, bottomh);
     }
 
-    /** @deprecated - Renamed to anchorX. */
+    /** @deprecated - Renamed to anchorX. Will be removed in v2.0.0. */
     get centerX() {
         return this.anchorX;
     }
 
-    /** @deprecated - Renamed to anchorX. */
+    /** @deprecated - Renamed to anchorX. Will be removed in v2.0.0. */
     set centerX(x: number) {
         this.anchorX = x;
     }
 
-    /** @deprecated - Renamed to anchorY. */
+    /** @deprecated - Renamed to anchorY. Will be removed in v2.0.0. */
     get centerY() {
         return this.anchorY;
     }
 
-    /** @deprecated - Renamed to anchorY. */
+    /** @deprecated - Renamed to anchorY. Will be removed in v2.0.0. */
     set centerY(y: number) {
         this.anchorY = y;
     }
@@ -264,7 +264,7 @@ export class DivRect {
         return DivRect.equalsEdges(this, other);
     }
 
-    /** @deprecated - Use `DivRect.equalsEdges()` instead. */
+    /** @deprecated - Use `DivRect.equalsEdges()` instead. Will be removed in v2.0.0. */
     static equalsFrame(a: DivRect | null | undefined, b: DivRect | null | undefined): boolean {
         return DivRect.equalsEdges(a,b);
     }

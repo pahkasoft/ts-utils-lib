@@ -17,116 +17,116 @@ function _fail(...msgs: (string | undefined)[]): never {
 //--------------------------------------------------------------------------------------------------------
 // Deprecated
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function interrupt(msg?: string): never {
     _fail("Interrupted!");
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function assertEnum<E extends EnumObject>(enumVal: unknown, enumObj: E, name = "value"): asserts enumVal is E[keyof E] {
     if (!Guard.isEnumValue(enumVal, enumObj))
         _fail(`Invalid enum value ${enumVal}.`);
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function int(value: unknown, msg?: string): number {
     if (!Guard.isInteger(value))
         _fail(`Expected ${value} to be integer.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function eq<T>(value1: T, value2: T, msg?: string): T {
     if (value1 !== value2)
         _fail(`Expected ${value1} to equal ${value2}.`, msg);
     return value1;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function int_eq(value: unknown, compareTo: unknown, msg?: string): number {
     if (!Guard.isIntegerEq(value, compareTo))
         _fail(`Expected ${value} to be integer equal to ${compareTo}.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function int_lt(value: unknown, compareTo: unknown, msg?: string): number {
     if (!Guard.isIntegerLt(value, compareTo))
         _fail(`Expected ${value} to be integer less than ${compareTo}.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function int_lte(value: unknown, compareTo: unknown, msg?: string): number {
     if (!Guard.isIntegerLte(value, compareTo))
         _fail(`Expected ${value} to be integer less than or equal to ${compareTo}.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function int_gt(value: unknown, compareTo: unknown, msg?: string): number {
     if (!Guard.isIntegerGt(value, compareTo))
         _fail(`Expected ${value} to be integer greater than ${compareTo}.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function int_gte(value: unknown, compareTo: unknown, msg?: string): number {
     if (!Guard.isIntegerGte(value, compareTo))
         _fail(`Expected ${value} to be integer greater than or equal to ${compareTo}.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function int_between(value: unknown, min: unknown, max: unknown, msg?: string): number {
     if (!Guard.isIntegerBetween(value, min, max))
         _fail(`Expected integer between ${min} <= ${value} <= ${max}.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function int_between_exclusive(value: unknown, min: unknown, max: unknown, msg?: string): number {
     if (!Guard.isIntegerBetweenExclusive(value, min, max))
         _fail(`Expected integer between ${min} < ${value} < ${max}.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function odd(value: unknown, msg?: string): number {
     if (!Guard.isOddNumber(value))
         _fail(`Expected ${value} to be odd number.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function even(value: unknown, msg?: string): number {
     if (!Guard.isEvenNumber(value))
         _fail(`Expected ${value} to be even number.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function in_group<T>(value: T, group: ReadonlyArray<T>, msg?: string): T {
     if (!(group.some(e => e === value)))
         _fail(`Expected ${value} to be in group [${group.map(v => String(v)).join(", ")}].`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function finite(value: unknown, msg?: string): number {
     if (!Guard.isFinite(value))
         _fail(`Expected ${value} to be finite number.`, msg);
     return value;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function array_id<T>(array: Readonly<T[]>, index: unknown, msg?: string): number {
     if (!Guard.isInteger(index) || !Guard.isArray(array) || index < 0 || index >= array.length)
         _fail(`Expected ${index} to be array index in bounds [0..${array.length - 1}].`, msg);
     return index;
 }
 
-/** @deprecated */
+/** @deprecated - Wil be removed in v2.0.0. */
 export function array_elem<T>(array: Readonly<T[]>, index: number, msg?: string): T {
     return array[array_id(array, index, msg)];
 }
