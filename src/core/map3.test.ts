@@ -106,8 +106,8 @@ describe("Map3", () => {
     });
 
     it("should toString()", () => {
-        expect(new Map3().toString()).toEqual("Map3(0){ }");
-        expect(new Map3([["a", "b", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual(`Map3(2){ "a" => "b" => { "c" => "x", "d" => "y" } }`);
-        expect(new Map3([["a", "q", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual(`Map3(2){ "a" => "q" => { "c" => "x" }, "a" => "b" => { "d" => "y" } }`);
+        expect(new Map3().toString()).toEqual("Map(0){ }");
+        expect(new Map3([["a", "b", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual(`Map(2){ "a" => "b" => { "c" => "x", "d" => "y" } }`);
+        expect(new Map3([["a", "q", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual(`Map(2){ "a" => "q" => { "c" => "x" }, "a" => "b" => { "d" => "y" } }`);
     });
 });

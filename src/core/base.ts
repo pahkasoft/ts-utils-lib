@@ -1,4 +1,3 @@
-
 export interface KVComponent<K extends any[], VALUE> {
     get size(): number;
     isEmpty(): boolean;
@@ -15,4 +14,8 @@ export interface KVComponent<K extends any[], VALUE> {
     kvValues(): IterableIterator<VALUE>;
     kvKeys(): IterableIterator<K>;
     kvEntries(): IterableIterator<[K, VALUE]>;
+}
+
+export abstract class BaseContainer {
+    abstract toString(): string;
 }

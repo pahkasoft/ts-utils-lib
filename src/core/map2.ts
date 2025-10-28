@@ -1,17 +1,19 @@
+import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
-import { formatValue } from "./format-value";
-import { KVComponent } from "./kv-container";
+import { BaseContainer, KVComponent } from "./base";
 
 /**
  * A Map implementation mapping a double key to a value.
  */
-export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE> {
+export class Map2<KEY1, KEY2, VALUE> extends BaseContainer  implements KVComponent<[KEY1, KEY2], VALUE> {
     private map1 = new Map<KEY1, Map<KEY2, VALUE>>();
 
     constructor();
     constructor(map2: Map2<KEY1, KEY2, VALUE>)
     constructor(entries: Iterable<[KEY1, KEY2, VALUE]>)
     constructor(entries?: Map2<KEY1, KEY2, VALUE> | Iterable<[KEY1, KEY2, VALUE]>) {
+        super();
+
         if (entries instanceof Map2) {
             for (const [key1, inner] of entries.map1) {
                 this.map1.set(key1, new Map(inner));
@@ -255,9 +257,9 @@ export class Map2<KEY1, KEY2, VALUE> implements KVComponent<[KEY1, KEY2], VALUE>
     toString(): string {
         const entries: string[] = [];
         for (const [key1, map2] of this.map1) {
-            const inner = [...map2].map(([key2, v]) => `${formatValue(key2)} => ${formatValue(v)}`).join(', ');
-            entries.push(`${formatValue(key1)} => { ${inner} }`);
+            const inner = [...map2].map(([key2, v]) => `${stringify(key2)} => ${stringify(v)}`).join(', ');
+            entries.push(`${stringify(key1)} => { ${inner} }`);
         }
-        return `Map2(${this.size}){ ${entries} }`.replaceAll("  ", " ");
+        return entries.length === 0 ?  `Map(${this.size}){ }` : `Map(${this.size}){ ${entries} }`;
     }
 }

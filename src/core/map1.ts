@@ -1,17 +1,19 @@
+import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
-import { formatValue } from "./format-value";
-import { KVComponent } from "./kv-container";
+import { BaseContainer, KVComponent } from "./base";
 
 /**
  * A Map implementation mapping a single key to a value.
  */
-export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
+export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KEY1], VALUE> {
     private map1: Map<KEY1, VALUE>;
 
     constructor();
     constructor(map1: Map1<KEY1, VALUE>)
     constructor(entries: Iterable<[KEY1, VALUE]>)
     constructor(entries?: Map1<KEY1, VALUE> | Iterable<[KEY1, VALUE]>) {
+        super();
+
         this.map1 = entries instanceof Map1 ? new Map(entries.map1) : new Map(entries);
 
         /*
@@ -216,7 +218,7 @@ export class Map1<KEY1, VALUE> implements KVComponent<[KEY1], VALUE> {
     }
 
     toString(): string {
-        const entries = [...this.map1].map(([k, v]) => `${formatValue(k)} => ${formatValue(v)}`).join(', ');
-        return `Map1(${this.size}){ ${entries} }`.replaceAll("  ", " ");
+        const entries = [...this.map1].map(([k, v]) => `${stringify(k)} => ${stringify(v)}`).join(', ');
+        return entries.length === 0 ?  `Map(${this.size}){ }` : `Map(${this.size}){ ${entries} }`;
     }
 }

@@ -1,6 +1,6 @@
+import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
-import { formatValue } from "./format-value";
-import { KVComponent } from "./kv-container";
+import { BaseContainer, KVComponent } from "./base";
 
 /**
  * `DefaultArray` is an array list where every index is guaranteed to have a value.
@@ -8,12 +8,14 @@ import { KVComponent } from "./kv-container";
  * When you create `DefaultArray` you give a default value. For example if you
  * delete an index then that index is set to the default value.
  */
-export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
+export class DefaultArray<VALUE> extends BaseContainer implements KVComponent<[number], VALUE> {
     private data: VALUE[];
 
     constructor(values: Iterable<VALUE>, defaultValue: VALUE);
     constructor(length: number, defaultValue: VALUE);
     constructor(lengthOrValues: number | Iterable<VALUE>, readonly defaultValue: VALUE) {
+        super();
+
         if (typeof lengthOrValues === "number") {
             this.data = Array(lengthOrValues).fill(defaultValue);
         }
@@ -263,7 +265,6 @@ export class DefaultArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     toString(): string {
-        const entries = this.entriesArray().map(([id, v]) => `${formatValue(id)}: ${formatValue(v)}`).join(', ');
-        return `DefaultArray[ ${entries} ]`.replaceAll("  ", " ");
+        return stringify(this.data);
     }
 }

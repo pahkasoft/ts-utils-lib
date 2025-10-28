@@ -167,9 +167,9 @@ describe("DefaultArray", () => {
     });
 
     it("toString() produces readable format", () => {
-        const arr = new DefaultArray<number>(2, 0);
+        const arr = new DefaultArray<number>(4, 5);
         arr.set(1, 42);
-        expect(arr.toString()).toBe("DefaultArray[ 0: 0, 1: 42 ]");
+        expect(arr.toString()).toBe("[ 5, 42, 5, 5 ]");
     });
 
 });

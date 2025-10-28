@@ -1,12 +1,12 @@
+import { stringify } from "../utils/str";
 import { isFunction, isInteger } from "../guard";
-import { formatValue } from "./format-value";
-import { KVComponent } from "./kv-container";
+import { BaseContainer, KVComponent } from "./base";
 
 /**
  * `IndexArray` is a sparse array with positive and negative indexes. It stores
  * values to indexes, and each index also has flag telling it has a value.
  */
-export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
+export class SignedIndexArray<VALUE> extends BaseContainer  implements KVComponent<[number], VALUE> {
     private static toNegIndex(id: number): number {
         return -id - 1;
     }
@@ -31,6 +31,8 @@ export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
     constructor(arr: SignedIndexArray<VALUE>)
     constructor(entries: Iterable<[number, VALUE]>)
     constructor(entries?: SignedIndexArray<VALUE> | Iterable<[number, VALUE]>) {
+        super();
+
         if (entries instanceof SignedIndexArray) {
             this.negVal = entries.negVal.slice();
             this.hasNeg = entries.hasNeg.slice();
@@ -346,7 +348,7 @@ export class SignedIndexArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     toString(): string {
-        const entries = this.entriesArray().map(([id, v]) => `${formatValue(id)}: ${formatValue(v)}`).join(', ');
-        return `SignedIndexArray[ ${entries} ]`.replaceAll("  ", " ");
+        const entries = this.entriesArray().map(([id, v]) => `${stringify(id)}: ${stringify(v)}`).join(', ');
+        return entries.length === 0 ? `IndexArray[ ]` : `IndexArray[ ${entries} ]`;
     }
 }

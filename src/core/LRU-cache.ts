@@ -1,7 +1,9 @@
+import { BaseContainer } from "./base";
+
 /**
  * LRUCache is an implementation of least recently used cache with a fixed capacity.
  */
-export class LRUCache<K extends string, V> {
+export class LRUCache<K extends string, V> extends BaseContainer {
     private cache: Record<K, V>;   // Stores the actual key-value pairs
     private next: Record<K, K>;    // Linked list: points to the next newer key
     private prev: Record<K, K>;    // Linked list: points to the previous older key
@@ -12,6 +14,8 @@ export class LRUCache<K extends string, V> {
     private maxKeyLength: number;  // Maximum key length.
 
     constructor(maxSize: number, maxKeyLength: number = Infinity) {
+        super();
+
         this.cache = Object.create(null);
         this.next = Object.create(null);
         this.prev = Object.create(null);
@@ -113,5 +117,9 @@ export class LRUCache<K extends string, V> {
             this.head = key;
         }
         this.tail = key; // Always set as new tail
+    }
+
+    toString(): string {
+        return `LRUCache{ ? }`;
     }
 }

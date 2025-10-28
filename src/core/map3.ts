@@ -1,17 +1,19 @@
+import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
-import { formatValue } from "./format-value";
-import { KVComponent } from "./kv-container";
+import { BaseContainer, KVComponent } from "./base";
 
 /**
  * A Map implementation mapping a triple key to a value.
  */
-export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {
+export class Map3<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {
     private map1 = new Map<KEY1, Map<KEY2, Map<KEY3, VALUE>>>();
 
     constructor();
     constructor(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>);
     constructor(map3: Map3<KEY1, KEY2, KEY3, VALUE>);
     constructor(entries?: Iterable<[KEY1, KEY2, KEY3, VALUE]> | Map3<KEY1, KEY2, KEY3, VALUE>) {
+        super();
+
         if (entries instanceof Map3) {
             for (const [key1, map2] of entries.map1) {
                 const newMap2 = new Map<KEY2, Map<KEY3, VALUE>>();
@@ -289,10 +291,10 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> implements KVComponent<[KEY1, KEY2, K
         const entries: string[] = [];
         for (const [key1, map2] of this.map1) {
             for (const [key2, map3] of map2) {
-                const inner = [...map3].map(([key3, v]) => `${formatValue(key3)} => ${formatValue(v)}`).join(', ');
-                entries.push(`${formatValue(key1)} => ${formatValue(key2)} => { ${inner} }`);
+                const inner = [...map3].map(([key3, v]) => `${stringify(key3)} => ${stringify(v)}`).join(', ');
+                entries.push(`${stringify(key1)} => ${stringify(key2)} => { ${inner} }`);
             }
         }
-        return `Map3(${this.size}){ ${entries.join(', ')} }`.replaceAll("  ", " ");
+        return entries.length === 0 ? `Map(${this.size}){ }` : `Map(${this.size}){ ${entries.join(", ")} }`;
     }
 }

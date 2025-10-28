@@ -1,12 +1,12 @@
+import { stringify } from "../utils/str";
 import { isFunction, isIntegerGte } from "../guard";
-import { formatValue } from "./format-value";
-import { KVComponent } from "./kv-container";
+import { BaseContainer, KVComponent } from "./base";
 
 /**
  * `IndexArray` is a sparse array with non-negative indexes. It stores values
  * to indexes, and each index also has flag telling it has a value.
  */
-export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
+export class IndexArray<VALUE> extends BaseContainer implements KVComponent<[number], VALUE> {
     private static validateIndex(id: number): number {
         if (!isIntegerGte(id, 0)) throw new Error(`Invalid index ${id} - must be an integer >= 0!`);
         return id;
@@ -22,6 +22,8 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
     constructor(arr: IndexArray<VALUE>)
     constructor(entries: Iterable<[number, VALUE]>)
     constructor(entries?: IndexArray<VALUE> | Iterable<[number, VALUE]>) {
+        super();
+
         if (entries instanceof IndexArray) {
             this.posVal = entries.posVal.slice();
             this.hasPos = entries.hasPos.slice();
@@ -296,7 +298,7 @@ export class IndexArray<VALUE> implements KVComponent<[number], VALUE> {
     }
 
     toString(): string {
-        const entries = this.entriesArray().map(([id, v]) => `${formatValue(id)}: ${formatValue(v)}`).join(', ');
-        return `IndexArray[ ${entries} ]`.replaceAll("  ", " ");
+        const entries = this.entriesArray().map(([id, v]) => `${stringify(id)}: ${stringify(v)}`).join(', ');
+        return entries.length === 0 ? `IndexArray[ ]` : `IndexArray[ ${entries} ]`;
     }
 }

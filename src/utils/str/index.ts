@@ -1,4 +1,5 @@
-import { isInteger, isString } from "../../guard";
+import { BaseContainer } from "../../core";
+import { isArray, isFunction, isInteger, isObject, isString } from "../../guard";
 
 export { isString }
 
@@ -135,3 +136,43 @@ export function makeSentenceFromPascal(PascalString: string) {
 
     return sentence;
 }
+
+    export function stringify(value: any): string {
+        if (isString(value)) {
+            return `"${value}"`;
+        }
+        if (isArray(value)) {
+            const inner = value.map(v => stringify(v)).join(", ");
+            return inner.length === 0 ? "[ ]" : `[ ${inner} ]`;
+        }
+        if (value instanceof BaseContainer) {
+            return value.toString();
+        }
+        if (value instanceof Map) {
+            const entries = Array.from(value.entries())
+                .map(([k, v]) => `${stringify(k)} => ${stringify(v)}`)
+                .join(", ");
+            return entries.length === 0 ? `Map(${value.size}){ }` : `Map(${value.size}){ ${entries} }`;
+        }
+        if (value instanceof Set) {
+            const entries = Array.from(value.values())
+                .map(v => stringify(v))
+                .join(", ");
+            return entries.length === 0 ? "Set{ }" : `Set{ ${entries} }`;
+        }
+        if (isObject(value)) {
+            const entries = Object.entries(value).map(
+                ([key, val]) => `${stringify(key)}: ${stringify(val)}`
+            );
+            return entries.length === 0 ? "{ }" : `{ ${entries.join(", ")} }`;
+        }
+        if (isFunction(value)) {
+            return `Function(...) { ? }`;
+        }
+        if (value instanceof WeakMap) return "WeakMap{ ? }";
+        if (value instanceof WeakSet) return "WeakSet{ ? }";
+        if (value instanceof Date) return `Date("${value.toISOString()}")`;
+        if (value instanceof RegExp) return value.toString();
+        if (value instanceof Error) return `Error("${value.message}")`;
+        return String(value);
+    }

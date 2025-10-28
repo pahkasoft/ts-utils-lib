@@ -1,14 +1,16 @@
+import { stringify } from "../utils/str";
 import { isDeepEqual, isFunction } from "../guard";
-import { formatValue } from "./format-value";
-import { KVComponent } from "./kv-container";
+import { BaseContainer, KVComponent } from "./base";
 
 /**
  * An abstract base class implementation of a Set data structure.
  */
-export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> implements KVComponent<[VALUE], VALUE> {
+export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> extends BaseContainer implements KVComponent<[VALUE], VALUE> {
     protected data: Set<VALUE>;
 
     constructor(entries?: Iterable<VALUE>) {
+        super();
+
         this.data = new Set(entries ?? []);
 
         /*
@@ -23,7 +25,6 @@ export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> impl
 
     protected abstract valueEquals(a: VALUE, b: VALUE): boolean;
     protected abstract createEmpty<R = VALUE>(): SetBase<R, any>;
-    protected abstract getName(): string;
 
     has(value: VALUE): boolean {
         return this.some(v => this.valueEquals(v, value));
@@ -230,7 +231,7 @@ export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> impl
     }
 
     toString(): string {
-        return `${this.getName()}(${this.size})${formatValue([...this.data])}`.replaceAll("  ", " ");
+        return stringify(this.data);
     }
 }
 
@@ -253,10 +254,6 @@ export class Set1<VALUE> extends SetBase<VALUE, Set1<VALUE>> {
     protected valueEquals(a: VALUE, b: VALUE): boolean {
         return a === b;
     }
-
-    protected getName(): string {
-        return "Set1";
-    }
 }
 
 /**
@@ -277,9 +274,5 @@ export class DeepSet<VALUE> extends SetBase<VALUE, DeepSet<VALUE>> {
 
     protected valueEquals(a: VALUE, b: VALUE): boolean {
         return isDeepEqual(a, b);
-    }
-
-    protected getName(): string {
-        return "DeepSet";
     }
 }

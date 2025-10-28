@@ -1,4 +1,5 @@
 import { isFinite } from "../guard";
+import { BaseContainer } from "./base";
 
 /**
  * `Vec` is a generic vector class with two or more coordinates.
@@ -15,10 +16,12 @@ import { isFinite } from "../guard";
  * console.log(a.clone().equals(a));     // true
  * ```
  */
-export class Vec {
+export class Vec extends BaseContainer  {
     readonly coords: number[];
 
     constructor(...coords: number[]) {
+        super();
+
         if (coords.length < 2) {
             throw new TypeError("Vec needs minumum two coords!")
         }

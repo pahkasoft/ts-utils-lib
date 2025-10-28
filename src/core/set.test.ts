@@ -196,18 +196,18 @@ describe("Set1", () => {
     });
 
     it("Set1 returns correct string", () => {
-        expect(set.toString()).toBe(`Set1(0)[ ]`);
+        expect(set.toString()).toBe(`Set{ }`);
         set.add("a");
         set.add("b");
         set.add("c");
-        expect(set.toString()).toBe(`Set1(3)[ "a", "b", "c" ]`);
+        expect(set.toString()).toBe(`Set{ "a", "b", "c" }`);
     });
 
     it("DeepSet returns correct string", () => {
-        expect(deep.toString()).toBe(`DeepSet(0)[ ]`);
+        expect(deep.toString()).toBe(`Set{ }`);
         deep.add(["a"]);
         deep.add(["bb"]);
         deep.add(["c", "c"]);
-        expect(deep.toString()).toBe(`DeepSet(3)[ [ "a" ], [ "bb" ], [ "c", "c" ] ]`);
+        expect(deep.toString()).toBe(`Set{ [ "a" ], [ "bb" ], [ "c", "c" ] }`);
     });
 });

@@ -133,7 +133,7 @@ describe("SignedIndexArray", () => {
     });
 
     it("should toString()", () => {
-        expect(new Arr().toString()).toEqual(`SignedIndexArray[ ]`);
-        expect(new Arr([[-1, "a"], [2, "b"]]).toString()).toEqual(`SignedIndexArray[ -1: "a", 2: "b" ]`);
+        expect(new Arr().toString()).toEqual(`IndexArray[ ]`);
+        expect(new Arr([[-1, "a"], [2, "b"]]).toString()).toEqual(`IndexArray[ -1: "a", 2: "b" ]`);
     });
 });

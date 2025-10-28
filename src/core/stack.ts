@@ -1,11 +1,12 @@
+import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
 import { Assert } from "..";
-import { formatValue } from "./format-value";
+import { BaseContainer } from "./base";
 
 /**
  * This is a stack data structure.
  */
-export class Stack<T> {
+export class Stack<T> extends BaseContainer  {
     private readonly data: T[] = [];
 
     private assertId(id: number): number {
@@ -90,6 +91,6 @@ export class Stack<T> {
     }
 
     toString(): string {
-        return `Stack(${this.length})${formatValue(this.data)}`;
+        return `Stack(${this.length})${stringify(this.data)}`;
     }
 }

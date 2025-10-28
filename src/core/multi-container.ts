@@ -1,11 +1,13 @@
-import { formatValue } from "./format-value";
-import { KVComponent } from "./kv-container";
+import { stringify } from "../utils/str";
+import { BaseContainer, KVComponent } from "./base";
 
 /**
  * Wrapper class of a key-value container that contain array values.
  */
-export class MultiContainer<K extends any[], V> {
+export class MultiContainer<K extends any[], V> extends BaseContainer {
     constructor(private readonly base: KVComponent<K, V[]>) {
+        super();
+
         /*
         this.keys = this.keys.bind(this);
         this.values = this.values.bind(this);
@@ -77,11 +79,11 @@ export class MultiContainer<K extends any[], V> {
         const entries: string[] = [];
         for (const keys of this.keys()) {
             const arr = this.getAll(...keys);
-            const keyStr = Array.isArray(keys) ? formatValue(keys) : '[ ]';
-            const valuesStr = Array.isArray(arr) ? formatValue(arr) : '[ ]';
+            const keyStr = Array.isArray(keys) ? stringify(keys) : '[ ]';
+            const valuesStr = Array.isArray(arr) ? stringify(arr) : '[ ]';
             entries.push(`${keyStr} => ${valuesStr}`);
         }
-        return `MultiContainer{ ${entries.join(', ')} }`.replaceAll("  ", " ");
+        return entries.length === 0 ? `MultiContainer{ }` : `MultiContainer{ ${entries.join(', ')} }`;
     }
 }
 

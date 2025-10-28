@@ -1,8 +1,8 @@
+export { BaseContainer, KVComponent } from "./base";
 export { Stack } from "./stack";
 export { Vec } from "./vec";
 export { DivRect } from "./div-rect";
 export { LRUCache } from "./LRU-cache";
-export { KVComponent } from "./kv-container";
 export { IndexArray } from "./index-array";
 export { SignedIndexArray } from "./signed-index-array";
 export { DefaultArray } from "./default-array";
