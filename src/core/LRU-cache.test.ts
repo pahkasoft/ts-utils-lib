@@ -27,4 +27,13 @@ describe("LRUCache", () => {
         c.set("abc", 10); // too long, should be ignored
         expect(c.get("abc")).toBeUndefined();
     });
+
+    it("toString oututs cache", () => {
+        const c = new LRUCache<string, number>(3, 2); // max key length 2
+        expect(c.toString()).toBe(`Cache(0){ }`);
+        c.set("b", 10);
+        c.set("a", -11);
+        c.set("c", 12);
+        expect(c.toString()).toBe(`Cache(3){ "b": 10, "a": -11, "c": 12 }`);
+    });
 });

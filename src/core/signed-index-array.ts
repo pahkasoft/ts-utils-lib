@@ -6,7 +6,7 @@ import { BaseContainer, KVComponent } from "./base";
  * `IndexArray` is a sparse array with positive and negative indexes. It stores
  * values to indexes, and each index also has flag telling it has a value.
  */
-export class SignedIndexArray<VALUE> extends BaseContainer  implements KVComponent<[number], VALUE> {
+export class SignedIndexArray<VALUE> extends BaseContainer implements KVComponent<[number], VALUE> {
     private static toNegIndex(id: number): number {
         return -id - 1;
     }
@@ -348,7 +348,14 @@ export class SignedIndexArray<VALUE> extends BaseContainer  implements KVCompone
     }
 
     toString(): string {
+        // Format full pos only array as regular array.
+        let isRegularArray = this.hasNeg.length === 0;
+        for (let i = 0; i < this.hasPos.length && isRegularArray; i++)
+            if (!this.hasPos[i]) isRegularArray = false;
+        if (isRegularArray)
+            return stringify(this.posVal.slice(0, this.hasPos.length));
+
         const entries = this.entriesArray().map(([id, v]) => `${stringify(id)}: ${stringify(v)}`).join(', ');
-        return entries.length === 0 ? `IndexArray[ ]` : `IndexArray[ ${entries} ]`;
+        return entries.length === 0 ? `[ ]` : `[ ${entries} ]`;
     }
 }

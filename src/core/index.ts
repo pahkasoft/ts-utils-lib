@@ -1,4 +1,4 @@
-export { BaseContainer, KVComponent } from "./base";
+export { BaseContainer, KVComponent, ValueEqualsFn } from "./base";
 export { Stack } from "./stack";
 export { Vec } from "./vec";
 export { DivRect } from "./div-rect";
@@ -6,8 +6,8 @@ export { LRUCache } from "./LRU-cache";
 export { IndexArray } from "./index-array";
 export { SignedIndexArray } from "./signed-index-array";
 export { DefaultArray } from "./default-array";
-export { Map1 } from "./map1";
-export { Map2 } from "./map2";
-export { Map3 } from "./map3";
-export { SetBase, Set1, DeepSet } from "./set";
+export { UniMap } from "./uni-map";
+export { BiMap } from "./bi-map";
+export { TriMap } from "./tri-map";
+export { ValueSet } from "./set";
 export { MultiContainer, asMulti } from "./multi-container";

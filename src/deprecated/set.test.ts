@@ -1,12 +1,12 @@
-import { ValueSet } from "./set";
+import { DeepSet, Set1 } from "./set";
 
 describe("RefSet", () => {
-    let set: ValueSet<string>;
-    let deep: ValueSet<string[]>;
+    let set: Set1<string>;
+    let deep: DeepSet<string[]>;
 
     beforeEach(() => {
-        set = new ValueSet();
-        deep = ValueSet.createDeep();
+        set = new Set1();
+        deep = new DeepSet();
     });
 
     it("adds to RefSet and checks values", () => {
@@ -119,7 +119,7 @@ describe("RefSet", () => {
         set.add("1");
         set.add("2");
         const mapped = set.map(v => parseInt(v) * 2);
-        expect(mapped instanceof ValueSet).toBeTrue();
+        expect(mapped instanceof Set1).toBeTrue();
         expect(mapped.has(2)).toBeTrue();
         expect(mapped.has(4)).toBeTrue();
     });

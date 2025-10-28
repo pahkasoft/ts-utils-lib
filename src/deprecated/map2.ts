@@ -1,8 +1,9 @@
 import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
-import { BaseContainer, KVComponent } from "./base";
+import { BaseContainer, KVComponent } from "../core";
 
 /**
+ * @deprecated - Use {@link BiMap} instead. Will be removed in v2.0.0.
  * A Map implementation mapping a double key to a value.
  */
 export class Map2<KEY1, KEY2, VALUE> extends BaseContainer  implements KVComponent<[KEY1, KEY2], VALUE> {

@@ -1,20 +1,30 @@
 import { stringify } from "../utils/str";
 import { isFunction } from "../guard";
-import { BaseContainer, KVComponent } from "./base";
+import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
 
 /**
  * A Map implementation mapping a triple key to a value.
  */
-export class Map3<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {
+export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {
     private map1 = new Map<KEY1, Map<KEY2, Map<KEY3, VALUE>>>();
+    private valueEquals: ValueEqualsFn;
 
     constructor();
+    constructor(valueEqualsFn: ValueEqualsFn);
     constructor(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>);
-    constructor(map3: Map3<KEY1, KEY2, KEY3, VALUE>);
-    constructor(entries?: Iterable<[KEY1, KEY2, KEY3, VALUE]> | Map3<KEY1, KEY2, KEY3, VALUE>) {
+    constructor(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>, valueEqualsFn: ValueEqualsFn);
+    constructor(map3: TriMap<KEY1, KEY2, KEY3, VALUE>);
+    constructor(map3: TriMap<KEY1, KEY2, KEY3, VALUE>, valueEqualsFn: ValueEqualsFn);
+    constructor(...args: unknown[]) {
         super();
 
-        if (entries instanceof Map3) {
+        this.valueEquals = isFunction(args[args.length - 1])
+            ? args.pop() as ValueEqualsFn
+            : ValueEqualsRef;
+
+        const entries = args[0] as TriMap<KEY1, KEY2, KEY3, VALUE> | Iterable<[KEY1, KEY2, KEY3, VALUE]>;
+
+        if (entries instanceof TriMap) {
             for (const [key1, map2] of entries.map1) {
                 const newMap2 = new Map<KEY2, Map<KEY3, VALUE>>();
                 for (const [key2, map3] of map2) {
@@ -109,7 +119,7 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVCo
         return this.size === 0;
     }
 
-    forEach(callbackfn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, map2: Map3<KEY1, KEY2, KEY3, VALUE>) => void, thisArg?: any): void {
+    forEach(callbackfn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, map2: TriMap<KEY1, KEY2, KEY3, VALUE>) => void, thisArg?: any): void {
         this.map1.forEach((map2, key1) => map2.forEach((map3, key2) => map3.forEach((value, key3) => callbackfn.call(thisArg, value, key1, key2, key3, this))));
     }
 
@@ -165,11 +175,11 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVCo
         yield* this.entries();
     }
 
-    clone(): Map3<KEY1, KEY2, KEY3, VALUE> {
-        return new Map3(this);
+    clone(): TriMap<KEY1, KEY2, KEY3, VALUE> {
+        return new TriMap(this);
     }
 
-    merge(other: Map3<KEY1, KEY2, KEY3, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => VALUE): this {
+    merge(other: TriMap<KEY1, KEY2, KEY3, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => VALUE): this {
         for (const [key1, key2, key3, value] of other.entries()) {
             if (this.has(key1, key2, key3) && conflictResolver) {
                 this.set(key1, key2, key3, conflictResolver(this.get(key1, key2, key3)!, value, key1, key2, key3));
@@ -203,11 +213,11 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVCo
         return true;
     }
 
-    filter<S extends VALUE>(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: Map3<KEY1, KEY2, KEY3, VALUE>) => value is S): Map3<KEY1, KEY2, KEY3, S>;
-    filter(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: Map3<KEY1, KEY2, KEY3, VALUE>) => unknown): Map3<KEY1, KEY2, KEY3, VALUE>;
-    filter(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: Map3<KEY1, KEY2, KEY3, VALUE>) => unknown) {
+    filter<S extends VALUE>(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: TriMap<KEY1, KEY2, KEY3, VALUE>) => value is S): TriMap<KEY1, KEY2, KEY3, S>;
+    filter(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: TriMap<KEY1, KEY2, KEY3, VALUE>) => unknown): TriMap<KEY1, KEY2, KEY3, VALUE>;
+    filter(predicate: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3, array: TriMap<KEY1, KEY2, KEY3, VALUE>) => unknown) {
         // Preserve subclass type using the constructor
-        const result = new (this.constructor as { new(): Map3<KEY1, KEY2, KEY3, VALUE> })();
+        const result = new (this.constructor as { new(): TriMap<KEY1, KEY2, KEY3, VALUE> })();
         for (const [key1, map2] of this.map1) {
             for (const [key2, map3] of map2) {
                 for (const [key3, value] of map3) {
@@ -263,8 +273,8 @@ export class Map3<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVCo
         return result;
     }
 
-    mapValues<R = VALUE>(fn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => R): Map3<KEY1, KEY2, KEY3, R> {
-        let result = new Map3<KEY1, KEY2, KEY3, R>();
+    mapValues<R = VALUE>(fn: (value: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => R): TriMap<KEY1, KEY2, KEY3, R> {
+        let result = new TriMap<KEY1, KEY2, KEY3, R>();
         for (const [key1, map2] of this.map1) {
             for (const [key2, map3] of map2) {
                 for (const [key3, value] of map3) {

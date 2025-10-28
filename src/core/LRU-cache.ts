@@ -1,3 +1,4 @@
+import { stringify } from "../utils/str";
 import { BaseContainer } from "./base";
 
 /**
@@ -120,6 +121,6 @@ export class LRUCache<K extends string, V> extends BaseContainer {
     }
 
     toString(): string {
-        return `LRUCache{ ? }`;
+        return `Cache(${this.size})${stringify(this.cache)}`;
     }
 }

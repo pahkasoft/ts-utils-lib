@@ -1,6 +1,6 @@
-import { stringify } from "../utils/str";
 import { isFunction, isIntegerGte } from "../guard";
 import { BaseContainer, KVComponent } from "./base";
+import { stringify } from "../utils/str";
 
 /**
  * `IndexArray` is a sparse array with non-negative indexes. It stores values
@@ -298,7 +298,14 @@ export class IndexArray<VALUE> extends BaseContainer implements KVComponent<[num
     }
 
     toString(): string {
+        // Format full array as regular array.
+        let isRegularArray = true;
+        for (let i = 0; i < this.hasPos.length && isRegularArray; i++)
+            if (!this.hasPos[i]) isRegularArray = false;
+        if (isRegularArray)
+            return stringify(this.posVal.slice(0, this.hasPos.length));
+
         const entries = this.entriesArray().map(([id, v]) => `${stringify(id)}: ${stringify(v)}`).join(', ');
-        return entries.length === 0 ? `IndexArray[ ]` : `IndexArray[ ${entries} ]`;
+        return entries.length === 0 ? `[ ]` : `[ ${entries} ]`;
     }
 }

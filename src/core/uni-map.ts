@@ -1,20 +1,30 @@
 import { stringify } from "../utils/str";
-import { isFunction } from "../guard";
-import { BaseContainer, KVComponent } from "./base";
+import { isFunction, isDeepEqual } from "../guard";
+import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
 
 /**
  * A Map implementation mapping a single key to a value.
  */
-export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KEY1], VALUE> {
+export class UniMap<KEY1, VALUE> extends BaseContainer implements KVComponent<[KEY1], VALUE> {
     private map1: Map<KEY1, VALUE>;
+    private valueEquals: ValueEqualsFn;
 
     constructor();
-    constructor(map1: Map1<KEY1, VALUE>)
+    constructor(valueEqualsFn: ValueEqualsFn);
+    constructor(uniMap: UniMap<KEY1, VALUE>)
+    constructor(uniMmap: UniMap<KEY1, VALUE>, valueEqualsFn: ValueEqualsFn)
     constructor(entries: Iterable<[KEY1, VALUE]>)
-    constructor(entries?: Map1<KEY1, VALUE> | Iterable<[KEY1, VALUE]>) {
+    constructor(entries: Iterable<[KEY1, VALUE]>, valueEqualsFn: ValueEqualsFn)
+    constructor(...args: unknown[]) {
         super();
 
-        this.map1 = entries instanceof Map1 ? new Map(entries.map1) : new Map(entries);
+        this.valueEquals = isFunction(args[args.length - 1])
+            ? args.pop() as ValueEqualsFn
+            : ValueEqualsRef;
+
+        const entries = args[0] as UniMap<KEY1, VALUE> | Iterable<[KEY1, VALUE]>;
+
+        this.map1 = entries instanceof UniMap ? new Map(entries.map1) : new Map(entries);
 
         /*
         this.keys = this.keys.bind(this);
@@ -24,6 +34,13 @@ export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KE
         this.kvValues = this.kvValues.bind(this);
         this.kvEntries = this.kvEntries.bind(this);
         */
+    }
+
+    static createDeep<KEY1, VALUE>(): UniMap<KEY1, VALUE>;
+    static createDeep<KEY1, VALUE>(set: UniMap<KEY1, VALUE>): UniMap<KEY1, VALUE>;
+    static createDeep<KEY1, VALUE>(entries: Iterable<[KEY1, VALUE]>): UniMap<KEY1, VALUE>;
+    static createDeep<KEY1, VALUE>(arg?: UniMap<KEY1, VALUE> | Iterable<[KEY1, VALUE]>) {
+        return arg ? new UniMap<KEY1, VALUE>(arg, isDeepEqual) : new UniMap<KEY1, VALUE>(isDeepEqual);
     }
 
     has(key1: KEY1): boolean {
@@ -72,7 +89,7 @@ export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KE
         return this.size === 0;
     }
 
-    forEach(callbackfn: (value: VALUE, key1: KEY1, map1: Map1<KEY1, VALUE>) => void, thisArg?: any): void {
+    forEach(callbackfn: (value: VALUE, key1: KEY1, map1: UniMap<KEY1, VALUE>) => void, thisArg?: any): void {
         this.map1.forEach((value, key1) => callbackfn.call(thisArg, value, key1, this));
     }
 
@@ -123,11 +140,11 @@ export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KE
         yield* this.entries();
     }
 
-    clone(): Map1<KEY1, VALUE> {
-        return new Map1(this);
+    clone(): UniMap<KEY1, VALUE> {
+        return new UniMap(this);
     }
 
-    merge(other: Map1<KEY1, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1) => VALUE): this {
+    merge(other: UniMap<KEY1, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1) => VALUE): this {
         for (const [key1, value] of other.entries()) {
             if (this.has(key1) && conflictResolver) {
                 this.set(key1, conflictResolver(this.get(key1)!, value, key1));
@@ -153,11 +170,11 @@ export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KE
         return true;
     }
 
-    filter<S extends VALUE>(predicate: (value: VALUE, key1: KEY1, array: Map1<KEY1, VALUE>) => value is S): Map1<KEY1, S>;
-    filter(predicate: (value: VALUE, key1: KEY1, array: Map1<KEY1, VALUE>) => unknown): Map1<KEY1, VALUE>;
-    filter(predicate: (value: VALUE, key1: KEY1, array: Map1<KEY1, VALUE>) => unknown) {
+    filter<S extends VALUE>(predicate: (value: VALUE, key1: KEY1, array: UniMap<KEY1, VALUE>) => value is S): UniMap<KEY1, S>;
+    filter(predicate: (value: VALUE, key1: KEY1, array: UniMap<KEY1, VALUE>) => unknown): UniMap<KEY1, VALUE>;
+    filter(predicate: (value: VALUE, key1: KEY1, array: UniMap<KEY1, VALUE>) => unknown) {
         // Preserve subclass type using the constructor
-        const result = new (this.constructor as { new(): Map1<KEY1, VALUE> })();
+        const result = new (this.constructor as { new(): UniMap<KEY1, VALUE> })();
         for (const [key1, value] of this.map1) {
             if (predicate(value, key1, this)) result.set(key1, value);
         }
@@ -205,8 +222,8 @@ export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KE
         return result;
     }
 
-    mapValues<R = VALUE>(fn: (value: VALUE, key1: KEY1) => R): Map1<KEY1, R> {
-        let result = new Map1<KEY1, R>();
+    mapValues<R = VALUE>(fn: (value: VALUE, key1: KEY1) => R): UniMap<KEY1, R> {
+        let result = new UniMap<KEY1, R>();
         for (const [key1, value] of this.map1) {
             result.set(key1, fn(value, key1));
         }
@@ -219,6 +236,6 @@ export class Map1<KEY1, VALUE> extends BaseContainer  implements KVComponent<[KE
 
     toString(): string {
         const entries = [...this.map1].map(([k, v]) => `${stringify(k)} => ${stringify(v)}`).join(', ');
-        return entries.length === 0 ?  `Map(${this.size}){ }` : `Map(${this.size}){ ${entries} }`;
+        return entries.length === 0 ? `Map(${this.size}){ }` : `Map(${this.size}){ ${entries} }`;
     }
 }

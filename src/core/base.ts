@@ -1,3 +1,8 @@
+
+export type ValueEqualsFn = <VALUE>(a: VALUE, b: VALUE) => boolean;
+
+export const ValueEqualsRef: ValueEqualsFn = <VALUE>(a: VALUE, b: VALUE) => a === b;
+
 export interface KVComponent<K extends any[], VALUE> {
     get size(): number;
     isEmpty(): boolean;

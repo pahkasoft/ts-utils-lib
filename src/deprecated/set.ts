@@ -1,30 +1,18 @@
 import { stringify } from "../utils/str";
 import { isDeepEqual, isFunction } from "../guard";
-import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef as ValueEqualsDefaultFn } from "./base";
+import { BaseContainer, KVComponent } from "../core";
 
 /**
- * An implementation of a Set data structure.
+ * @deprecated - Use {@link ValueSet} instead. Will be removed in v2.0.0.
+ * An abstract base class implementation of a Set data structure.
  */
-export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE], VALUE> {
-    private data: Set<VALUE>;
-    private valueEquals: ValueEqualsFn;
+export abstract class SetBase<VALUE, CLS extends SetBase<VALUE, CLS> = any> extends BaseContainer implements KVComponent<[VALUE], VALUE> {
+    protected data: Set<VALUE>;
 
-    constructor();
-    constructor(valueEqualsFn: ValueEqualsFn);
-    constructor(set: ValueSet<VALUE>);
-    constructor(set: ValueSet<VALUE>, valueEqualsFn: ValueEqualsFn);
-    constructor(entries: Iterable<VALUE>);
-    constructor(entries: Iterable<VALUE>, valueEqualsFn: ValueEqualsFn);
-    constructor(...args: unknown[]) {
+    constructor(entries?: Iterable<VALUE>) {
         super();
 
-        this.valueEquals = isFunction(args[args.length - 1])
-            ? args.pop() as ValueEqualsFn
-            : ValueEqualsDefaultFn;
-
-        const entries = args[0] as ValueSet<VALUE> | Iterable<VALUE>;
-
-        this.data = new Set(entries instanceof ValueSet ? entries.data : entries);
+        this.data = new Set(entries ?? []);
 
         /*
         this.keys = this.keys.bind(this);
@@ -36,12 +24,8 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
         */
     }
 
-    static createDeep<VALUE>(): ValueSet<VALUE>;
-    static createDeep<VALUE>(set: ValueSet<VALUE>): ValueSet<VALUE>;
-    static createDeep<VALUE>(entries: Iterable<VALUE>): ValueSet<VALUE>;
-    static createDeep<VALUE>(arg?: ValueSet<VALUE> | Iterable<VALUE>) {
-        return arg ? new ValueSet<VALUE>(arg, isDeepEqual) : new ValueSet<VALUE>(isDeepEqual);
-    }
+    protected abstract valueEquals(a: VALUE, b: VALUE): boolean;
+    protected abstract createEmpty<R = VALUE>(): SetBase<R, any>;
 
     has(value: VALUE): boolean {
         return this.some(v => this.valueEquals(v, value));
@@ -56,7 +40,7 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
     /** @internal - This method exists only for interface `KVComponent` compatibility.*/
     set(key: VALUE, value: VALUE): void {
         if (!this.valueEquals(key, value))
-            throw new TypeError("ValueSet.set() requires key === value.");
+            throw new TypeError("SetBase.set() requires key === value.");
         this.add(value);
     }
 
@@ -108,7 +92,7 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
         return this.size === 0;
     }
 
-    forEach(callbackfn: (value: VALUE, set: ValueSet<VALUE>) => void, thisArg?: any): void {
+    forEach(callbackfn: (value: VALUE, set1: SetBase<VALUE>) => void, thisArg?: any): void {
         this.data.forEach(value => callbackfn.call(thisArg, value, this));
     }
 
@@ -146,13 +130,13 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
         yield* this.values();
     }
 
-    clone(): ValueSet<VALUE> {
-        const result = new ValueSet<VALUE>();
+    clone(): SetBase<VALUE> {
+        const result = this.createEmpty();
         for (const v of this.values()) result.add(v);
         return result;
     }
 
-    merge(other: ValueSet<VALUE>): this {
+    merge(other: SetBase<VALUE>): this {
         for (const value of other.values()) {
             this.add(value);
         }
@@ -173,10 +157,10 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
         return true;
     }
 
-    filter<R extends VALUE>(predicate: (value: VALUE, set: ValueSet<VALUE>) => value is R): ValueSet<R>;
-    filter(predicate: (value: VALUE, set1: ValueSet<VALUE>) => unknown): ValueSet<VALUE>;
-    filter(predicate: (value: VALUE, set1: ValueSet<VALUE>) => unknown) {
-        const result = new ValueSet<VALUE>();
+    filter<R extends VALUE>(predicate: (value: VALUE, set1: SetBase<VALUE, any>) => value is R): SetBase<R, any>;
+    filter(predicate: (value: VALUE, set1: SetBase<VALUE>) => unknown): SetBase<VALUE, any>;
+    filter(predicate: (value: VALUE, set1: SetBase<VALUE>) => unknown) {
+        const result = this.createEmpty();
         for (const value of this.data)
             if (predicate(value, this)) result.add(value);
         return result;
@@ -190,7 +174,7 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
 
         if (first.done) {
             if (arguments.length < 2) {
-                throw new TypeError("Reduce of empty ValueSet with no initial value!");
+                throw new TypeError("Reduce of empty SetBase with no initial value!");
             }
             return init!;
         }
@@ -215,8 +199,8 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
         return acc;
     }
 
-    mapValues<R = VALUE>(fn: (value: VALUE) => R): ValueSet<R> {
-        let result = new ValueSet<R>();
+    mapValues<R = VALUE>(fn: (value: VALUE) => R): SetBase<R, any> {
+        let result = this.createEmpty<R>();
         for (const value of this.data) {
             result.add(fn(value));
         }
@@ -231,8 +215,8 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
         return result;
     }
 
-    map<R = VALUE>(fn: (value: VALUE) => R): ValueSet<R> {
-        let result = new ValueSet<R>();
+    map<R = VALUE>(fn: (value: VALUE) => R): SetBase<R, any> {
+        let result = this.createEmpty<R>();
         for (const value of this.values()) {
             result.add(fn(value));
         }
@@ -249,5 +233,49 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
 
     toString(): string {
         return stringify(this.data);
+    }
+}
+
+/**
+ * @deprecated - Use {@link ValueSet} instead. Will be removed in v2.0.0.
+ * A simple Set data structure. Comparison of values is done
+ * using === operator (e.g. "a" === "a", but [1, 2] !== [1, 2]).
+ */
+export class Set1<VALUE> extends SetBase<VALUE, Set1<VALUE>> {
+    constructor();
+    constructor(set: SetBase<VALUE>)
+    constructor(entries: Iterable<VALUE>)
+    constructor(entries?: SetBase<VALUE> | Iterable<VALUE>) {
+        super(entries);
+    }
+
+    protected createEmpty<R = VALUE>(): Set1<R> {
+        return new Set1<R>();
+    }
+
+    protected valueEquals(a: VALUE, b: VALUE): boolean {
+        return a === b;
+    }
+}
+
+/**
+ * @deprecated - Use {@link ValueSet}.createDeep() instead. Will be removed in v2.0.0.
+ * A simple Set data structure, where comparison of values is done
+ * using deep equality (e.g. "a" === "a" and also [1, 2] === [1, 2]).
+ */
+export class DeepSet<VALUE> extends SetBase<VALUE, DeepSet<VALUE>> {
+    constructor();
+    constructor(set: SetBase<VALUE>)
+    constructor(entries: Iterable<VALUE>)
+    constructor(entries?: SetBase<VALUE> | Iterable<VALUE>) {
+        super(entries);
+    }
+
+    protected createEmpty<R = VALUE>(): DeepSet<R> {
+        return new DeepSet<R>();
+    }
+
+    protected valueEquals(a: VALUE, b: VALUE): boolean {
+        return isDeepEqual(a, b);
     }
 }
