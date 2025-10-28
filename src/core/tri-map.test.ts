@@ -28,15 +28,15 @@ describe("Map3", () => {
     });
 
     it("should getOrDefault()", () => {
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "b", "c", 0)).toEqual(2);
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "c", "d", 0)).toEqual(0);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "b", "c", 0)).toBe(2);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "c", "d", 0)).toBe(0);
     });
 
     it("should getOrCreate()", () => {
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", 1)).toEqual(2);
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", 1)).toEqual(1);
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", () => 1)).toEqual(2);
-        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", () => 1)).toEqual(1);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", 1)).toBe(2);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", 1)).toBe(1);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", () => 1)).toBe(2);
+        expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", () => 1)).toBe(1);
     });
 
     it("should delete()", () => {
@@ -125,7 +125,7 @@ describe("Map3", () => {
 
     it("should reduce()", () => {
         expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v), 10)).toEqual(15);
-        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v))).toEqual(5);
+        expect(new TriMap([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v))).toBe(5);
     });
 
     it("should mapEntries()", () => {
@@ -141,7 +141,7 @@ describe("Map3", () => {
     });
 
     it("should toString()", () => {
-        expect(new TriMap().toString()).toEqual("Map(0){ }");
+        expect(new TriMap().toString()).toBe("Map(0){ }");
         expect(new TriMap([["a", "b", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual(`Map(2){ "a" => "b" => { "c" => "x", "d" => "y" } }`);
         expect(new TriMap([["a", "q", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual(`Map(2){ "a" => "q" => { "c" => "x" }, "a" => "b" => { "d" => "y" } }`);
     });

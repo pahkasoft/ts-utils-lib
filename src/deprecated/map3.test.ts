@@ -6,42 +6,42 @@ function mapArr<K, V>(m: Map<K, V>) {
 
 describe("Map3", () => {
     it("should has()", () => {
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "b", "c")).toEqual(true);
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "c", "d")).toEqual(false);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "b", "c")).toBeTrue();
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "c", "d")).toBeFalse();
     });
 
     it("should get()", () => {
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).get("a", "b", "c")).toEqual(2);
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).get("a", "c", "d")).toEqual(undefined);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).get("a", "b", "c")).toBe(2);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).get("a", "c", "d")).toBeUndefined();
     });
 
     it("should getOrDefault()", () => {
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "b", "c", 0)).toEqual(2);
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "c", "d", 0)).toEqual(0);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "b", "c", 0)).toBe(2);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrDefault("a", "c", "d", 0)).toBe(0);
     });
 
     it("should getOrCreate()", () => {
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", 1)).toEqual(2);
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", 1)).toEqual(1);
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", () => 1)).toEqual(2);
-        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", () => 1)).toEqual(1);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", 1)).toBe(2);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", 1)).toBe(1);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "b", "c", () => 1)).toBe(2);
+        expect(new Map3([["a", "b", "c", 2], ["b", "c", "d", 3]]).getOrCreate("a", "c", "d", () => 1)).toBe(1);
     });
 
     it("should delete()", () => {
         let del = new Map3([["a", "b", "c", 2], ["a", "b", "d", 2], ["b", "c", "d", 3], ["b", "c", "e", 3], ["b", "g", "f", 3]]);
-        expect(del.delete("a")).toEqual(true);
-        expect(del.size).toEqual(3);
-        expect(del.delete("b", "c")).toEqual(true);
-        expect(del.size).toEqual(1);
-        expect(del.delete("b", "g", "x")).toEqual(false);
-        expect(del.delete("b", "g", "f")).toEqual(true);
-        expect(del.size).toEqual(0);
+        expect(del.delete("a")).toBeTrue();
+        expect(del.size).toBe(3);
+        expect(del.delete("b", "c")).toBeTrue();
+        expect(del.size).toBe(1);
+        expect(del.delete("b", "g", "x")).toBeFalse();
+        expect(del.delete("b", "g", "f")).toBeTrue();
+        expect(del.size).toBe(0);
     });
 
     it("should clear()", () => {
         let clr = new Map3([["a", "b", "c", 2], ["a", "b", "d", 2], ["b", "c", "d", 3], ["b", "c", "e", 3], ["b", "g", "f", 3]]);
         clr.clear();
-        expect(clr.size).toEqual(0);
+        expect(clr.size).toBe(0);
     });
 
     it("should get keysArray()", () => {
@@ -69,13 +69,13 @@ describe("Map3", () => {
     });
 
     it("should have some()", () => {
-        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).some((v) => v === 2)).toEqual(true);
-        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).some((v) => v === 1)).toEqual(false);
+        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).some((v) => v === 2)).toBeTrue();
+        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).some((v) => v === 1)).toBeFalse();
     });
 
     it("should have every()", () => {
-        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).every((v, k1) => k1 === "a")).toEqual(true);
-        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).every((v, k1, k2, k3) => k3 === "c")).toEqual(false);
+        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).every((v, k1) => k1 === "a")).toBeTrue();
+        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).every((v, k1, k2, k3) => k3 === "c")).toBeFalse();
     });
 
     it("should filter()", () => {
@@ -84,13 +84,13 @@ describe("Map3", () => {
         let fltr = new Map3<number, string, boolean, A | B>([[0, "a", true, new A()], [1, "b", false, new B()]]);
         let fltrA = fltr.filter(v => v instanceof A);
         let fltrB = fltr.filter(v => v instanceof B);
-        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
-        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toBeTrue();
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toBeTrue();
     });
 
     it("should reduce()", () => {
         expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v), 10)).toEqual(15);
-        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v))).toEqual(5);
+        expect(new Map3([["a", "b", "c", 2], ["a", "b", "d", 3]]).reduce((acc, v, k1, k2, k3) => (acc + v))).toBe(5);
     });
 
     it("should mapEntries()", () => {
@@ -106,7 +106,7 @@ describe("Map3", () => {
     });
 
     it("should toString()", () => {
-        expect(new Map3().toString()).toEqual("Map(0){ }");
+        expect(new Map3().toString()).toBe("Map(0){ }");
         expect(new Map3([["a", "b", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual(`Map(2){ "a" => "b" => { "c" => "x", "d" => "y" } }`);
         expect(new Map3([["a", "q", "c", "x"], ["a", "b", "d", "y"]]).toString()).toEqual(`Map(2){ "a" => "q" => { "c" => "x" }, "a" => "b" => { "d" => "y" } }`);
     });

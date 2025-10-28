@@ -17,48 +17,48 @@ describe("Map1", () => {
     });
 
     it("should get()", () => {
-        expect(new UniMap([["a", 2], ["b", 3]]).get("a")).toEqual(2);
+        expect(new UniMap([["a", 2], ["b", 3]]).get("a")).toBe(2);
         expect(new UniMap([["a", 2], ["b", 3]]).get("c")).toBeUndefined();
     });
 
     it("should deep get()", () => {
         expect(new UniMap([[["a"], 2], [["b"], 3]]).get(["a"])).toBeUndefined();
-        expect(UniMap.createDeep([[["a"], 2], [["b"], 3]]).get(["a"])).toEqual(2);
+        expect(UniMap.createDeep([[["a"], 2], [["b"], 3]]).get(["a"])).toBe(2);
         expect(UniMap.createDeep([[["a"], 2], [["b"], 3]]).get(["c"])).toBeUndefined();
     });
 
     it("should getOrDefault()", () => {
-        expect(new UniMap([["a", 2], ["b", 3]]).getOrDefault("a", 0)).toEqual(2);
-        expect(new UniMap([["a", 2], ["b", 3]]).getOrDefault("c", 0)).toEqual(0);
+        expect(new UniMap([["a", 2], ["b", 3]]).getOrDefault("a", 0)).toBe(2);
+        expect(new UniMap([["a", 2], ["b", 3]]).getOrDefault("c", 0)).toBe(0);
     });
 
     it("should getOrCreate()", () => {
-        expect(new UniMap([["a", 2], ["b", 3]]).getOrCreate("a", 1)).toEqual(2);
-        expect(new UniMap([["a", 2], ["b", 3]]).getOrCreate("c", 1)).toEqual(1);
-        expect(new UniMap([["a", 2], ["b", 3]]).getOrCreate("a", () => 1)).toEqual(2);
-        expect(new UniMap([["a", 2], ["b", 3]]).getOrCreate("c", () => 1)).toEqual(1);
+        expect(new UniMap([["a", 2], ["b", 3]]).getOrCreate("a", 1)).toBe(2);
+        expect(new UniMap([["a", 2], ["b", 3]]).getOrCreate("c", 1)).toBe(1);
+        expect(new UniMap([["a", 2], ["b", 3]]).getOrCreate("a", () => 1)).toBe(2);
+        expect(new UniMap([["a", 2], ["b", 3]]).getOrCreate("c", () => 1)).toBe(1);
     });
 
     it("should delete()", () => {
         let del = new UniMap([["a", 2], ["b", 2], ["c", 3], ["d", 3], ["g", 3]]);
         expect(del.delete("a")).toBeTrue();
-        expect(del.size).toEqual(4);
+        expect(del.size).toBe(4);
         expect(del.delete("x")).toBeFalse();
-        expect(del.size).toEqual(4);
+        expect(del.size).toBe(4);
     });
 
     it("should deep delete()", () => {
         let del = UniMap.createDeep([[["a"], 2], [["b"], 2], [["c"], 3], [["d"], 3], [["g"], 3]]);
         expect(del.delete(["a"])).toBeTrue();
-        expect(del.size).toEqual(4);
+        expect(del.size).toBe(4);
         expect(del.delete(["x"])).toBeFalse();
-        expect(del.size).toEqual(4);
+        expect(del.size).toBe(4);
     });
 
     it("should clear()", () => {
         let clr = new UniMap([["a", 2], ["b", 2], ["c", 3], ["d", 3], ["g", 3]]);
         clr.clear();
-        expect(clr.size).toEqual(0);
+        expect(clr.size).toBe(0);
     });
 
     it("should get keysArray()", () => {
@@ -112,8 +112,8 @@ describe("Map1", () => {
     });
 
     it("should reduce()", () => {
-        expect(new UniMap([["a", 2], ["b", 3]]).reduce((acc, v, k1) => (acc + k1), "x-")).toEqual("x-ab");
-        expect(new UniMap([["a", 2], ["b", 3]]).reduce((acc, v, k1) => (acc + v))).toEqual(5);
+        expect(new UniMap([["a", 2], ["b", 3]]).reduce((acc, v, k1) => (acc + k1), "x-")).toBe("x-ab");
+        expect(new UniMap([["a", 2], ["b", 3]]).reduce((acc, v, k1) => (acc + v))).toBe(5);
     });
 
     it("should mapEntries()", () => {

@@ -115,8 +115,8 @@ describe("Map2", () => {
     });
 
     it("should reduce()", () => {
-        expect(new BiMap([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v), "X")).toEqual("XYZ");
-        expect(new BiMap([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v))).toEqual("YZ");
+        expect(new BiMap([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v), "X")).toBe("XYZ");
+        expect(new BiMap([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v))).toBe("YZ");
     });
 
     it("should mapEntries()", () => {

@@ -26,9 +26,9 @@ describe("ArrayUtil", () => {
         expect(ArrayUtils.getRangeArray(-2, 3)).toEqual([-2, -1, 0, 1, 2, 3]);
         expect(ArrayUtils.getRangeArray(3, -2)).toEqual([3, 2, 1, 0, -1, -2]);
 
-        expect(ArrayUtils.arrayContains(["a", "b", "c"], "a")).toEqual(true);
-        expect(ArrayUtils.arrayContains(["a", "b", "c"], "d")).toEqual(false);
-        expect(ArrayUtils.arrayContains([1, 2, 3], 2)).toEqual(true);
-        expect(ArrayUtils.arrayContains([1, 2, 3], 0)).toEqual(false);
+        expect(ArrayUtils.arrayContains(["a", "b", "c"], "a")).toBeTrue();
+        expect(ArrayUtils.arrayContains(["a", "b", "c"], "d")).toBeFalse();
+        expect(ArrayUtils.arrayContains([1, 2, 3], 2)).toBeTrue();
+        expect(ArrayUtils.arrayContains([1, 2, 3], 0)).toBeFalse();
     });
 });

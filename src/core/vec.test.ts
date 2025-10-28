@@ -98,8 +98,8 @@ describe("Vec", () => {
     });
 
     it("toString returns readable format", () => {
-        expect(new Vec(1, 2).toString()).toEqual("Vec(1, 2)");
-        expect(new Vec(3, 4, 5).toString()).toEqual("Vec(3, 4, 5)");
+        expect(new Vec(1, 2).toString()).toBe("Vec(1, 2)");
+        expect(new Vec(3, 4, 5).toString()).toBe("Vec(3, 4, 5)");
     });
 
     it("creates Vec2 using static helper", () => {

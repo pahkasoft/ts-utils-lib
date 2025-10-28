@@ -6,40 +6,40 @@ function mapArr<K, V>(m: Map<K, V>) {
 
 describe("Map2", () => {
     it("should has()", () => {
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).has("a", "b")).toEqual(true);
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).has("a", "c")).toEqual(false);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).has("a", "b")).toBeTrue();
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).has("a", "c")).toBeFalse();
     });
 
     it("should get()", () => {
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).get("a", "b")).toEqual(2);
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).get("a", "c")).toEqual(undefined);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).get("a", "b")).toBe(2);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).get("a", "c")).toBeUndefined();
     });
 
     it("should getOrDefault()", () => {
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrDefault("a", "b", 0)).toEqual(2);
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrDefault("a", "c", 0)).toEqual(0);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrDefault("a", "b", 0)).toBe(2);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrDefault("a", "c", 0)).toBe(0);
     });
 
     it("should getOrCreate()", () => {
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "b", 1)).toEqual(2);
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "c", 1)).toEqual(1);
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "b", () => 1)).toEqual(2);
-        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "c", () => 1)).toEqual(1);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "b", 1)).toBe(2);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "c", 1)).toBe(1);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "b", () => 1)).toBe(2);
+        expect(new Map2([["a", "b", 2], ["b", "c", 3]]).getOrCreate("a", "c", () => 1)).toBe(1);
     });
 
     it("should delete()", () => {
         let del = new Map2([["a", "b", 2], ["a", "c", 2], ["b", "c", 3], ["b", "d", 3], ["g", "f", 3]]);
-        expect(del.delete("a")).toEqual(true);
-        expect(del.size).toEqual(3);
-        expect(del.delete("b", "g")).toEqual(false);
-        expect(del.delete("b", "c")).toEqual(true);
-        expect(del.size).toEqual(2);
+        expect(del.delete("a")).toBeTrue();
+        expect(del.size).toBe(3);
+        expect(del.delete("b", "g")).toBeFalse();
+        expect(del.delete("b", "c")).toBeTrue();
+        expect(del.size).toBe(2);
     });
 
     it("should clear()", () => {
         let clr = new Map2([["a", "b", 2], ["a", "c", 2], ["b", "c", 3], ["b", "d", 3], ["g", "f", 3]]);
         clr.clear();
-        expect(clr.size).toEqual(0);
+        expect(clr.size).toBe(0);
     });
 
     it("should get keysArray()", () => {
@@ -67,13 +67,13 @@ describe("Map2", () => {
     });
 
     it("should have some()", () => {
-        expect(new Map2([["a", "b", 2], ["a", "d", 3]]).some((v) => v === 2)).toEqual(true);
-        expect(new Map2([["a", "b", 2], ["a", "d", 3]]).some((v) => v === 1)).toEqual(false);
+        expect(new Map2([["a", "b", 2], ["a", "d", 3]]).some((v) => v === 2)).toBeTrue();
+        expect(new Map2([["a", "b", 2], ["a", "d", 3]]).some((v) => v === 1)).toBeFalse();
     });
 
     it("should have every()", () => {
-        expect(new Map2([["a", "b", 2], ["a", "d", 3]]).every((v, k1) => k1 === "a")).toEqual(true);
-        expect(new Map2([["a", "b", 2], ["a", "c", 3]]).every((v, k1, k2) => k2 === "b")).toEqual(false);
+        expect(new Map2([["a", "b", 2], ["a", "d", 3]]).every((v, k1) => k1 === "a")).toBeTrue();
+        expect(new Map2([["a", "b", 2], ["a", "c", 3]]).every((v, k1, k2) => k2 === "b")).toBeFalse();
     });
 
     it("should filter()", () => {
@@ -82,13 +82,13 @@ describe("Map2", () => {
         let fltr = new Map2<number, string,  A | B>([[0, "a", new A()], [1, "b", new B()]]);
         let fltrA = fltr.filter(v => v instanceof A);
         let fltrB = fltr.filter(v => v instanceof B);
-        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
-        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toBeTrue();
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toBeTrue();
     });
 
     it("should reduce()", () => {
-        expect(new Map2([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v), "X")).toEqual("XYZ");
-        expect(new Map2([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v))).toEqual("YZ");
+        expect(new Map2([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v), "X")).toBe("XYZ");
+        expect(new Map2([["a", "b", "Y"], ["a", "c", "Z"]]).reduce((acc, v, k1, k2) => (acc + v))).toBe("YZ");
     });
 
     it("should mapEntries()", () => {

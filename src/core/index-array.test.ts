@@ -4,49 +4,49 @@ describe("IndexArray", () => {
     it("should have size", () => {
         let s = new Arr([[17, "a"], [1, "b"]]);
         s.set(17, "x");
-        expect(s.size).toEqual(2);
+        expect(s.size).toBe(2);
         s.set(19, "y");
-        expect(s.size).toEqual(3);
+        expect(s.size).toBe(3);
         s.delete(21);
-        expect(s.size).toEqual(3);
+        expect(s.size).toBe(3);
         s.delete(1);
-        expect(s.size).toEqual(2);
+        expect(s.size).toBe(2);
         s = s.clone();
-        expect(s.size).toEqual(2);
+        expect(s.size).toBe(2);
         s.clear();
-        expect(s.size).toEqual(0);
+        expect(s.size).toBe(0);
     });
 
     it("has()", () => {
-        expect(new Arr([[17, "a"], [1, "b"]]).has(17)).toEqual(true);
-        expect(new Arr([[17, "a"], [1, "b"]]).has(1)).toEqual(true);
-        expect(new Arr([[17, "a"], [1, "b"]]).has(0)).toEqual(false);
+        expect(new Arr([[17, "a"], [1, "b"]]).has(17)).toBeTrue();
+        expect(new Arr([[17, "a"], [1, "b"]]).has(1)).toBeTrue();
+        expect(new Arr([[17, "a"], [1, "b"]]).has(0)).toBeFalse();
         expect(() => new Arr([[17, "a"], [1, "b"]]).has(1.5)).toThrow();
     });
 
     it("should get()", () => {
-        expect(new Arr([[19, "a"], [3, "b"]]).get(19)).toEqual("a");
-        expect(new Arr([[19, "a"], [3, "b"]]).get(3)).toEqual("b");
-        expect(new Arr([[19, "a"], [3, "b"]]).get(0)).toEqual(undefined);
+        expect(new Arr([[19, "a"], [3, "b"]]).get(19)).toBe("a");
+        expect(new Arr([[19, "a"], [3, "b"]]).get(3)).toBe("b");
+        expect(new Arr([[19, "a"], [3, "b"]]).get(0)).toBeUndefined();
     });
 
     it("should getOrDefault()", () => {
-        expect(new Arr([[19, "a"], [3, "b"]]).getOrDefault(19, "x")).toEqual("a");
-        expect(new Arr([[19, "a"], [3, "b"]]).getOrDefault(0, "x")).toEqual("x");
+        expect(new Arr([[19, "a"], [3, "b"]]).getOrDefault(19, "x")).toBe("a");
+        expect(new Arr([[19, "a"], [3, "b"]]).getOrDefault(0, "x")).toBe("x");
     });
 
     it("should getOrCreate()", () => {
-        expect(new Arr([[2, "a"], [3, "b"]]).getOrCreate(2, "x")).toEqual("a");
-        expect(new Arr([[2, "a"], [3, "b"]]).getOrCreate(1, "x")).toEqual("x");
-        expect(new Arr([[2, "a"], [3, "b"]]).getOrCreate(3, () => "x")).toEqual("b");
-        expect(new Arr([[2, "a"], [3, "b"]]).getOrCreate(15, () => "x")).toEqual("x");
+        expect(new Arr([[2, "a"], [3, "b"]]).getOrCreate(2, "x")).toBe("a");
+        expect(new Arr([[2, "a"], [3, "b"]]).getOrCreate(1, "x")).toBe("x");
+        expect(new Arr([[2, "a"], [3, "b"]]).getOrCreate(3, () => "x")).toBe("b");
+        expect(new Arr([[2, "a"], [3, "b"]]).getOrCreate(15, () => "x")).toBe("x");
     });
 
     it("should delete()", () => {
         let d = new Arr([[15, "a"], [17, "b"], [0, "c"], [1, "d"], [3, "g"]]);
-        expect(d.delete(17)).toEqual(true);
-        expect(d.delete(15)).toEqual(true);
-        expect(d.delete(2)).toEqual(false);
+        expect(d.delete(17)).toBeTrue();
+        expect(d.delete(15)).toBeTrue();
+        expect(d.delete(2)).toBeFalse();
         expect(d.entriesArray()).toEqual([[0, "c"], [1, "d"], [3, "g"]]);
     });
 
@@ -61,8 +61,8 @@ describe("IndexArray", () => {
         let idStr = " ";
         let elStr = " ";
         arr.forEach((e, i) => { idStr += i + " "; elStr += e + " "; });
-        expect(idStr).toEqual(" 8 23 25 99 ");
-        expect(elStr).toEqual(" 13 3 5 0 ");
+        expect(idStr).toBe(" 8 23 25 99 ");
+        expect(elStr).toBe(" 13 3 5 0 ");
     });
 
     it("should get indicesArray()", () => {
@@ -90,13 +90,13 @@ describe("IndexArray", () => {
     });
 
     it("should have some()", () => {
-        expect(new Arr([[2, "a"], [3, "d"]]).some((v) => v === "a")).toEqual(true);
-        expect(new Arr([[2, "a"], [3, "d"]]).some((v) => v === "b")).toEqual(false);
+        expect(new Arr([[2, "a"], [3, "d"]]).some((v) => v === "a")).toBeTrue();
+        expect(new Arr([[2, "a"], [3, "d"]]).some((v) => v === "b")).toBeFalse();
     });
 
     it("should have every()", () => {
-        expect(new Arr([[2, "a"], [3, "d"]]).every((v, id) => id === 3)).toEqual(false);
-        expect(new Arr([[2, "a"], [3, "d"]]).every((v, id) => id >= 2)).toEqual(true);
+        expect(new Arr([[2, "a"], [3, "d"]]).every((v, id) => id === 3)).toBeFalse();
+        expect(new Arr([[2, "a"], [3, "d"]]).every((v, id) => id >= 2)).toBeTrue();
     });
 
     it("should filter()", () => {
@@ -105,13 +105,13 @@ describe("IndexArray", () => {
         let fltr = new Arr<A | B>([[0, new A()], [1, new B()]]);
         let fltrA = fltr.filter(v => v instanceof A);
         let fltrB = fltr.filter(v => v instanceof B);
-        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toEqual(true);
-        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toEqual(true);
+        expect(fltrA.size === 1 && fltrA.every(v => v.a === 1)).toBeTrue();
+        expect(fltrB.size === 1 && fltrB.every(v => v.b === 2)).toBeTrue();
     });
 
     it("should reduce()", () => {
-        expect(new Arr([[2, "a"], [3, "b"]]).reduce((acc, v, id) => (acc + v), "x-")).toEqual("x-ab");
-        expect(new Arr([[2, "a"], [3, "b"]]).reduce((acc, v, id) => (acc + v))).toEqual("ab");
+        expect(new Arr([[2, "a"], [3, "b"]]).reduce((acc, v, id) => (acc + v), "x-")).toBe("x-ab");
+        expect(new Arr([[2, "a"], [3, "b"]]).reduce((acc, v, id) => (acc + v))).toBe("ab");
         expect(() => new Arr<string>().reduce((acc, v, id) => (acc + v))).toThrow();
     });
 
@@ -124,12 +124,12 @@ describe("IndexArray", () => {
     });
 
     it("should equals()", () => {
-        expect(new Arr().equals(new Arr())).toEqual(true);
-        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"], [2, "b"]]))).toEqual(true);
-        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"], [2, "b"]]), (a, b) => false)).toEqual(false);
-        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"], [2, "c"]]))).toEqual(false);
-        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"], [3, "b"]]))).toEqual(false);
-        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"]]))).toEqual(false);
+        expect(new Arr().equals(new Arr())).toBeTrue();
+        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"], [2, "b"]]))).toBeTrue();
+        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"], [2, "b"]]), (a, b) => false)).toBeFalse();
+        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"], [2, "c"]]))).toBeFalse();
+        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"], [3, "b"]]))).toBeFalse();
+        expect(new Arr([[17, "a"], [2, "b"]]).equals(new Arr([[17, "a"]]))).toBeFalse();
     });
 
     it("should toString()", () => {
