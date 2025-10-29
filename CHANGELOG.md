@@ -1,10 +1,12 @@
 # Changelog
 
-## [1.20.0] - 2025-10-
+## [1.20.0] - 2025-10-29
 ### Added
 - Guard.isNotThrowing(), Assert.isNotThrowing().
 - UniMap, BiMap, TriMap, ValueSet.
-- Utils.Str.stringify().
+- UniMap.createDeep() for deep equality single key map.
+- ValueSet.createDeep() for deep equality set.
+- Utils.Str.stringify() for stringifying any object or type.
 
 ### Deprecated
 - Map1 (-> UniMap), Map2 (-> BiMap), Map3 (-> TriMap).
