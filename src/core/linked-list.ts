@@ -1,4 +1,5 @@
-import { EqualityFn } from "./base";
+import { isDeepEqual, isFunction } from "../guard";
+import { DefaultEqualityFn, EqualityFn } from "./base";
 
 export class LinkedListNode<V> {
     public value: V;
@@ -16,9 +17,34 @@ export class LinkedList<V> implements Iterable<V> {
     private _size = 0;
     private readonly equals: EqualityFn<V>;
 
-    constructor(equals?: EqualityFn<V>) {
-        // Default: strict equality
-        this.equals = equals ?? ((a, b) => a === b);
+    constructor();
+    constructor(equals?: EqualityFn<V>);
+    constructor(list: LinkedList<V>);
+    constructor(list: LinkedList<V>, equals?: EqualityFn<V>);
+    constructor(entries: Iterable<V>);
+    constructor(entriews: Iterable<V>, equals?: EqualityFn<V>);
+    constructor(...args: unknown[]) {
+        this.equals = isFunction(args[args.length - 1])
+            ? args.pop() as EqualityFn<V>
+            : DefaultEqualityFn;
+
+        const entries = args[0] as LinkedList<V> | Iterable<V> | undefined;
+
+        if (entries) {
+            for (const v of entries)
+                this.push(v);
+        }
+    }
+
+    static createDeep<V>(): LinkedList<V>;
+    static createDeep<V>(list: LinkedList<V>): LinkedList<V>;
+    static createDeep<V>(entries: Iterable<V>): LinkedList<V>;
+    static createDeep<V>(entries?: LinkedList<V> | Iterable<V>): LinkedList<V> {
+        if (entries) {
+            return new LinkedList<V>(entries, isDeepEqual);
+        } else {
+            return new LinkedList<V>(isDeepEqual);
+        }
     }
 
     get length(): number {
@@ -177,12 +203,12 @@ export class LinkedList<V> implements Iterable<V> {
         yield* this.values();
     }
 
-    *keys(): IterableIterator<number> {
+    * keys(): IterableIterator<number> {
         for (let id = 0; id < this._size; id++)
             yield id;
     }
 
-    *values(): IterableIterator<V> {
+    * values(): IterableIterator<V> {
         let node = this._head;
         while (node) {
             yield node.value;
@@ -190,7 +216,7 @@ export class LinkedList<V> implements Iterable<V> {
         }
     }
 
-    *entries(): IterableIterator<[number, V]> {
+    * entries(): IterableIterator<[number, V]> {
         let node = this._head;
         let id = 0;
         while (node) {
@@ -217,5 +243,9 @@ export class LinkedList<V> implements Iterable<V> {
             for (let i = this._size - 1; i > index; i--) node = node!.prev;
         }
         return node;
+    }
+
+    clone(): LinkedList<V> {
+        return new LinkedList(this);
     }
 }

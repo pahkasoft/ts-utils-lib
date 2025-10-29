@@ -33,4 +33,27 @@ describe("LinkedList", () => {
         expect([...list.values()]).toEqual(["a", "b", "c"]);
         expect([...list.entries()]).toEqual([[0, "a"], [1, "b"], [2, "c"]]);
     });
+
+    it("test createDeep() and clone()", () => {
+        const list1 = new LinkedList<[string]>();
+        const deep1 = LinkedList.createDeep<[string]>();
+
+        list1.push(["a"]);
+        list1.push(["b"]);
+        list1.push(["c"]);
+
+        deep1.push(["a"]);
+        deep1.push(["b"]);
+        deep1.push(["c"]);
+
+        expect(list1.has(["a"])).toBeFalse();
+        expect(deep1.has(["a"])).toBeTrue();
+        expect(deep1.has(["d"])).toBeFalse();
+
+        expect([...list1]).toEqual([["a"], ["b"], ["c"]]);
+        expect([...list1.clone()]).toEqual([["a"], ["b"], ["c"]]);
+
+        expect([...deep1]).toEqual([["a"], ["b"], ["c"]]);
+        expect([...deep1.clone()]).toEqual([["a"], ["b"], ["c"]]);
+    });
 });
