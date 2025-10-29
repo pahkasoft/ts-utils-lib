@@ -1,6 +1,5 @@
 import { BaseContainer } from "../../core";
-import { isArray, isFunction, isInteger, isObject, isString } from "../../guard";
-
+import { isString, isArray, isInteger, isNaNValue, isFinite } from "../../guard";
 export { isString }
 
 /**
@@ -137,42 +136,119 @@ export function makeSentenceFromPascal(PascalString: string) {
     return sentence;
 }
 
-    export function stringify(value: any): string {
-        if (isString(value)) {
-            return `"${value}"`;
-        }
-        if (isArray(value)) {
-            const inner = value.map(v => stringify(v)).join(", ");
-            return inner.length === 0 ? "[ ]" : `[ ${inner} ]`;
-        }
-        if (value instanceof BaseContainer) {
+export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): string {
+    // --- Primitive & simple values ---
+    if (value === null) return "null";
+    if (value === undefined) return "undefined";
+
+    const t = typeof value;
+    switch (t) {
+        case "boolean": return value ? "true" : "false";
+        case "number":
+            if (isNaNValue(value)) return "NaN";
+            if (!isFinite(value))
+                return value < 0 ? "-Infinity" : "Infinity";
             return value.toString();
-        }
-        if (value instanceof Map) {
-            const entries = Array.from(value.entries())
-                .map(([k, v]) => `${stringify(k)} => ${stringify(v)}`)
-                .join(", ");
-            return entries.length === 0 ? `Map(${value.size}){ }` : `Map(${value.size}){ ${entries} }`;
-        }
-        if (value instanceof Set) {
-            const entries = Array.from(value.values())
-                .map(v => stringify(v))
-                .join(", ");
-            return entries.length === 0 ? "Set{ }" : `Set{ ${entries} }`;
-        }
-        if (isObject(value)) {
-            const entries = Object.entries(value).map(
-                ([key, val]) => `${stringify(key)}: ${stringify(val)}`
-            );
-            return entries.length === 0 ? "{ }" : `{ ${entries.join(", ")} }`;
-        }
-        if (isFunction(value)) {
-            return `Function(...) { ? }`;
-        }
-        if (value instanceof WeakMap) return "WeakMap{ ? }";
-        if (value instanceof WeakSet) return "WeakSet{ ? }";
-        if (value instanceof Date) return `Date("${value.toISOString()}")`;
-        if (value instanceof RegExp) return value.toString();
-        if (value instanceof Error) return `Error("${value.message}")`;
-        return String(value);
+        case "bigint": return `${value}n`;
+        case "string": return `"${value}"`;
+        case "symbol": return value.description
+            ? `Symbol(${value.description})`
+            : "Symbol()";
+        case "function":
+            return `[Function${value.name ? ` ${value.name}` : ""}]`;
     }
+
+    // Prevent infinite recursion
+    if (seen.has(value))
+        return "[Circular]";
+    if (maxDepth <= 0)
+        return "[Depth limit]";
+
+    // Mark as seen before descending
+    seen.add(value);
+
+    // --- Containers ---
+    if (isArray(value)) {
+        const inner = value.map(v => stringify(v)).join(", ");
+        return inner.length === 0 ? "[ ]" : `[ ${inner} ]`;
+    }
+
+    // --- Typed arrays ---
+    if (ArrayBuffer.isView(value)) {
+        // covers all TypedArrays + DataView
+        if (value instanceof DataView)
+            return `DataView(${value.byteLength})`;
+        const inner = Array.from(value as any).map(v => stringify(v)).join(", ");
+        return `${value.constructor.name}[ ${inner} ]`;
+    }
+
+    // --- ArrayBuffer ---
+    if (value instanceof ArrayBuffer)
+        return `ArrayBuffer(${value.byteLength})`;
+
+    // --- Map / Set ---
+    if (value instanceof Map) {
+        const entries = Array.from(value.entries())
+            .map(([k, v]) => `${stringify(k)} => ${stringify(v)}`)
+            .join(", ");
+        return entries.length === 0
+            ? `Map(${value.size}){ }`
+            : `Map(${value.size}){ ${entries} }`;
+    }
+
+    if (value instanceof Set) {
+        const entries = Array.from(value.values())
+            .map(v => stringify(v))
+            .join(", ");
+        return entries.length === 0
+            ? `Set(${value.size}){ }`
+            : `Set(${value.size}){ ${entries} }`;
+    }
+
+    if (value instanceof WeakMap)
+        return "WeakMap{ ? }";
+    if (value instanceof WeakSet)
+        return "WeakSet{ ? }";
+
+    // --- Custom container class ---
+    if (typeof BaseContainer !== "undefined" && value instanceof BaseContainer)
+        return value.toString();
+
+    // --- Built-ins ---
+    if (value instanceof Date)
+        return `Date("${value.toISOString()}")`;
+
+    if (value instanceof RegExp)
+        return value.toString();
+
+    if (value instanceof Error)
+        return `${value.name}("${value.message}")`;
+
+    if (value instanceof Promise)
+        return "Promise{ ? }";
+
+    if (value instanceof URL)
+        return `URL("${value.href}")`;
+
+    if (value instanceof URLSearchParams)
+        return `URLSearchParams("${value.toString()}")`;
+
+    // --- Common singletons ---
+    if (value === Math) return "Math";
+    if (value === JSON) return "JSON";
+    if (value === Reflect) return "Reflect";
+    if (value === Intl) return "Intl";
+
+    // --- Plain object or class instance ---
+    if (t === "object") {
+        const ctorName = value.constructor?.name ?? "Object";
+        const entries = Object.entries(value).map(
+            ([key, val]) => `${stringify(key)}: ${stringify(val)}`
+        );
+        if (entries.length === 0) return `${ctorName}{ }`;
+        return `${ctorName}{ ${entries.join(", ")} }`;
+    }
+
+    // --- Fallback ---
+    return String(value);
+}
