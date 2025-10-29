@@ -29,11 +29,20 @@ describe("LRUCache", () => {
     });
 
     it("toString oututs cache", () => {
-        const c = new LRUCache<string, number>(3, 2); // max key length 2
-        expect(c.toString()).toBe(`Cache(0){ }`);
-        c.set("b", 10);
-        c.set("a", -11);
-        c.set("c", 12);
-        expect(c.toString()).toBe(`Cache(3){ "b": 10, "a": -11, "c": 12 }`);
+        const chc1 = new LRUCache<string, number>(3);
+        expect(chc1.toString()).toBe(`LRUCache(0){ }`);
+        chc1.set("a", 10);
+        expect(chc1.toString()).toBe(`LRUCache(1){ "a": 10 }`);
+        chc1.set("b", -11);
+        expect(chc1.toString()).toBe(`LRUCache(2){ "a": 10, "b": -11 }`);
+        chc1.set("c", 12);
+        expect(chc1.toString()).toBe(`LRUCache(3){ "a": 10, "b": -11, "c": 12 }`);
+        chc1.set("a", 1);
+        expect(chc1.toString()).toBe(`LRUCache(3){ "b": -11, "c": 12, "a": 1 }`);
+        const chc2 = new LRUCache<string, string>(3, 3);
+        chc2.set("LongKey", "LongValue");
+        expect(chc2.toString()).toBe(`LRUCache(0){ }`);
+        chc2.set("Lon", "LongValue");
+        expect(chc2.toString()).toBe(`LRUCache(1){ "Lon": "LongValue" }`);
     });
 });

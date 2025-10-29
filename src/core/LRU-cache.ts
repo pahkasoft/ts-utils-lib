@@ -120,7 +120,29 @@ export class LRUCache<K extends string, V> extends BaseContainer {
         this.tail = key; // Always set as new tail
     }
 
+    *keys(): IterableIterator<K> {
+        for (let key = this.head; key != null; key = this.next[key])
+            yield key;
+    }
+
+    *values(): IterableIterator<V> {
+        for (let key = this.head; key != null; key = this.next[key])
+            yield this.cache[key];
+    }
+
+    *entries(): IterableIterator<[K, V]> {
+        for (let key = this.head; key != null; key = this.next[key])
+            yield [key, this.cache[key]];
+    }
+
+    *[Symbol.iterator](): IterableIterator<[K, V]> {
+        yield* this.entries();
+    }
+
     toString(): string {
-        return `Cache(${this.size})${stringify(this.cache)}`;
+        const entries = [...this.entries()];
+        return entries.length === 0
+            ? `LRUCache(0){ }`
+            : `LRUCache(${entries.length}){ ${entries.map(e => `${stringify(e[0])}: ${stringify(e[1])}`).join(", ")} }`;
     }
 }
