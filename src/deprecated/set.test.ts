@@ -1,6 +1,6 @@
 import { DeepSet, Set1 } from "./set";
 
-describe("RefSet", () => {
+describe("Set1 and DeepSet", () => {
     let set: Set1<string>;
     let deep: DeepSet<string[]>;
 
@@ -9,7 +9,7 @@ describe("RefSet", () => {
         deep = new DeepSet();
     });
 
-    it("adds to RefSet and checks values", () => {
+    it("adds to Set1 and DeepSet and checks values", () => {
         expect(set.size).toBe(0);
         set.add("a");
         expect(set.size).toBe(1);
@@ -25,7 +25,7 @@ describe("RefSet", () => {
         expect(deep.has(["a", "b"])).toBeFalse();
     });
 
-    it("RefSet does not add duplicate values", () => {
+    it("Set1 and DeepSet does not add duplicate values", () => {
         set.add("x");
         set.add("x");
         expect(set.size).toBe(1);
@@ -37,7 +37,7 @@ describe("RefSet", () => {
         expect(deep.size).toBe(1);
     });
 
-    it("RefSet deletes values", () => {
+    it("Set1 and DeepSet deletes values", () => {
         set.add("a");
         set.add("b");
         expect(set.delete("a")).toBeTrue();
@@ -93,7 +93,7 @@ describe("RefSet", () => {
         expect(seen).toContain("b");
     });
 
-    it("RefSet maps values", () => {
+    it("Set1 and DeepSet maps values", () => {
         set.add("1");
         set.add("2");
         const mapped = set.map(v => v + v);
@@ -115,7 +115,7 @@ describe("RefSet", () => {
         expect(Array.isArray(arr)).toBeTrue();
     });
 
-    it("map() transforms values into a new RefSet", () => {
+    it("map() transforms values into a new Set1 and DeepSet", () => {
         set.add("1");
         set.add("2");
         const mapped = set.map(v => parseInt(v) * 2);
@@ -132,7 +132,7 @@ describe("RefSet", () => {
         expect(mapped.has("same")).toBeTrue();
     });
 
-    it("RefSet filters values", () => {
+    it("Set1 and DeepSet filters values", () => {
         set.add("a");
         set.add("b");
         const filtered = set.filter(v => v === "a");
@@ -195,19 +195,19 @@ describe("RefSet", () => {
         expect(set.has("new")).toBeTrue();
     });
 
-    it("RefSet returns correct string", () => {
-        expect(set.toString()).toBe(`Set{ }`);
+    it("Set1 and DeepSet returns correct string", () => {
+        expect(set.toString()).toBe(`Set(0){ }`);
         set.add("a");
         set.add("b");
         set.add("c");
-        expect(set.toString()).toBe(`Set{ "a", "b", "c" }`);
+        expect(set.toString()).toBe(`Set(3){ "a", "b", "c" }`);
     });
 
     it("DeepSet returns correct string", () => {
-        expect(deep.toString()).toBe(`Set{ }`);
+        expect(deep.toString()).toBe(`Set(0){ }`);
         deep.add(["a"]);
         deep.add(["bb"]);
         deep.add(["c", "c"]);
-        expect(deep.toString()).toBe(`Set{ [ "a" ], [ "bb" ], [ "c", "c" ] }`);
+        expect(deep.toString()).toBe(`Set(3){ [ "a" ], [ "bb" ], [ "c", "c" ] }`);
     });
 });

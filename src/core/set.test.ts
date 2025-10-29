@@ -1,6 +1,6 @@
 import { ValueSet } from "./set";
 
-describe("RefSet", () => {
+describe("ValueSet", () => {
     let set: ValueSet<string>;
     let deep: ValueSet<string[]>;
 
@@ -9,14 +9,14 @@ describe("RefSet", () => {
         deep = ValueSet.createDeep();
     });
 
-    it("adds to RefSet and checks values", () => {
+    it("adds to ValueSet and checks values", () => {
         expect(set.size).toBe(0);
         set.add("a");
         expect(set.size).toBe(1);
         expect(set.has("a")).toBeTrue();
     });
 
-    it("adds to DeepSet and checks values", () => {
+    it("adds to deep ValueSet and checks values", () => {
         expect(deep.size).toBe(0);
         deep.add(["a"]);
         expect(deep.size).toBe(1);
@@ -25,19 +25,19 @@ describe("RefSet", () => {
         expect(deep.has(["a", "b"])).toBeFalse();
     });
 
-    it("RefSet does not add duplicate values", () => {
+    it("ValueSet does not add duplicate values", () => {
         set.add("x");
         set.add("x");
         expect(set.size).toBe(1);
     });
 
-    it("DeepSet does not add duplicate values", () => {
+    it("deep ValueSet does not add duplicate values", () => {
         deep.add(["x", "y"]);
         deep.add(["x", "y"]);
         expect(deep.size).toBe(1);
     });
 
-    it("RefSet deletes values", () => {
+    it("ValueSet deletes values", () => {
         set.add("a");
         set.add("b");
         expect(set.delete("a")).toBeTrue();
@@ -45,7 +45,7 @@ describe("RefSet", () => {
         expect(set.size).toBe(1);
     });
 
-    it("DeepSet deletes values", () => {
+    it("deep ValueSet deletes values", () => {
         deep.add(["a"]);
         deep.add(["b"]);
         expect(deep.delete(["a"])).toBeTrue();
@@ -93,14 +93,14 @@ describe("RefSet", () => {
         expect(seen).toContain("b");
     });
 
-    it("RefSet maps values", () => {
+    it("ValueSet maps values", () => {
         set.add("1");
         set.add("2");
         const mapped = set.map(v => v + v);
         expect([...mapped]).toEqual(["11", "22"]);
     });
 
-    it("DeepSet maps values", () => {
+    it("deep ValueSet maps values", () => {
         deep.add(["1a"]);
         deep.add(["2b"]);
         const mapped = deep.map(v => "" + v + v);
@@ -115,7 +115,7 @@ describe("RefSet", () => {
         expect(Array.isArray(arr)).toBeTrue();
     });
 
-    it("map() transforms values into a new RefSet", () => {
+    it("map() transforms values into a new ValueSet", () => {
         set.add("1");
         set.add("2");
         const mapped = set.map(v => parseInt(v) * 2);
@@ -132,14 +132,14 @@ describe("RefSet", () => {
         expect(mapped.has("same")).toBeTrue();
     });
 
-    it("RefSet filters values", () => {
+    it("ValueSet filters values", () => {
         set.add("a");
         set.add("b");
         const filtered = set.filter(v => v === "a");
         expect([...filtered]).toEqual(["a"]);
     });
 
-    it("DeepSet filters values", () => {
+    it("deep ValueSet filters values", () => {
         deep.add(["a"]);
         deep.add(["BB"]);
         const filtered = deep.filter(v => v.length === 1 && v[0] === "a");
@@ -195,19 +195,19 @@ describe("RefSet", () => {
         expect(set.has("new")).toBeTrue();
     });
 
-    it("RefSet returns correct string", () => {
-        expect(set.toString()).toBe(`Set{ }`);
+    it("ValueSet returns correct string", () => {
+        expect(set.toString()).toBe(`Set(0){ }`);
         set.add("a");
         set.add("b");
         set.add("c");
-        expect(set.toString()).toBe(`Set{ "a", "b", "c" }`);
+        expect(set.toString()).toBe(`Set(3){ "a", "b", "c" }`);
     });
 
-    it("DeepSet returns correct string", () => {
-        expect(deep.toString()).toBe(`Set{ }`);
+    it("deep ValueSet returns correct string", () => {
+        expect(deep.toString()).toBe(`Set(0){ }`);
         deep.add(["a"]);
         deep.add(["bb"]);
         deep.add(["c", "c"]);
-        expect(deep.toString()).toBe(`Set{ [ "a" ], [ "bb" ], [ "c", "c" ] }`);
+        expect(deep.toString()).toBe(`Set(3){ [ "a" ], [ "bb" ], [ "c", "c" ] }`);
     });
 });
