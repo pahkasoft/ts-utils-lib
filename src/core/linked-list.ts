@@ -174,9 +174,27 @@ export class LinkedList<V> implements Iterable<V> {
 
     /** Iterator support */
     *[Symbol.iterator](): Iterator<V> {
+        yield* this.values();
+    }
+
+    *keys(): IterableIterator<number> {
+        for (let id = 0; id < this._size; id++)
+            yield id;
+    }
+
+    *values(): IterableIterator<V> {
         let node = this._head;
         while (node) {
             yield node.value;
+            node = node.next;
+        }
+    }
+
+    *entries(): IterableIterator<[number, V]> {
+        let node = this._head;
+        let id = 0;
+        while (node) {
+            yield [id++, node.value];
             node = node.next;
         }
     }

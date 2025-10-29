@@ -1,7 +1,7 @@
 import { LinkedList } from "./linked-list";
 
 describe("LinkedList", () => {
-    it("misc tests", () => {
+    it("test basic container ops", () => {
         const list = new LinkedList<number>();
 
         expect(list.toString()).toBe("LinkedList(0)[ ]");
@@ -19,5 +19,18 @@ describe("LinkedList", () => {
 
         list.removeAt(1);
         expect(list.toArray()).toEqual([5, 11, 20]);
+    });
+
+    it("test iterator", () => {
+        const list = new LinkedList<string>();
+
+        list.push("a");
+        list.push("b");
+        list.push("c");
+
+        expect([...list]).toEqual(["a", "b", "c"]);
+        expect([...list.keys()]).toEqual([0, 1, 2]);
+        expect([...list.values()]).toEqual(["a", "b", "c"]);
+        expect([...list.entries()]).toEqual([[0, "a"], [1, "b"], [2, "c"]]);
     });
 });
