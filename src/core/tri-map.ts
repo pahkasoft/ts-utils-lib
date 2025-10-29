@@ -14,7 +14,7 @@ export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KV
 
     constructor();
     constructor(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>);
-    constructor(map3: TriMap<KEY1, KEY2, KEY3, VALUE>);
+    constructor(triMap: TriMap<KEY1, KEY2, KEY3, VALUE>);
     constructor(entries?: Iterable<[KEY1, KEY2, KEY3, VALUE]> | TriMap<KEY1, KEY2, KEY3, VALUE>) {
         super();
 

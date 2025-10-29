@@ -6,8 +6,12 @@ import { BaseContainer } from "./base";
 /**
  * This is a stack data structure.
  */
-export class Stack<T> extends BaseContainer  {
+export class Stack<T> extends BaseContainer {
     private readonly data: T[] = [];
+
+    constructor() {
+        super();
+    }
 
     private assertId(id: number): number {
         Assert.isIntegerBetween(id, 0, this.length - 1, `Stack index ${id} out of range.`);

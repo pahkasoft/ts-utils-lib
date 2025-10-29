@@ -11,4 +11,4 @@ export { BiMap } from "./bi-map";
 export { TriMap } from "./tri-map";
 export { ValueSet } from "./set";
 export { MultiContainer, asMulti } from "./multi-container";
-export { LinkedList, LinkedListNode } from "./linked-list"
+export { LinkedList } from "./linked-list"

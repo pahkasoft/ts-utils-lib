@@ -10,21 +10,19 @@ export class UniMap<KEY, VALUE> extends BaseContainer implements KVComponent<[KE
     private keyEquals: EqualityFn<KEY>;
 
     constructor();
-    constructor(keyEquals: EqualityFn<KEY>);
-    constructor(uniMap: UniMap<KEY, VALUE>)
-    constructor(uniMmap: UniMap<KEY, VALUE>, keyEquals: EqualityFn<KEY>)
-    constructor(entries: Iterable<[KEY, VALUE]>)
-    constructor(entries: Iterable<[KEY, VALUE]>, keyEquals: EqualityFn<KEY>)
+    constructor(equals?: EqualityFn<KEY>);
+    constructor(list: UniMap<KEY, VALUE> | Iterable<[KEY, VALUE]>, equals?: EqualityFn<KEY>);
     constructor(...args: unknown[]) {
         super();
 
-        const [entries, keyEquals] = args.length === 0
-            ? [undefined, undefined]
-            : isFunction(args[0])
-                ? [undefined, args[0] as any]
-                : [args[0] as any, args[1] as any];
+        // Detect equality function if last argument is a function
+        const maybeEquals = args.at(-1);
+        this.keyEquals = isFunction(maybeEquals)
+            ? (args.pop() as EqualityFn<KEY>)
+            : DefaultEqualityFn;
 
-        this.keyEquals = keyEquals ?? DefaultEqualityFn;
+        // Extract optional list or iterable
+        const entries = args[0] as Iterable<[KEY, VALUE]> | UniMap<KEY, VALUE> | undefined;
 
         this.map = new Map(entries);
 

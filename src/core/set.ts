@@ -10,18 +10,18 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
     private equals: EqualityFn<VALUE>;
 
     constructor();
-    constructor(equals: EqualityFn<VALUE>);
-    constructor(set: ValueSet<VALUE>);
-    constructor(set: ValueSet<VALUE>, equals: EqualityFn<VALUE>);
-    constructor(entries: Iterable<VALUE>);
-    constructor(entries: Iterable<VALUE>, equals: EqualityFn<VALUE>);
+    constructor(equals?: EqualityFn<VALUE>);
+    constructor(list: ValueSet<VALUE> | Iterable<VALUE>, equals?: EqualityFn<VALUE>);
     constructor(...args: unknown[]) {
         super();
 
-        this.equals = isFunction(args[args.length - 1])
-            ? args.pop() as EqualityFn<VALUE>
+        // Detect equality function if last argument is a function
+        const maybeEquals = args.at(-1);
+        this.equals = isFunction(maybeEquals)
+            ? (args.pop() as EqualityFn<VALUE>)
             : DefaultEqualityFn;
 
+        // Extract optional list or iterable
         const entries = args[0] as ValueSet<VALUE> | Iterable<VALUE> | undefined;
 
         this.data = new Set(entries);

@@ -1,17 +1,14 @@
 import { isDeepEqual, isFunction } from "../guard";
-import { DefaultEqualityFn, EqualityFn } from "./base";
+import { BaseContainer, DefaultEqualityFn, EqualityFn } from "./base";
 
-export class LinkedListNode<V> {
-    public value: V;
+class LinkedListNode<V> {
     public next: LinkedListNode<V> | null = null;
     public prev: LinkedListNode<V> | null = null;
 
-    constructor(value: V) {
-        this.value = value;
-    }
+    constructor(public value: V) { }
 }
 
-export class LinkedList<V> implements Iterable<V> {
+export class LinkedList<V> extends BaseContainer implements Iterable<V> {
     private _head: LinkedListNode<V> | null = null;
     private _tail: LinkedListNode<V> | null = null;
     private _size = 0;
@@ -19,20 +16,23 @@ export class LinkedList<V> implements Iterable<V> {
 
     constructor();
     constructor(equals?: EqualityFn<V>);
-    constructor(list: LinkedList<V>);
-    constructor(list: LinkedList<V>, equals?: EqualityFn<V>);
-    constructor(entries: Iterable<V>);
-    constructor(entriews: Iterable<V>, equals?: EqualityFn<V>);
+    constructor(list: LinkedList<V> | Iterable<V>, equals?: EqualityFn<V>);
     constructor(...args: unknown[]) {
-        this.equals = isFunction(args[args.length - 1])
-            ? args.pop() as EqualityFn<V>
+        super();
+
+        // Detect equality function if last argument is a function
+        const maybeEquals = args.at(-1);
+        this.equals = isFunction(maybeEquals)
+            ? (args.pop() as EqualityFn<V>)
             : DefaultEqualityFn;
 
+        // Extract optional list or iterable
         const entries = args[0] as LinkedList<V> | Iterable<V> | undefined;
 
         if (entries) {
-            for (const v of entries)
+            for (const v of entries) {
                 this.push(v);
+            }
         }
     }
 

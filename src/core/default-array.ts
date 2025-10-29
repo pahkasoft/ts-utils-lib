@@ -9,19 +9,23 @@ import { BaseContainer, KVComponent } from "./base";
  * delete an index then that index is set to the default value.
  */
 export class DefaultArray<VALUE> extends BaseContainer implements KVComponent<[number], VALUE> {
+    private readonly defaultValue: VALUE;
     private data: VALUE[];
 
-    constructor(values: Iterable<VALUE>, defaultValue: VALUE);
+    constructor(defaultValue: VALUE);
     constructor(length: number, defaultValue: VALUE);
-    constructor(lengthOrValues: number | Iterable<VALUE>, readonly defaultValue: VALUE) {
+    constructor(values: Iterable<VALUE>, defaultValue: VALUE);
+    constructor(...args: unknown[]) {
         super();
 
-        if (typeof lengthOrValues === "number") {
-            this.data = Array(lengthOrValues).fill(defaultValue);
+        this.defaultValue = args.pop()! as VALUE;
+
+        if (typeof args[0] === "number") {
+            this.data = Array(args[0]).fill(this.defaultValue);
         }
         else {
-            this.data = Array.from(lengthOrValues).map(v =>
-                v === undefined ? defaultValue : v
+            this.data = Array.from(args[0] as Iterable<VALUE>).map(v =>
+                v === undefined ? this.defaultValue : v
             );
         }
     }
@@ -149,11 +153,9 @@ export class DefaultArray<VALUE> extends BaseContainer implements KVComponent<[n
         yield* this.entries();
     }
 
-    clone(): this {
-        const ctor = this.constructor as new (len: number, def: VALUE) => this;
-        const clone = new ctor(this.length, this.defaultValue);
-        clone.data = this.data.slice();
-        return clone;
+    clone(): DefaultArray<VALUE> {
+        const ctor = this.constructor as new (entries: Iterable<VALUE>, def: VALUE) => DefaultArray<VALUE>;
+        return new ctor(this.values(), this.defaultValue);
     }
 
     merge(other: DefaultArray<VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, id: number) => VALUE): this {
