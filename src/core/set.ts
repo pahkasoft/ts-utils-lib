@@ -1,30 +1,30 @@
 import { stringify } from "../utils/str";
 import { isDeepEqual, isFunction } from "../guard";
-import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef as ValueEqualsDefaultFn } from "./base";
+import { BaseContainer, KVComponent, EqualityFn, DefaultEqualityFn } from "./base";
 
 /**
  * An implementation of a Set data structure.
  */
 export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE], VALUE> {
     private data: Set<VALUE>;
-    private valueEquals: ValueEqualsFn;
+    private equals: EqualityFn<VALUE>;
 
     constructor();
-    constructor(valueEqualsFn: ValueEqualsFn);
+    constructor(equals: EqualityFn<VALUE>);
     constructor(set: ValueSet<VALUE>);
-    constructor(set: ValueSet<VALUE>, valueEqualsFn: ValueEqualsFn);
+    constructor(set: ValueSet<VALUE>, equals: EqualityFn<VALUE>);
     constructor(entries: Iterable<VALUE>);
-    constructor(entries: Iterable<VALUE>, valueEqualsFn: ValueEqualsFn);
+    constructor(entries: Iterable<VALUE>, equals: EqualityFn<VALUE>);
     constructor(...args: unknown[]) {
         super();
 
-        this.valueEquals = isFunction(args[args.length - 1])
-            ? args.pop() as ValueEqualsFn
-            : ValueEqualsDefaultFn;
+        this.equals = isFunction(args[args.length - 1])
+            ? args.pop() as EqualityFn<VALUE>
+            : DefaultEqualityFn;
 
-        const entries = args[0] as ValueSet<VALUE> | Iterable<VALUE>;
+        const entries = args[0] as ValueSet<VALUE> | Iterable<VALUE> | undefined;
 
-        this.data = new Set(entries instanceof ValueSet ? entries.data : entries);
+        this.data = new Set(entries);
 
         /*
         this.keys = this.keys.bind(this);
@@ -44,9 +44,9 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
     }
 
     has(value: VALUE): boolean {
-        if (this.valueEquals === ValueEqualsDefaultFn)
+        if (this.equals === DefaultEqualityFn)
             return this.data.has(value);
-        return this.some(v => this.valueEquals(v, value));
+        return this.some(v => this.equals(v, value));
     }
 
     add(value: VALUE): VALUE {
@@ -57,7 +57,7 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
 
     /** @internal - This method exists only for interface `KVComponent` compatibility.*/
     set(key: VALUE, value: VALUE): void {
-        if (!this.valueEquals(key, value))
+        if (!this.equals(key, value))
             throw new TypeError("ValueSet.set() requires key === value.");
         this.add(value);
     }
@@ -88,10 +88,10 @@ export class ValueSet<VALUE> extends BaseContainer implements KVComponent<[VALUE
     }
 
     delete(value: VALUE): boolean {
-        if(this.valueEquals === ValueEqualsDefaultFn || this.data.has(value))
+        if (this.equals === DefaultEqualityFn || this.data.has(value))
             return this.data.delete(value);
         for (const v of this.values()) {
-            if (this.valueEquals(v, value)) {
+            if (this.equals(v, value)) {
                 this.data.delete(v);
                 return true;
             }

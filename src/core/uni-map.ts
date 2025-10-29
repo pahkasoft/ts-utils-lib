@@ -1,30 +1,32 @@
 import { stringify } from "../utils/str";
 import { isFunction, isDeepEqual } from "../guard";
-import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
+import { BaseContainer, KVComponent, EqualityFn, DefaultEqualityFn } from "./base";
 
 /**
  * A Map implementation mapping a single key to a value.
  */
 export class UniMap<KEY, VALUE> extends BaseContainer implements KVComponent<[KEY], VALUE> {
     private map: Map<KEY, VALUE>;
-    private valueEquals: ValueEqualsFn;
+    private keyEquals: EqualityFn<KEY>;
 
     constructor();
-    constructor(valueEqualsFn: ValueEqualsFn);
+    constructor(keyEquals: EqualityFn<KEY>);
     constructor(uniMap: UniMap<KEY, VALUE>)
-    constructor(uniMmap: UniMap<KEY, VALUE>, valueEqualsFn: ValueEqualsFn)
+    constructor(uniMmap: UniMap<KEY, VALUE>, keyEquals: EqualityFn<KEY>)
     constructor(entries: Iterable<[KEY, VALUE]>)
-    constructor(entries: Iterable<[KEY, VALUE]>, valueEqualsFn: ValueEqualsFn)
+    constructor(entries: Iterable<[KEY, VALUE]>, keyEquals: EqualityFn<KEY>)
     constructor(...args: unknown[]) {
         super();
 
-        this.valueEquals = isFunction(args[args.length - 1])
-            ? args.pop() as ValueEqualsFn
-            : ValueEqualsRef;
+        const [entries, keyEquals] = args.length === 0
+            ? [undefined, undefined]
+            : isFunction(args[0])
+                ? [undefined, args[0] as any]
+                : [args[0] as any, args[1] as any];
 
-        const entries = args[0] as UniMap<KEY, VALUE> | Iterable<[KEY, VALUE]>;
+        this.keyEquals = keyEquals ?? DefaultEqualityFn;
 
-        this.map = entries instanceof UniMap ? new Map(entries.map) : new Map(entries);
+        this.map = new Map(entries);
 
         /*
         this.keys = this.keys.bind(this);
@@ -44,21 +46,21 @@ export class UniMap<KEY, VALUE> extends BaseContainer implements KVComponent<[KE
     }
 
     has(key: KEY): boolean {
-        if (this.valueEquals === ValueEqualsRef || this.map.has(key))
+        if (this.keyEquals === DefaultEqualityFn || this.map.has(key))
             return this.map.has(key);
         for (const [k, v] of this.map)
-            if (this.valueEquals(k, key))
+            if (this.keyEquals(k, key))
                 return true;
         return false;
     }
 
     set(key: KEY, value: VALUE): VALUE {
-        if (this.valueEquals === ValueEqualsRef || this.map.has(key)) {
+        if (this.keyEquals === DefaultEqualityFn || this.map.has(key)) {
             this.map.set(key, value);
             return value;
         }
         for (const key2 of this.map.keys())
-            if (this.valueEquals(key2, key)) {
+            if (this.keyEquals(key2, key)) {
                 this.map.set(key2, value);
                 return value;
             }
@@ -67,21 +69,21 @@ export class UniMap<KEY, VALUE> extends BaseContainer implements KVComponent<[KE
     }
 
     get(key: KEY): VALUE | undefined {
-        if (this.valueEquals === ValueEqualsRef || this.map.has(key))
+        if (this.keyEquals === DefaultEqualityFn || this.map.has(key))
             return this.map.get(key);
 
         for (const [k, v] of this.map)
-            if (this.valueEquals(k, key))
+            if (this.keyEquals(k, key))
                 return v;
 
         return undefined;
     }
 
     delete(key: KEY): boolean {
-        if (this.valueEquals === ValueEqualsRef || this.map.has(key))
+        if (this.keyEquals === DefaultEqualityFn || this.map.has(key))
             return this.map.delete(key);
         for (const k of this.map.keys())
-            if (this.valueEquals(k, key))
+            if (this.keyEquals(k, key))
                 return this.map.delete(k);
         return this.map.delete(key);
     }
@@ -166,7 +168,7 @@ export class UniMap<KEY, VALUE> extends BaseContainer implements KVComponent<[KE
     }
 
     clone(): UniMap<KEY, VALUE> {
-        return new UniMap(this, this.valueEquals);
+        return new UniMap(this, this.keyEquals);
     }
 
     merge(other: UniMap<KEY, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key: KEY) => VALUE): this {

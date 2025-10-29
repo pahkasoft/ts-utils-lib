@@ -1,4 +1,4 @@
-export { BaseContainer, KVComponent, ValueEqualsFn } from "./base";
+export { BaseContainer, KVComponent, EqualityFn, DefaultEqualityFn } from "./base";
 export { Stack } from "./stack";
 export { Vec } from "./vec";
 export { DivRect } from "./div-rect";

@@ -10,21 +10,9 @@ describe("Map2", () => {
         expect(new BiMap([["a", "b", 2], ["b", "c", 3]]).has("a", "c")).toBeFalse();
     });
 
-    it("should deep has()", () => {
-        expect(new BiMap([[{ a: "a" }, ["b"], 2], [{ b: "b" }, ["c"], 3]]).has({ a: "a" }, ["b"])).toBeFalse();
-        expect(BiMap.createDeep([[{ a: "a" }, ["b"], 2], [{ b: "b" }, ["c"], 3]]).has({ a: "a" }, ["b"])).toBeTrue();
-        expect(BiMap.createDeep([[{ a: "a" }, ["b"], 2], [{ b: "b" }, ["c"], 3]]).has({ a: "a" }, ["c"])).toBeFalse();
-    });
-
     it("should get()", () => {
         expect(new BiMap([["a", "b", 2], ["b", "c", 3]]).get("a", "b")).toBe(2);
         expect(new BiMap([["a", "b", 2], ["b", "c", 3]]).get("a", "c")).toBeUndefined();
-    });
-
-    it("should deep get()", () => {
-        expect(new BiMap([["a", ["b"], 2], ["b", ["c"], 3]]).get("a", ["b"])).toBeUndefined();
-        expect(BiMap.createDeep([["a", ["b"], 2], ["b", ["c"], 3]]).get("a", ["b"])).toBe(2);
-        expect(BiMap.createDeep([["a", ["b"], 2], ["b", ["c"], 3]]).get("a", ["c"])).toBeUndefined();
     });
 
     it("should getOrDefault()", () => {
@@ -45,15 +33,6 @@ describe("Map2", () => {
         expect(del.size).toBe(3);
         expect(del.delete("b", "g")).toBeFalse();
         expect(del.delete("b", "c")).toBeTrue();
-        expect(del.size).toBe(2);
-    });
-
-    it("should deep delete()", () => {
-        let del = BiMap.createDeep([[["a"], ["b"], 2], [["a"], ["c"], 2], [["b"], ["c"], 3], [["b"], ["d"], 3], [["g"], ["f"], 3]]);
-        expect(del.delete(["a"])).toBeTrue();
-        expect(del.size).toBe(3);
-        expect(del.delete(["b"], ["g"])).toBeFalse();
-        expect(del.delete(["b"], ["c"])).toBeTrue();
         expect(del.size).toBe(2);
     });
 
@@ -78,13 +57,6 @@ describe("Map2", () => {
     it("should clone()", () => {
         let map1 = new BiMap([["a", "b", 2], ["a", "c", 2], ["a", "c", 3]]);
         expect(map1).toEqual(map1.clone());
-    });
-
-    it("should deep clone()", () => {
-        let map1 = new BiMap([[["a", "x"], "b", 2], [["a", "y"], "c", 2], [["a", "x"], "c", 3]]);
-        let map2 = BiMap.createDeep([[["a", "x"], "b", 2], [["a", "y"], "c", 2], [["a", "x"], "c", 3]]);
-        expect(map1).toEqual(map1.clone());
-        expect(map2).toEqual(map2.clone());
     });
 
     it("should merge()", () => {

@@ -1,6 +1,6 @@
 import { stringify } from "../utils/str";
-import { isDeepEqual, isFunction } from "../guard";
-import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
+import { isFunction } from "../guard";
+import { BaseContainer, KVComponent, EqualityFn, DefaultEqualityFn } from "./base";
 import { UniMap } from "./uni-map";
 
 /**
@@ -8,28 +8,23 @@ import { UniMap } from "./uni-map";
  */
 export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVComponent<[KEY1, KEY2], VALUE> {
     private map1: UniMap<KEY1, UniMap<KEY2, VALUE>>;
-    private valueEquals: ValueEqualsFn;
+    private key1Equals: EqualityFn<KEY1> = DefaultEqualityFn;
+    private key2Equals: EqualityFn<KEY2> = DefaultEqualityFn;
 
     constructor();
-    constructor(valueEqualsFn: ValueEqualsFn);
     constructor(biMap: BiMap<KEY1, KEY2, VALUE>)
-    constructor(biMap: BiMap<KEY1, KEY2, VALUE>, valueEqualsFn: ValueEqualsFn)
     constructor(entries: Iterable<[KEY1, KEY2, VALUE]>)
-    constructor(entries: Iterable<[KEY1, KEY2, VALUE]>, valueEqualsFn: ValueEqualsFn)
-    constructor(...args: unknown[]) {
+    constructor(entries?: BiMap<KEY1, KEY2, VALUE> | Iterable<[KEY1, KEY2, VALUE]>) {
         super();
 
-        this.valueEquals = isFunction(args[args.length - 1])
-            ? args.pop() as ValueEqualsFn
-            : ValueEqualsRef;
-
-        const entries = args[0] as BiMap<KEY1, KEY2, VALUE> | Iterable<[KEY1, KEY2, VALUE]>;
-
-        this.map1 = new UniMap(this.valueEquals);
+        this.map1 = new UniMap(this.key1Equals);
 
         if (entries instanceof BiMap) {
-            for (const [key1, inner] of entries.map1) {
-                this.map1.set(key1, new UniMap(inner, this.valueEquals));
+            for (const [key1, map2] of entries.map1) {
+                const newMap2 = this.map1.set(key1, new UniMap(this.key2Equals));
+                for (const [key2, value] of map2) {
+                    newMap2.set(key2, value);
+                }
             }
         }
         else if (entries) {
@@ -48,19 +43,12 @@ export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVCompone
         */
     }
 
-    static createDeep<KEY1, KEY2, VALUE>(): BiMap<KEY1, KEY2, VALUE>;
-    static createDeep<KEY1, KEY2, VALUE>(set: BiMap<KEY1, KEY2, VALUE>): BiMap<KEY1, KEY2, VALUE>;
-    static createDeep<KEY1, KEY2, VALUE>(entries: Iterable<[KEY1, KEY2, VALUE]>): BiMap<KEY1, KEY2, VALUE>;
-    static createDeep<KEY1, KEY2, VALUE>(arg?: BiMap<KEY1, KEY2, VALUE> | Iterable<[KEY1, KEY2, VALUE]>) {
-        return arg ? new BiMap<KEY1, KEY2, VALUE>(arg, isDeepEqual) : new BiMap<KEY1, KEY2, VALUE>(isDeepEqual);
-    }
-
     has(key1: KEY1, key2: KEY2): boolean {
         return this.map1.get(key1)?.has(key2) ?? false;
     }
 
     set(key1: KEY1, key2: KEY2, value: VALUE): VALUE {
-        return this.map1.getOrCreate(key1, () => new UniMap<KEY2, VALUE>(this.valueEquals)).set(key2, value);
+        return this.map1.getOrCreate(key1, () => new UniMap<KEY2, VALUE>(this.key2Equals)).set(key2, value);
     }
 
     get(key1: KEY1, key2: KEY2): VALUE | undefined {
@@ -163,7 +151,7 @@ export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVCompone
     }
 
     clone(): BiMap<KEY1, KEY2, VALUE> {
-        return new BiMap(this, this.valueEquals);
+        return new BiMap(this);
     }
 
     merge(other: BiMap<KEY1, KEY2, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1, key2: KEY2) => VALUE): this {

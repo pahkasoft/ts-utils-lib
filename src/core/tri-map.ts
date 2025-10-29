@@ -1,6 +1,6 @@
 import { stringify } from "../utils/str";
-import { isDeepEqual, isFunction } from "../guard";
-import { BaseContainer, KVComponent, ValueEqualsFn, ValueEqualsRef } from "./base";
+import { isFunction } from "../guard";
+import { BaseContainer, KVComponent, EqualityFn, DefaultEqualityFn } from "./base";
 import { UniMap } from "./uni-map";
 
 /**
@@ -8,30 +8,23 @@ import { UniMap } from "./uni-map";
  */
 export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KVComponent<[KEY1, KEY2, KEY3], VALUE> {
     private map1: UniMap<KEY1, UniMap<KEY2, UniMap<KEY3, VALUE>>>;
-    private valueEquals: ValueEqualsFn;
+    private key1Equals: EqualityFn<KEY1> = DefaultEqualityFn;
+    private key2Equals: EqualityFn<KEY2> = DefaultEqualityFn;
+    private key3Equals: EqualityFn<KEY3> = DefaultEqualityFn;
 
     constructor();
-    constructor(valueEqualsFn: ValueEqualsFn);
     constructor(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>);
-    constructor(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>, valueEqualsFn: ValueEqualsFn);
     constructor(map3: TriMap<KEY1, KEY2, KEY3, VALUE>);
-    constructor(map3: TriMap<KEY1, KEY2, KEY3, VALUE>, valueEqualsFn: ValueEqualsFn);
-    constructor(...args: unknown[]) {
+    constructor(entries?: Iterable<[KEY1, KEY2, KEY3, VALUE]> | TriMap<KEY1, KEY2, KEY3, VALUE>) {
         super();
 
-        this.valueEquals = isFunction(args[args.length - 1])
-            ? args.pop() as ValueEqualsFn
-            : ValueEqualsRef;
-
-        const entries = args[0] as TriMap<KEY1, KEY2, KEY3, VALUE> | Iterable<[KEY1, KEY2, KEY3, VALUE]>;
-
-        this.map1 = new UniMap(this.valueEquals);
+        this.map1 = new UniMap(this.key1Equals);
 
         if (entries instanceof TriMap) {
             for (const [key1, map2] of entries.map1) {
-                const newMap2 = this.map1.set(key1, new UniMap(this.valueEquals));
+                const newMap2 = this.map1.set(key1, new UniMap(this.key2Equals));
                 for (const [key2, map3] of map2) {
-                    newMap2.set(key2, new UniMap(map3, this.valueEquals));
+                    newMap2.set(key2, new UniMap(map3, this.key3Equals));
                 }
             }
         }
@@ -51,20 +44,13 @@ export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KV
         */
     }
 
-    static createDeep<KEY1, KEY2, KEY3, VALUE>(): TriMap<KEY1, KEY2, KEY3, VALUE>;
-    static createDeep<KEY1, KEY2, KEY3, VALUE>(set: TriMap<KEY1, KEY2, KEY3, VALUE>): TriMap<KEY1, KEY2, KEY3, VALUE>;
-    static createDeep<KEY1, KEY2, KEY3, VALUE>(entries: Iterable<[KEY1, KEY2, KEY3, VALUE]>): TriMap<KEY1, KEY2, KEY3, VALUE>;
-    static createDeep<KEY1, KEY2, KEY3, VALUE>(arg?: TriMap<KEY1, KEY2, KEY3, VALUE> | Iterable<[KEY1, KEY2, KEY3, VALUE]>) {
-        return arg ? new TriMap<KEY1, KEY2, KEY3, VALUE>(arg, isDeepEqual) : new TriMap<KEY1, KEY2, KEY3, VALUE>(isDeepEqual);
-    }
-
     has(key1: KEY1, key2: KEY2, key3: KEY3): boolean {
         return this.map1.get(key1)?.get(key2)?.has(key3) ?? false;
     }
 
     set(key1: KEY1, key2: KEY2, key3: KEY3, value: VALUE): VALUE {
-        let map2 = this.map1.getOrCreate(key1, () => new UniMap<KEY2, UniMap<KEY3, VALUE>>(this.valueEquals));
-        let map3 = map2.getOrCreate(key2, () => new UniMap<KEY3, VALUE>(this.valueEquals));
+        let map2 = this.map1.getOrCreate(key1, () => new UniMap<KEY2, UniMap<KEY3, VALUE>>(this.key2Equals));
+        let map3 = map2.getOrCreate(key2, () => new UniMap<KEY3, VALUE>(this.key3Equals));
         map3.set(key3, value);
         return value;
     }
@@ -183,7 +169,7 @@ export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KV
     }
 
     clone(): TriMap<KEY1, KEY2, KEY3, VALUE> {
-        return new TriMap(this, this.valueEquals);
+        return new TriMap(this);
     }
 
     merge(other: TriMap<KEY1, KEY2, KEY3, VALUE>, conflictResolver?: (oldValue: VALUE, newValue: VALUE, key1: KEY1, key2: KEY2, key3: KEY3) => VALUE): this {
