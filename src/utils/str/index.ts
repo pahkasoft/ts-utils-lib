@@ -164,12 +164,16 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
     if (maxDepth <= 0)
         return "[Depth limit]";
 
+    maxDepth--;
+
     // Mark as seen before descending
     seen.add(value);
 
+    const strfy = (v: any): string => stringify(v, maxDepth, seen);
+
     // --- Containers ---
     if (isArray(value)) {
-        const inner = value.map(v => stringify(v)).join(", ");
+        const inner = value.map(v => strfy(v)).join(", ");
         return inner.length === 0 ? "[ ]" : `[ ${inner} ]`;
     }
 
@@ -178,7 +182,7 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
         // covers all TypedArrays + DataView
         if (value instanceof DataView)
             return `DataView(${value.byteLength})`;
-        const inner = Array.from(value as any).map(v => stringify(v)).join(", ");
+        const inner = Array.from(value as any).map(v => strfy(v)).join(", ");
         return `${value.constructor.name}[ ${inner} ]`;
     }
 
@@ -189,7 +193,7 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
     // --- Map / Set ---
     if (value instanceof Map) {
         const entries = Array.from(value.entries())
-            .map(([k, v]) => `${stringify(k)} => ${stringify(v)}`)
+            .map(([k, v]) => `${strfy(k)} => ${strfy(v)}`)
             .join(", ");
         return entries.length === 0
             ? `Map(${value.size}){ }`
@@ -198,7 +202,7 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
 
     if (value instanceof Set) {
         const entries = Array.from(value.values())
-            .map(v => stringify(v))
+            .map(v => strfy(v))
             .join(", ");
         return entries.length === 0
             ? `Set(${value.size}){ }`
@@ -243,7 +247,7 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
     if (t === "object") {
         const ctorName = value.constructor?.name ?? "Object";
         const entries = Object.entries(value).map(
-            ([key, val]) => `${stringify(key)}: ${stringify(val)}`
+            ([key, val]) => `${strfy(key)}: ${strfy(val)}`
         );
         if (entries.length === 0) return `${ctorName}{ }`;
         return `${ctorName}{ ${entries.join(", ")} }`;
