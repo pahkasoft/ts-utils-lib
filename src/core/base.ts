@@ -1,6 +1,8 @@
+export type EqualityFn<V> = (a: V, b: V) => boolean;
+export const DefaultEqualityFn: EqualityFn<any> = (a: any, b: any) => a === b;
 
+// FIXME! 
 export type ValueEqualsFn = <VALUE>(a: VALUE, b: VALUE) => boolean;
-
 export const ValueEqualsRef: ValueEqualsFn = <VALUE>(a: VALUE, b: VALUE) => a === b;
 
 export interface KVComponent<K extends any[], VALUE> {
