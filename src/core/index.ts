@@ -1,7 +1,8 @@
 export { BaseContainer, KVComponent, EqualityFn, DefaultEqualityFn } from "./base";
 export { Stack } from "./stack";
 export { Vec } from "./vec";
-export { DivRect } from "./div-rect";
+export { AnchoredRect } from "./anchor-rect";
+export { Rect } from "./rect";
 export { LRUCache } from "./LRU-cache";
 export { IndexArray } from "./index-array";
 export { SignedIndexArray } from "./signed-index-array";

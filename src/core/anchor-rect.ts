@@ -1,9 +1,10 @@
 import { clamp } from "../utils/math";
+import { Rect } from "./rect";
 
 /**
- * DivRect class is a rectangle (left, top, right, bottom) with an anchor point (anchorX, anchorY).
+ * A mutable AnchoredRect class is a rectangle (left, top, right, bottom) with an anchor point (anchorX, anchorY).
  */
-export class DivRect {
+export class AnchoredRect {
     left: number;
     anchorX: number;
     right: number;
@@ -61,8 +62,63 @@ export class DivRect {
             this.top = this.anchorY = this.bottom = 0;
         }
         else {
-            throw new TypeError(`Invalid DivRect args: ${args}`);
+            throw new TypeError(`Invalid AnchoredRect args: ${args}`);
         }
+    }
+
+    /**
+     * Set rectangle with all zero values.
+     */
+    set(): AnchoredRect;
+
+    /**
+     * Set rectangle with left, right, top, bottom.
+     * Properties anchorX and anchorY will be centered in the middle.
+     * 
+     * @param left - Left coordinate.
+     * @param right - Right coordinate.
+     * @param top - Top coordinate.
+     * @param bottom - Bottom coordinate.
+     */
+    set(left: number, right: number, top: number, bottom: number): AnchoredRect;
+
+    /**
+     * Set rectangle with full arguments.
+     * 
+     * @param left - Left coordinate.
+     * @param anchorX - Center x-coordinate.
+     * @param right - Right coordinate.
+     * @param top - Top coordinate.
+     * @param anchorY - Center y-coordinate.
+     * @param bottom - Bottom coordinate.
+     */
+    set(left: number, anchorX: number, right: number, top: number, anchorY: number, bottom: number): AnchoredRect;
+
+    set(...args: unknown[]): AnchoredRect {
+        if (args.length === 6) {
+            this.left = args[0] as number;
+            this.anchorX = args[1] as number;
+            this.right = args[2] as number;
+            this.top = args[3] as number;
+            this.anchorY = args[4] as number;
+            this.bottom = args[5] as number;
+        }
+        else if (args.length === 4) {
+            this.left = args[0] as number;
+            this.right = args[1] as number;
+            this.anchorX = (this.left + this.right) / 2;
+            this.top = args[2] as number;
+            this.bottom = args[3] as number;
+            this.anchorY = (this.top + this.bottom) / 2;
+        }
+        else if (args.length === 0) {
+            this.left = this.anchorX = this.right = 0;
+            this.top = this.anchorY = this.bottom = 0;
+        }
+        else {
+            throw new TypeError(`Invalid AnchoredRect args: ${args}`);
+        }
+        return this;
     }
 
     /**
@@ -72,10 +128,10 @@ export class DivRect {
      * @param top - Top coordinate.
      * @param width - Width.
      * @param height - Height.
-     * @returns - DivRect.
+     * @returns - AnchoredRect.
      */
-    static create(left: number, top: number, width: number, height: number): DivRect {
-        return new DivRect(left, left + width, top, top + height);
+    static create(left: number, top: number, width: number, height: number): AnchoredRect {
+        return new AnchoredRect(left, left + width, top, top + height);
     }
 
     /**
@@ -85,10 +141,10 @@ export class DivRect {
      * @param centerY - Center y-coordinate.
      * @param width - Width.
      * @param height - Height.
-     * @returns - DivRect.
+     * @returns - AnchoredRect.
      */
-    static createCentered(centerX: number, centerY: number, width: number, height: number): DivRect {
-        return new DivRect(
+    static createCentered(centerX: number, centerY: number, width: number, height: number): AnchoredRect {
+        return new AnchoredRect(
             centerX - width / 2,
             centerX,
             centerX + width / 2,
@@ -105,42 +161,24 @@ export class DivRect {
      * @param rightw - Right section width.
      * @param toph - Top section height.
      * @param bottomh - Bottomsection height.
-     * @returns - DivRect.
+     * @returns - AnchoredRect.
      */
-    static createSections(leftw: number, rightw: number, toph: number, bottomh: number): DivRect {
-        return new DivRect(-leftw, 0, rightw, -toph, 0, bottomh);
+    static createSections(leftw: number, rightw: number, toph: number, bottomh: number): AnchoredRect {
+        return new AnchoredRect(-leftw, 0, rightw, -toph, 0, bottomh);
     }
 
     /**
-     * @deprecated - Renamed to anchorX. Will be removed in v2.0.0.
-     * @private
-     * */
+     * Get center x-coordinate.
+     */
     get centerX() {
-        return this.anchorX;
+        return this.left + this.width / 2;
     }
 
     /**
-     * @deprecated - Renamed to anchorX. Will be removed in v2.0.0.
-     * @private
-     * */
-    set centerX(x: number) {
-        this.anchorX = x;
-    }
-
-    /**
-     * @deprecated - Renamed to anchorX. Will be removed in v2.0.0.
-     * @private
-     * */
+     * Get center ycoordinate.
+     */
     get centerY() {
-        return this.anchorY;
-    }
-
-    /**
-     * @deprecated - Renamed to anchorX. Will be removed in v2.0.0.
-     * @private
-     * */
-    set centerY(y: number) {
-        this.anchorY = y;
+        return this.top + this.height / 2;
     }
 
     /**
@@ -199,32 +237,32 @@ export class DivRect {
     /**
      * Do a and b rects overlap?
      * 
-     * @param a - DivRect a.
-     * @param b - DivRect b.
+     * @param a - AnchoredRect a.
+     * @param b - AnchoredRect b.
      * @returns - True/false.
      */
-    static overlap(a: DivRect, b: DivRect): boolean {
+    static overlap(a: AnchoredRect, b: AnchoredRect): boolean {
         return a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
     }
 
     /**
      * Do horizontal measures of a and b rects overlap?
      * 
-     * @param a - DivRect a.
-     * @param b - DivRect b.
+     * @param a - AnchoredRect a.
+     * @param b - AnchoredRect b.
      * @returns - True/false.
      */
-    static overlapX(a: DivRect, b: DivRect): boolean {
+    static overlapX(a: AnchoredRect, b: AnchoredRect): boolean {
         return a.right > b.left && a.left < b.right;
     }
 
     /**
      * Check if given rects are equal.
-     * @param a - DivRect a.
-     * @param b - DivRect b.
+     * @param a - AnchoredRect a.
+     * @param b - AnchoredRect b.
      * @returns - True/false.
      */
-    static equals(a: DivRect | null | undefined, b: DivRect | null | undefined): boolean {
+    static equals(a: AnchoredRect | null | undefined, b: AnchoredRect | null | undefined): boolean {
         if (a == null && b == null) {
             // handles null and undefined
             return true;
@@ -242,18 +280,18 @@ export class DivRect {
      * @param other - The other rect.
      * @returns - True/false.
      */
-    equals(other: DivRect): boolean {
-        return DivRect.equals(this, other);
+    equals(other: AnchoredRect): boolean {
+        return AnchoredRect.equals(this, other);
     }
 
     /**
      * Check if edges of given rects are equal, ignoring anchorX and anchorY.
      * 
-     * @param a - DivRect a.
-     * @param b - DivRect b.
+     * @param a - AnchoredRect a.
+     * @param b - AnchoredRect b.
      * @returns - True/false.
      */
-    static equalsEdges(a: DivRect | null | undefined, b: DivRect | null | undefined): boolean {
+    static equalsEdges(a: AnchoredRect | null | undefined, b: AnchoredRect | null | undefined): boolean {
         if (a == null && b == null) {
             // handles null and undefined
             return true;
@@ -269,28 +307,19 @@ export class DivRect {
     /**
      * Check if edges of this Rect equals with given Rect, ignoring anchorX and anchorY.
      * 
-     * @param other - The other DivRect.
+     * @param other - The other AnchoredRect.
      * @returns - True/false.
      */
-    equalsEdges(other: DivRect): boolean {
-        return DivRect.equalsEdges(this, other);
-    }
-
-    /**
-     * @deprecated - Use `DivRect.equalsEdges()` instead. Will be removed in v2.0.0.
-     * @private
-     */
-    static equalsFrame(a: DivRect | null | undefined, b: DivRect | null | undefined): boolean {
-        return DivRect.equalsEdges(a,b);
+    equalsEdges(other: AnchoredRect): boolean {
+        return AnchoredRect.equalsEdges(this, other);
     }
 
     /**
      * Created duplicate of this Rect.
-     * 
      * @returns - Duplicate.
      */
-    copy(): DivRect {
-        return new DivRect(this.left, this.anchorX, this.right, this.top, this.anchorY, this.bottom);
+    clone(): AnchoredRect {
+        return new AnchoredRect(this.left, this.anchorX, this.right, this.top, this.anchorY, this.bottom);
     }
 
     /**
@@ -298,9 +327,9 @@ export class DivRect {
      * 
      * @param dx - Offset amount in x-direction.
      * @param dy - Offset amount in y-direction.
-     * @returns - This DivRect instance.
+     * @returns - This AnchoredRect instance.
      */
-    offsetInPlace(dx: number, dy: number): DivRect {
+    offsetInPlace(dx: number, dy: number): AnchoredRect {
         this.left += dx;
         this.anchorX += dx;
         this.right += dx;
@@ -315,19 +344,19 @@ export class DivRect {
      * 
      * @param dx - Offset amount in x-direction.
      * @param dy - Offset amount in y-direction.
-     * @returns - DivRect copy with applied offset.
+     * @returns - AnchoredRect copy with applied offset.
      */
-    offsetCopy(dx: number, dy: number): DivRect {
-        return this.copy().offsetInPlace(dx, dy);
+    offsetCopy(dx: number, dy: number): AnchoredRect {
+        return this.clone().offsetInPlace(dx, dy);
     }
 
     /**
      * Expand this Rect by given Rect. Modifies this Rect.
      * 
-     * @param rect - DivRect to expand this instance with.
-     * @returns - This DivRect instance.
+     * @param rect - AnchoredRect to expand this instance with.
+     * @returns - This AnchoredRect instance.
      */
-    expandInPlace(rect: DivRect): DivRect {
+    expandInPlace(rect: AnchoredRect): AnchoredRect {
         this.left = Math.min(this.left, rect.left);
         this.right = Math.max(this.right, rect.right);
         this.top = Math.min(this.top, rect.top);
@@ -338,20 +367,20 @@ export class DivRect {
     /**
      * Expand this Rect by given Rect. Immutable, returns modified copy.
      * 
-     * @param rect - DivRect to expand this instance with.
-     * @returns - Expanded copy of this DivRect.
+     * @param rect - AnchoredRect to expand this instance with.
+     * @returns - Expanded copy of this AnchoredRect.
      */
-    expandCopy(rect: DivRect): DivRect {
-        return this.copy().expandInPlace(rect);
+    expandCopy(rect: AnchoredRect): AnchoredRect {
+        return this.clone().expandInPlace(rect);
     }
 
     /**
      * Clip this Rect by given Rect. Mmodifies this Rect.
      * 
-     * @param clipRect - DivRect to clip this instance with.
-     * @returns - This DivRect instance.
+     * @param clipRect - AnchoredRect to clip this instance with.
+     * @returns - This AnchoredRect instance.
      */
-    clipInPlace(clipRect: DivRect): DivRect {
+    clipInPlace(clipRect: AnchoredRect): AnchoredRect {
         this.left = Math.max(this.left, clipRect.left);
         this.right = Math.min(this.right, clipRect.right);
         this.anchorX = clamp(this.anchorX, this.left, this.right);
@@ -364,11 +393,11 @@ export class DivRect {
     /**
      * Clip this Rect by given Rect. Immutable, return modified copy.
      * 
-     * @param clipRect - DivRecto to clip this instance with.
-     * @returns - Clipped DivRect copy.
+     * @param clipRect - AnchoredRecto to clip this instance with.
+     * @returns - Clipped AnchoredRect copy.
      */
-    clipCopy(clipRect: DivRect): DivRect {
-        return this.copy().clipInPlace(clipRect);
+    clipCopy(clipRect: AnchoredRect): AnchoredRect {
+        return this.clone().clipInPlace(clipRect);
     }
 
     /**
@@ -376,11 +405,9 @@ export class DivRect {
      * 
      * @param scaleX - Scale x-amount.
      * @param scaleY - Scale y-amount. If undefined then scale x-amount is used.
-     * @returns This DivRect instance.
+     * @returns This AnchoredRect instance.
      */
-    scaleInPlace(scaleX: number, scaleY?: number): DivRect {
-        scaleY = scaleY ?? scaleX;
-
+    scaleInPlace(scaleX: number, scaleY: number = scaleX): AnchoredRect {
         this.left = this.anchorX - this.leftw * scaleX;
         this.right = this.anchorX + this.rightw * scaleX;
         this.top = this.anchorY - this.toph * scaleY;
@@ -393,17 +420,21 @@ export class DivRect {
      * 
      * @param scaleX - Scale x-amount.
      * @param scaleY - Scale y-amount. If undefined then scale x-amount is used.
-     * @returns Scaled copy of this DivRect.
+     * @returns Scaled copy of this AnchoredRect.
      */
-    scaleCopy(scaleX: number, scaleY?: number): DivRect {
-        return this.copy().scaleInPlace(scaleX, scaleY);
+    scaleCopy(scaleX: number, scaleY: number = scaleX): AnchoredRect {
+        return this.clone().scaleInPlace(scaleX, scaleY);
     }
 
     /**
-     * Get this DivRect instance.
-     * @returns - This DivRect instance.
+     * Get this AnchoredRect instance.
+     * @returns - This AnchoredRect instance.
      */
-    getRect(): DivRect {
+    getRect(): AnchoredRect {
         return this;
+    }
+
+    toRect(): Rect {
+        return new Rect(this.left, this.right, this.width, this.height);
     }
 }

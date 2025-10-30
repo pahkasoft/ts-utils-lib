@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.21.0] - 2025-10-
+### Added
+- Rect
+- AnchoredRect
+
+## Deprecated
+- DivRect (-> AnchoredRect)
+
 ## [1.20.0] - 2025-10-29
 ### Added
 - Guard.isNotThrowing(), Assert.isNotThrowing().
