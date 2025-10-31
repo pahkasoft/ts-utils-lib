@@ -1,4 +1,9 @@
 # Changelog
+## [2.1.0] - 2025-11-??
+### Added
+ - Bundle index.es5.iife.js
+ - Bundle index.es5.polyfilled.iife.js
+
 ## [2.0.0] - 2025-10-31
 ### **Breaking Major Update**
 - Removed all deprecated functions.

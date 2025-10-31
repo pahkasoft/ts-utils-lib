@@ -48,6 +48,7 @@
         "package.json"
     ],
     "devDependencies": {
+        "@swc/core": "^1.14.0",
         "@types/jasmine": "^5.1.8",
         "benchmark": "^2.1.4",
         "jasmine": "^5.8.0",
@@ -68,5 +69,9 @@
         "watch": "tsup --watch",
         "test": "karma start",
         "docs": "typedoc"
+    },
+    "dependencies": {
+        "core-js": "^3.46.0",
+        "regenerator-runtime": "^0.14.1"
     }
 }

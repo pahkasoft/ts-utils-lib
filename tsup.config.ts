@@ -4,7 +4,7 @@ import pkg from './package.json' assert { type: 'json' }
 
 const bannerText = `/* TsUtilsLib v${pkg.version} | (c) 2023 PahkaSoft | Licensed under the MIT License */`;
 
-export default defineConfig(
+export default defineConfig([
     {
         entry: ['src/index.ts'],
         outDir: 'dist',
@@ -13,8 +13,20 @@ export default defineConfig(
         dts: true,
         sourcemap: true,
         clean: true,
-        banner: {
-            js: bannerText
-        }
-    }
-);
+        banner: { js: bannerText }
+    },
+    {
+        entry: {
+            'index.es5': 'src/index.ts',
+            'index.es5.polyfilled': 'src/index.polyfilled.ts'
+        },
+        outDir: 'dist',
+        target: 'es5',
+        format: ['iife'],
+        globalName: 'TsUtilsLib',
+        sourcemap: true,
+        banner: { js: bannerText },
+        minify: true,
+        outExtension: () => ({ js: '.iife.js' })
+    },
+]);
