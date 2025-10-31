@@ -1,8 +1,11 @@
 # Changelog
 ## [2.0.0] - 2025-10-31
 ### Breaking Major Update
-- Removed all deprecated functions and classes.
-- Assert update, so that assertions can be used `let i =  Assert.isInteger(i);`.
+- Removed all deprecated functions.
+- Removed all deprecated classes.
+- Removed Utils.Is (-> use Guard).
+- Updated Assert so that assertions can be used `let i = Assert.isInteger(i);`.
+- Renamed many Assert and Guard functions.
 
 ## [1.21.0] - 2025-10-30
 ### Added
