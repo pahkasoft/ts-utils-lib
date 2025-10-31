@@ -325,6 +325,36 @@ export function isNegInfinity(val: unknown, msg?: string): number {
     return val;
 }
 
+export function isPos(val: unknown, msg?: string): number {
+    if (!Guard.isPos(val))
+        _fail(`Expected ${fmt(val)} to be > 0`, msg);
+    return val;
+}
+
+export function isNeg(val: unknown, msg?: string): number {
+    if (!Guard.isNeg(val))
+        _fail(`Expected ${fmt(val)} to be < 0`, msg);
+    return val;
+}
+
+export function isZero(val: unknown, msg?: string): number {
+    if (!Guard.isZero(val))
+        _fail(`Expected ${fmt(val)} to be 0`, msg);
+    return val;
+}
+
+export function isPosZero(val: unknown, msg?: string): number {
+    if (!Guard.isPosZero(val))
+        _fail(`Expected ${fmt(val)} to be +0`, msg);
+    return val;
+}
+
+export function isNegZero(val: unknown, msg?: string): number {
+    if (!Guard.isNegZero(val))
+        _fail(`Expected ${fmt(val)} to be -0`, msg);
+    return val;
+}
+
 export function isOddNumber(val: unknown, msg?: string): number {
     if (!Guard.isOddNumber(val))
         _fail(`Expected ${fmt(val)} to odd number.`, msg);

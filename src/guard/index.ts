@@ -195,6 +195,26 @@ export function isNegInfinity(val: unknown): val is number {
     return typeof val === "number" && val === -Infinity;
 }
 
+export function isPos(val: unknown): val is number {
+    return typeof val === "number" && val > 0;
+}
+
+export function isNeg(val: unknown): val is number {
+    return typeof val === "number" && val < 0;
+}
+
+export function isZero(val: unknown): val is number {
+    return typeof val === "number" && val === 0;
+}
+
+export function isPosZero(val: unknown): val is number {
+    return typeof val === "number" && val === 0 && (1 / val === Infinity);
+}
+
+export function isNegZero(val: unknown): val is number {
+    return typeof val === "number" && val === 0 && (1 / val === -Infinity);
+}
+
 export function isOddNumber(val: unknown): val is number {
     return isInteger(val) && val % 2 === 1;
 }
