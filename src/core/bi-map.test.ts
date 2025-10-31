@@ -4,7 +4,7 @@ function mapArr<K, V>(m: Map<K, V>) {
     return [...m.entries()];
 }
 
-describe("Map2", () => {
+describe("BiMap", () => {
     it("should has()", () => {
         expect(new BiMap([["a", "b", 2], ["b", "c", 3]]).has("a", "b")).toBeTrue();
         expect(new BiMap([["a", "b", 2], ["b", "c", 3]]).has("a", "c")).toBeFalse();

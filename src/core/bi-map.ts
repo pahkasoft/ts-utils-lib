@@ -205,7 +205,7 @@ export class BiMap<KEY1, KEY2, VALUE> extends BaseContainer implements KVCompone
 
         if (first.done) {
             if (arguments.length < 2) {
-                throw new TypeError("Reduce of empty Map2 with no initial value!");
+                throw new TypeError("Reduce of empty BiMap with no initial value!");
             }
             return init!;
         }

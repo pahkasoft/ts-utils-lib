@@ -214,7 +214,7 @@ export class UniMap<KEY, VALUE> extends BaseContainer implements KVComponent<[KE
 
         if (first.done) {
             if (arguments.length < 2) {
-                throw new TypeError("Reduce of empty Map1 with no initial value!");
+                throw new TypeError("Reduce of empty UniMap with no initial value!");
             }
             return init!;
         }

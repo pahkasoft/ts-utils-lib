@@ -4,7 +4,7 @@ function mapArr<K, V>(m: Map<K, V>) {
     return [...m.entries()];
 }
 
-describe("Map1", () => {
+describe("UniMap", () => {
     it("should has()", () => {
         expect(new UniMap([["a", 2], ["b", 3]]).has("a")).toBeTrue();
         expect(new UniMap([["a", 2], ["b", 3]]).has("c")).toBeFalse();

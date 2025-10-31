@@ -92,7 +92,7 @@ export class MultiContainer<K extends any[], V> extends BaseContainer {
  * 
  * ```ts
  * // Usage:
- * const multi = asMulti(new Map2<string, string, number[]>());
+ * const multi = asMulti(new BiMap<string, string, number[]>());
  * multi.add("a", "b", 5);
  * multi.add("a", "b", 10);
  * multi.add("a", "c", 15);

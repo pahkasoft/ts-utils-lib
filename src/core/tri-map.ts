@@ -229,7 +229,7 @@ export class TriMap<KEY1, KEY2, KEY3, VALUE> extends BaseContainer implements KV
 
         if (first.done) {
             if (arguments.length < 2) {
-                throw new TypeError("Reduce of empty Map3 with no initial value!");
+                throw new TypeError("Reduce of empty TriMap with no initial value!");
             }
             return init!;
         }

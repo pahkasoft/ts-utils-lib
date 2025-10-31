@@ -4,7 +4,7 @@ function mapArr<K, V>(m: Map<K, V>) {
     return [...m.entries()];
 }
 
-describe("Map3", () => {
+describe("TriMap", () => {
     it("should has()", () => {
         expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "b", "c")).toBeTrue();
         expect(new TriMap([["a", "b", "c", 2], ["b", "c", "d", 3]]).has("a", "c", "d")).toBeFalse();
