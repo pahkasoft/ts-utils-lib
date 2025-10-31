@@ -1,214 +1,218 @@
 import { deepEqual } from "../utils/obj";
-import { getEnumValues } from "../utils/enum";
-
-export function isEqual(value1: unknown, value2: unknown): boolean {
-    return value1 === value2;
-}
-
-export function isDeepEqual(value1: unknown, value2: unknown): boolean {
-    return deepEqual(value1, value2);
-}
-
-export function isUndefined(value: unknown): value is undefined {
-    return value === undefined;
-}
-
-export function isNull(value: unknown): value is null {
-    return value === null;
-}
-
-export function isNullish(value: unknown): value is null | undefined {
-    return value === undefined || value === null;
-}
-
-export function isObject(value: unknown): value is Record<string, unknown> {
-    return typeof value === "object" && value !== null && !isArray(value);
-}
-
-export function isObjectOrUndefined(value: unknown): value is Record<string, unknown> | undefined {
-    return value === undefined || isObject(value);
-}
+import { EnumObject, getEnumValues } from "../utils/enum";
 
 export type HasProps<T extends object> = T extends Record<string, unknown> ? T : never;
 
-export function isTypedObject<T extends object>(obj: unknown, keys: (keyof T)[]): obj is HasProps<T> {
-    return isObject(obj) && keys.every(k => k in obj);
+export function isEqual(val1: unknown, val2: unknown): boolean {
+    return val1 === val2;
 }
 
-export function isArray<T>(a: T[] | unknown): a is T[] {
-    return !!a && Object.prototype.toString.call(a) === "[object Array]";
+export function isDeepEqual(val1: unknown, val2: unknown): boolean {
+    return deepEqual(val1, val2);
 }
 
-export function isArrayOrUndefined(value: unknown): value is unknown[] | undefined {
-    return value === undefined || isArray(value);
+export function isUndefined(val: unknown): val is undefined {
+    return val === undefined;
 }
 
-export function isEmptyArray<T>(a: T[] | unknown): a is T[] {
-    return isArray(a) && a.length === 0;
+export function isNull(val: unknown): val is null {
+    return val === null;
 }
 
-export function isNonEmptyArray<T>(a: T[] | unknown): a is T[] {
-    return isArray(a) && a.length > 0;
+export function isNullish(val: unknown): val is null | undefined {
+    return val === undefined || val === null;
 }
 
-export function isEmptyArrayOrUndefined<T>(a: T[] | unknown): a is T[] | undefined {
-    return isArray(a) && a.length === 0 || a === undefined;
+export function isObject(val: unknown): val is Record<string, unknown> {
+    return typeof val === "object" && val !== null && !isArray(val);
 }
 
-export function isNonEmptyArrayOrUndefined<T>(a: T[] | unknown): a is T[] | undefined {
-    return isArray(a) && a.length > 0 || a === undefined;
+export function isObjectOrUndefined(val: unknown): val is Record<string, unknown> | undefined {
+    return val === undefined || isObject(val);
 }
 
-export function isString(value: unknown): value is string {
-    return typeof value === "string";
+export function isTypedObject<T extends object>(val: unknown, keys: (keyof T)[]): val is HasProps<T> {
+    return isObject(val) && keys.every(k => k in val);
 }
 
-export function isEmptyString(value: unknown): value is "" {
-    return typeof value === "string" && value.length === 0;
+export function isArray<T>(arr: T[] | unknown): arr is T[] {
+    return !!arr && Object.prototype.toString.call(arr) === "[object Array]";
 }
 
-export function isNonEmptyString(value: unknown): value is string {
-    return typeof value === "string" && value.length > 0;
+export function isArrayOrUndefined(arr: unknown): arr is unknown[] | undefined {
+    return arr === undefined || isArray(arr);
 }
 
-export function isStringOrUndefined(value: unknown): value is string | undefined {
-    return value === undefined || typeof value === "string";
+export function isEmptyArray<T>(arr: T[] | unknown): arr is T[] {
+    return isArray(arr) && arr.length === 0;
 }
 
-export function isEmptyStringOrUndefined(value: unknown): value is "" | undefined {
-    return typeof value === "string" && value.length === 0 || value === undefined;
+export function isNonEmptyArray<T>(arr: T[] | unknown): arr is T[] {
+    return isArray(arr) && arr.length > 0;
 }
 
-export function isNonEmptyStringOrUndefined(value: unknown): value is string | undefined {
-    return typeof value === "string" && value.length > 0 || value === undefined;
+export function isEmptyArrayOrUndefined<T>(arr: T[] | unknown): arr is T[] | undefined {
+    return isArray(arr) && arr.length === 0 || arr === undefined;
 }
 
-export function isBoolean(value: unknown): value is boolean {
-    return typeof value === "boolean";
+export function isNonEmptyArrayOrUndefined<T>(arr: T[] | unknown): arr is T[] | undefined {
+    return isArray(arr) && arr.length > 0 || arr === undefined;
 }
 
-export function isBooleanOrUndefined(value: unknown): value is boolean | undefined {
-    return value === undefined || typeof value === "boolean";
+export function isString(val: unknown): val is string {
+    return typeof val === "string";
 }
 
-export function isTrue(value: unknown): value is true {
-    return value === true;
+export function isEmptyString(val: unknown): val is "" {
+    return typeof val === "string" && val.length === 0;
 }
 
-export function isTrueOrUndefined(value: unknown): value is true {
-    return value === true || value === undefined;
+export function isNonEmptyString(val: unknown): val is string {
+    return typeof val === "string" && val.length > 0;
 }
 
-export function isFalse(value: unknown): value is false {
-    return value === false;
+export function isStringOrUndefined(val: unknown): val is string | undefined {
+    return val === undefined || typeof val === "string";
 }
 
-export function isFalseOrUndefined(value: unknown): value is false {
-    return value === false || value === undefined;
+export function isEmptyStringOrUndefined(val: unknown): val is "" | undefined {
+    return typeof val === "string" && val.length === 0 || val === undefined;
 }
 
-export function isFunction(value: unknown): value is Function {
-    return typeof value === "function";
+export function isNonEmptyStringOrUndefined(val: unknown): val is string | undefined {
+    return typeof val === "string" && val.length > 0 || val === undefined;
 }
 
-export function isFunctionOrUndefined(value: unknown): value is Function | undefined {
-    return value === undefined || typeof value === "function";
+export function isBoolean(val: unknown): val is boolean {
+    return typeof val === "boolean";
 }
 
-export function isEnumValue<E extends Record<string, string | number>>(value: unknown, enumObj: E, name = "value"): value is E[keyof E] {
-    return getEnumValues(enumObj).some(v => v === value);
+export function isBooleanOrUndefined(val: unknown): val is boolean | undefined {
+    return val === undefined || typeof val === "boolean";
 }
 
-export function isEnumValueOrUndefined<E extends Record<string, string | number>>(value: unknown, enumObj: E, name = "value"): value is E[keyof E] | undefined {
-    return value === undefined || getEnumValues(enumObj).some(v => v === value);
+export function isTrue(val: unknown): val is true {
+    return val === true;
 }
 
-export function isNumber(value: unknown): value is number {
-    return typeof value === "number";
+export function isTrueOrUndefined(val: unknown): val is true | undefined {
+    return val === true || val === undefined;
 }
 
-export function isNumberOrUndefined(value: unknown): value is number | undefined {
-    return typeof value === "number" || value === undefined;
+export function isFalse(val: unknown): val is false {
+    return val === false;
 }
 
-export function isFinite(value: unknown): value is number {
-    return typeof value === "number" && Number.isFinite(value);
+export function isFalseOrUndefined(val: unknown): val is false | undefined {
+    return val === false || val === undefined;
 }
 
-export function isInteger(n: unknown): n is number {
-    return typeof n === "number" && isFinite(n) && n === Math.trunc(n);
+export function isFunction(val: unknown): val is ((...args: any[]) => any) {
+    return typeof val === "function";
 }
 
-export function isIntegerOrUndefined(n: unknown): n is number | undefined {
-    return typeof n === "number" && isFinite(n) && n === Math.trunc(n) || n === undefined;
+export function isFunctionOrUndefined(val: unknown): val is ((...args: any[]) => any) | undefined {
+    return val === undefined || typeof val === "function";
 }
 
-export function isIntegerEq(value: unknown, compareTo: unknown): value is number {
-    return isInteger(value) && value === compareTo;
+export function isEnumValue<E extends EnumObject>(val: unknown, enumObj: E): val is E[keyof E] {
+    return getEnumValues(enumObj).some(v => v === val);
 }
 
-export function isIntegerGt(value: unknown, compareTo: unknown): value is number {
-    return isInteger(value) && isNumber(compareTo) && value > compareTo;
+export function isEnumValueOrUndefined<E extends EnumObject>(val: unknown, enumObj: E): val is E[keyof E] | undefined {
+    return val === undefined || getEnumValues(enumObj).some(v => v === val);
 }
 
-export function isIntegerGte(value: unknown, compareTo: unknown): value is number {
-    return isInteger(value) && isNumber(compareTo) && value >= compareTo;
+export function isNumber(val: unknown): val is number {
+    return typeof val === "number";
 }
 
-export function isIntegerLt(value: unknown, compareTo: unknown): value is number {
-    return isInteger(value) && isNumber(compareTo) && value < compareTo;
+export function isNumberOrUndefined(val: unknown): val is number | undefined {
+    return typeof val === "number" || val === undefined;
 }
 
-export function isIntegerLte(value: unknown, compareTo: unknown): value is number {
-    return isInteger(value) && isNumber(compareTo) && value <= compareTo;
+export function isFinite(val: unknown): val is number {
+    return typeof val === "number" && Number.isFinite(val);
 }
 
-export function isIntegerBetween(value: unknown, min: unknown, max: unknown): value is number {
-    return isInteger(value) && isNumber(min) && isNumber(max) && value >= min && value <= max;
+export function isInteger(val: unknown): val is number {
+    return typeof val === "number" && isFinite(val) && val === Math.trunc(val);
 }
 
-export function isIntegerBetweenExclusive(value: unknown, min: unknown, max: unknown): value is number {
-    return isInteger(value) && isNumber(min) && isNumber(max) && value > min && value < max;
+export function isIntegerOrUndefined(val: unknown): val is number | undefined {
+    return typeof val === "number" && isFinite(val) && val === Math.trunc(val) || val === undefined;
 }
 
-export function isNumberBetween(value: unknown, min: unknown, max: unknown): value is number {
-    return isNumber(value) && isNumber(min) && isNumber(max) && value >= min && value <= max;
+export function isIntegerEq(val: unknown, ref: unknown): val is number {
+    return isInteger(val) && val === ref;
 }
 
-export function isNumberBetweenExclusive(value: unknown, min: unknown, max: unknown): value is number {
-    return isNumber(value) && isNumber(min) && isNumber(max) && value > min && value < max;
+export function isIntegerGt(val: unknown, ref: unknown): val is number {
+    return isInteger(val) && isNumber(ref) && val > ref;
 }
 
-export function isNaNValue(value: unknown): value is number {
-    return typeof value === "number" && Number.isNaN(value);
+export function isIntegerGte(val: unknown, ref: unknown): val is number {
+    return isInteger(val) && isNumber(ref) && val >= ref;
 }
 
-export function isInfinity(value: unknown): value is number {
-    return typeof value === "number" && Math.abs(value) === Infinity;
+export function isIntegerLt(val: unknown, ref: unknown): val is number {
+    return isInteger(val) && isNumber(ref) && val < ref;
 }
 
-export function isPosInfinity(value: unknown): value is number {
-    return typeof value === "number" && value === Infinity;
+export function isIntegerLte(val: unknown, ref: unknown): val is number {
+    return isInteger(val) && isNumber(ref) && val <= ref;
 }
 
-export function isNegInfinity(value: unknown): value is number {
-    return typeof value === "number" && value === -Infinity;
+export function isIntegerBetween(val: unknown, min: unknown, max: unknown): val is number {
+    return isInteger(val) && isNumber(min) && isNumber(max) && val >= min && val <= max;
 }
 
-export function isOddNumber(value: unknown): value is number {
-    return isInteger(value) && value % 2 === 1;
+export function isIntegerBetweenExclusive(val: unknown, min: unknown, max: unknown): val is number {
+    return isInteger(val) && isNumber(min) && isNumber(max) && val > min && val < max;
 }
 
-export function isEvenNumber(value: unknown): value is number {
-    return isInteger(value) && value % 2 === 0;
+export function isNumberBetween(val: unknown, min: unknown, max: unknown): val is number {
+    return isNumber(val) && isNumber(min) && isNumber(max) && val >= min && val <= max;
 }
 
-export function isIncluded<T>(value: T, array: ReadonlyArray<T>): value is T {
-    return array.includes(value);
+export function isNumberBetweenExclusive(val: unknown, min: unknown, max: unknown): val is number {
+    return isNumber(val) && isNumber(min) && isNumber(max) && val > min && val < max;
+}
+
+export function isNaNValue(val: unknown): val is number {
+    return typeof val === "number" && Number.isNaN(val);
+}
+
+export function isInfinity(val: unknown): val is number {
+    return typeof val === "number" && Math.abs(val) === Infinity;
+}
+
+export function isPosInfinity(val: unknown): val is number {
+    return typeof val === "number" && val === Infinity;
+}
+
+export function isNegInfinity(val: unknown): val is number {
+    return typeof val === "number" && val === -Infinity;
+}
+
+export function isOddNumber(val: unknown): val is number {
+    return isInteger(val) && val % 2 === 1;
+}
+
+export function isEvenNumber(val: unknown): val is number {
+    return isInteger(val) && val % 2 === 0;
+}
+
+export function isDivisibleBy(val: unknown, n: unknown): val is number {
+    return typeof val === "number" && typeof n === "number" && (val % n === 0);
+}
+
+export function isIncluded<T>(val: unknown, array: ReadonlyArray<T>): val is T {
+    return isArray(array) && array.includes(val as T);
 }
 
 export function isArrayIndex<T>(index: unknown, array: ReadonlyArray<T>): index is number {
-    return isInteger(index) && isArray(array) && index >= 0 && index < array.length;
+    return isArray(array) && isIntegerBetween(index, 0, array.length - 1);
 }
 
 export function isThrowing(throwTestFn: () => void): boolean {

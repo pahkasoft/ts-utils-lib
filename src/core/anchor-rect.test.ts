@@ -17,7 +17,6 @@ describe("AnchoredRect", () => {
         const r = new AnchoredRect(0, 10, 0, 20);
         expect(r.anchorX).toBe(5);
         expect(r.anchorY).toBe(10);
-        // deprecated
         expect(r.centerX).toBe(5);
         expect(r.centerY).toBe(10);
     });
@@ -74,6 +73,14 @@ describe("AnchoredRect", () => {
         expect(r.rightw).toBe(5);
         expect(r.toph).toBe(5);
         expect(r.bottomh).toBe(5);
+    });
+
+    it("test anchorX, anchorY, centerX and centerY correctly", () => {
+        const r = new AnchoredRect(0, 3, 10, 0, 5, 20);
+        expect(r.anchorX).toBe(3);
+        expect(r.anchorY).toBe(5);
+        expect(r.centerX).toBe(5);
+        expect(r.centerY).toBe(10);
     });
 
     // --- Geometry / Spatial methods ---------------------------------------

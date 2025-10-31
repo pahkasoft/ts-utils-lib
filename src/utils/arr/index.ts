@@ -16,14 +16,6 @@ export function removeDuplicates<T>(arr: T[], compareFn?: (a: T, b: T) => boolea
         : arr.filter((a, id, self) => id === self.indexOf(a));
 }
 
-/**
- * @deprecated - Use {@link removeDuplicates} with compareFn instead.  Will be removed in v2.0.0.
- * @private
- */
-export function removeDuplicatesCmp<T>(arr: ReadonlyArray<T>, compareFn: (t1: T, t2: T) => boolean): T[] {
-    return arr.filter((a, id, self) => id === self.findIndex(b => compareFn(a, b)));
-}
-
 export function fillArray<T>(fillValue: T, fillCount: number): T[] {
     if (!isInteger(fillCount) || fillCount < 0) {
         throw new Error("fillArray: Invalid fillCount = " + fillCount);

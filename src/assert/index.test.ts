@@ -3,7 +3,7 @@ import { Assert } from "..";
 describe("Assert", () => {
 
     // Helper to catch thrown errors
-    function expectThrow(fn: () => void, msgPart?: string) {
+    function expectThrow(fn: () => any, msgPart?: string) {
         try {
             fn();
             fail("Expected function to throw");

@@ -4,4 +4,3 @@ export * as Device from "./web/device";
 export * as Guard from "./guard"
 export * as Utils from "./utils";
 export * from "./core";
-export * from "./deprecated";

@@ -1,5 +1,8 @@
 import { Guard } from "..";
 import { EnumObject } from "../utils/enum";
+import { stringify } from "../utils/str";
+
+const fmt = stringify;
 
 export type ErrorConstructor = new (msg: string) => Error;
 
@@ -14,511 +17,348 @@ function _fail(...msgs: (string | undefined)[]): never {
     throw new errorConstructor("Assertion Failed!" + (msg === "" ? "" : (" " + msg)));
 }
 
-//--------------------------------------------------------------------------------------------------------
-// Deprecated
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function interrupt(msg?: string): never {
-    _fail("Interrupted!");
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function assertEnum<E extends EnumObject>(enumVal: unknown, enumObj: E, name = "value"): asserts enumVal is E[keyof E] {
-    if (!Guard.isEnumValue(enumVal, enumObj))
-        _fail(`Invalid enum value ${enumVal}.`);
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function int(value: unknown, msg?: string): number {
-    if (!Guard.isInteger(value))
-        _fail(`Expected ${value} to be integer.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function eq<T>(value1: T, value2: T, msg?: string): T {
-    if (value1 !== value2)
-        _fail(`Expected ${value1} to equal ${value2}.`, msg);
-    return value1;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function int_eq(value: unknown, compareTo: unknown, msg?: string): number {
-    if (!Guard.isIntegerEq(value, compareTo))
-        _fail(`Expected ${value} to be integer equal to ${compareTo}.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function int_lt(value: unknown, compareTo: unknown, msg?: string): number {
-    if (!Guard.isIntegerLt(value, compareTo))
-        _fail(`Expected ${value} to be integer less than ${compareTo}.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function int_lte(value: unknown, compareTo: unknown, msg?: string): number {
-    if (!Guard.isIntegerLte(value, compareTo))
-        _fail(`Expected ${value} to be integer less than or equal to ${compareTo}.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function int_gt(value: unknown, compareTo: unknown, msg?: string): number {
-    if (!Guard.isIntegerGt(value, compareTo))
-        _fail(`Expected ${value} to be integer greater than ${compareTo}.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function int_gte(value: unknown, compareTo: unknown, msg?: string): number {
-    if (!Guard.isIntegerGte(value, compareTo))
-        _fail(`Expected ${value} to be integer greater than or equal to ${compareTo}.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function int_between(value: unknown, min: unknown, max: unknown, msg?: string): number {
-    if (!Guard.isIntegerBetween(value, min, max))
-        _fail(`Expected integer between ${min} <= ${value} <= ${max}.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function int_between_exclusive(value: unknown, min: unknown, max: unknown, msg?: string): number {
-    if (!Guard.isIntegerBetweenExclusive(value, min, max))
-        _fail(`Expected integer between ${min} < ${value} < ${max}.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function odd(value: unknown, msg?: string): number {
-    if (!Guard.isOddNumber(value))
-        _fail(`Expected ${value} to be odd number.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function even(value: unknown, msg?: string): number {
-    if (!Guard.isEvenNumber(value))
-        _fail(`Expected ${value} to be even number.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function in_group<T>(value: T, group: ReadonlyArray<T>, msg?: string): T {
-    if (!(group.some(e => e === value)))
-        _fail(`Expected ${value} to be in group [${group.map(v => String(v)).join(", ")}].`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function finite(value: unknown, msg?: string): number {
-    if (!Guard.isFinite(value))
-        _fail(`Expected ${value} to be finite number.`, msg);
-    return value;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function array_id<T>(array: Readonly<T[]>, index: unknown, msg?: string): number {
-    if (!Guard.isInteger(index) || !Guard.isArray(array) || index < 0 || index >= array.length)
-        _fail(`Expected ${index} to be array index in bounds [0..${array.length - 1}].`, msg);
-    return index;
-}
-
-/**
- * @deprecated - Wil be removed in v2.0.0.
- * @private
- */
-export function array_elem<T>(array: Readonly<T[]>, index: number, msg?: string): T {
-    return array[array_id(array, index, msg)];
-}
-
-//--------------------------------------------------------------------------------------------------------
-// New functions
-
 export function assert<T>(condition: T, msg?: string) {
     if (!condition) {
         _fail(msg);
     }
 }
 
-export function require<T>(value: T | null | undefined, msg?: string): T {
-    if (value == null) { // catches both null and undefined
-        _fail(`Expected ${value} not to be nullish`, msg);
+export function require<T>(val: T | null | undefined, msg?: string): T {
+    if (val == null) { // catches both null and undefined
+        _fail(`Expected ${fmt(val)} not to be nullish`, msg);
     }
-    return value;
+    return val;
 }
 
-export function requireDefined<T>(value: T | undefined, msg?: string): T {
-    if (value === undefined) {
-        _fail(`Expected ${value} not to be undefined`, msg);
+export function requireDefined<T>(val: T | undefined, msg?: string): T {
+    if (val === undefined) {
+        _fail(`Expected ${fmt(val)} not to be undefined`, msg);
     }
-    return value;
+    return val;
 }
 
 export function fail(msg?: string): never {
     _fail(msg);
 }
 
-export function isEqual(value1: unknown, value2: unknown, msg?: string) {
-    if (!Guard.isEqual(value1, value2))
-        _fail(`Expected ${value1} to equal with ${value2}`, msg);
+export function isEqual<T = any>(val1: T, val2: unknown, msg?: string): T {
+    if (!Guard.isEqual(val1, val2))
+        _fail(`Expected ${fmt(val1)} to equal with ${val2}`, msg);
+    return val1;
+}
+
+export function isDeepEqual<T = any>(val1: T, val2: unknown, msg?: string): T {
+    if (!Guard.isDeepEqual(val1, val2))
+        _fail(`Expected ${fmt(val1)} to deep equal with ${fmt(val2)}`, msg);
+    return val1;
+}
+
+export function isUndefined(val: unknown, msg?: string): undefined {
+    if (!Guard.isUndefined(val))
+        _fail(`Expected ${fmt(val)} to be undefined`, msg);
+    return val;
+}
+
+export function isNull(val: unknown, msg?: string): null {
+    if (!Guard.isNull(val))
+        _fail(`Expected ${fmt(val)} to be null`, msg);
+    return val;
+}
+
+export function isNullish(val: unknown, msg?: string): null | undefined {
+    if (!Guard.isNullish(val))
+        _fail(`Expected ${fmt(val)} to be null or undefined`, msg);
+    return val;
+}
+
+export function isObject(val: unknown, msg?: string): Record<string, unknown> {
+    if (!Guard.isObject(val))
+        _fail(`Expected ${fmt(val)} to be object`, msg);
+    return val;
+}
+
+export function isObjectOrUndefined(val: unknown, msg?: string): Record<string, unknown> | undefined {
+    if (!Guard.isObjectOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be object or undefined`, msg);
+    return val;
+}
+
+export function isTypedObject<T extends object>(val: unknown, keys: (keyof T)[], msg?: string): Guard.HasProps<T> {
+    if (!Guard.isTypedObject(val, keys))
+        _fail(`Expected ${fmt(val)} to have keys ${fmt(keys)}`, msg);
+    return val;
+}
+
+export function isArray<T>(val: unknown, msg?: string): T[] {
+    if (!Guard.isArray(val))
+        _fail(`Expected ${fmt(val)} to be array`, msg);
+    return val as T[];
+}
+
+export function isArrayOrUndefined(val: unknown, msg?: string): val is unknown[] | undefined {
+    if (!Guard.isArrayOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be array or undefined`, msg);
     return true;
 }
 
-export function isDeepEqual(value1: unknown, value2: unknown, msg?: string) {
-    if (!Guard.isDeepEqual(value1, value2))
-        _fail(`Expected ${value1} to deep equal with ${value2}`, msg);
-    return true;
+export function isEmptyArray<T = any>(val: T[], msg?: string): asserts val is T[] {
+    if (!Guard.isEmptyArray(val))
+        _fail(`Expected ${fmt(val)} to be empty array`, msg);
 }
 
-export function isUndefined(value: unknown, msg?: string): value is undefined {
-    if (!Guard.isUndefined(value))
-        _fail(`Expected ${value} to be undefined`, msg);
-    return true;
+export function isNonEmptyArray<T = any>(val: T[], msg?: string): asserts val is T[] {
+    if (!Guard.isNonEmptyArray(val))
+        _fail(`Expected ${fmt(val)} to be non-empty array`, msg);
 }
 
-export function isNull(value: unknown, msg?: string): value is null {
-    if (!Guard.isNull(value))
-        _fail(`Expected ${value} to be null`, msg);
-    return true;
+export function isEmptyArrayOrUndefined<T = any>(val: unknown, msg?: string): asserts val is T[] | undefined {
+    if (!Guard.isEmptyArrayOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be empty array or undefined`, msg);
 }
 
-export function isNullish(value: unknown, msg?: string): value is null | undefined {
-    if (!Guard.isNullish(value))
-        _fail(`Expected ${value} to be null or undefined`, msg);
-    return true;
+export function isNonEmptyArrayOrUndefined<T = any>(val: unknown, msg?: string): asserts val is T[] | undefined {
+    if (!Guard.isNonEmptyArrayOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be non-empty array or undefined`, msg);
 }
 
-export function isObject(value: unknown, msg?: string): value is Record<string, unknown> {
-    if (!Guard.isObject(value))
-        _fail(`Expected ${value} to be object`, msg);
-    return true;
+export function isString(val: unknown, msg?: string): string {
+    if (!Guard.isString(val))
+        _fail(`Expected ${fmt(val)} to be string`, msg);
+    return val;
 }
 
-export function isObjectOrUndefined(value: unknown, msg?: string): value is Record<string, unknown> | undefined {
-    if (!Guard.isObjectOrUndefined(value))
-        _fail(`Expected ${value} to be object or undefined`, msg);
-    return true;
+export function isEmptyString(val: unknown, msg?: string): "" {
+    if (!Guard.isEmptyString(val))
+        _fail(`Expected ${fmt(val)} to be empty string`, msg);
+    return val;
 }
 
-export function isTypedObject<T extends object>(obj: unknown, keys: (keyof T)[], msg?: string): obj is Guard.HasProps<T> {
-    if (!Guard.isTypedObject(obj, keys))
-        _fail(`Expected ${obj} to be object with keys [${keys.map(key => `'${String(key)}'`).join(", ")}]`, msg);
-    return true;
+export function isNonEmptyString(val: unknown, msg?: string): string {
+    if (!Guard.isNonEmptyString(val))
+        _fail(`Expected ${fmt(val)} to be non-empty string`, msg);
+    return val;
 }
 
-export function isArray<T>(value: T[] | unknown, msg?: string): value is T[] {
-    if (!Guard.isArray(value))
-        _fail(`Expected ${value} to be array`, msg);
-    return true;
+export function isStringOrUndefined(val: unknown, msg?: string): string | undefined {
+    if (!Guard.isStringOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be string or undefined`, msg);
+    return val;
 }
 
-export function isArrayOrUndefined(value: unknown, msg?: string): value is unknown[] | undefined {
-    if (!Guard.isArrayOrUndefined(value))
-        _fail(`Expected ${value} to be array or undefined`, msg);
-    return true;
+export function isEmptyStringOrUndefined(val: unknown, msg?: string): "" | undefined {
+    if (!Guard.isEmptyStringOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be empty string or undefined`, msg);
+    return val;
 }
 
-export function isEmptyArray<T>(value: T[] | unknown, msg?: string): value is T[] {
-    if (!Guard.isEmptyArray(value))
-        _fail(`Expected ${value} to be empty array`, msg);
-    return true;
+export function isNonEmptyStringOrUndefined(val: unknown, msg?: string): string | undefined {
+    if (!Guard.isNonEmptyStringOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be non-empty string or undefined`, msg);
+    return val;
 }
 
-export function isNonEmptyArray<T>(value: T[] | unknown, msg?: string): value is T[] {
-    if (!Guard.isNonEmptyArray(value))
-        _fail(`Expected ${value} to be non-empty array`, msg);
-    return true;
+export function isBoolean(val: unknown, msg?: string): boolean {
+    if (!Guard.isBoolean(val))
+        _fail(`Expected ${fmt(val)} to be boolean`, msg);
+    return val;
 }
 
-export function isEmptyArrayOrUndefined<T>(value: T[] | unknown, msg?: string): value is T[] | undefined {
-    if (!Guard.isEmptyArrayOrUndefined(value))
-        _fail(`Expected ${value} to be empty array or undefined`, msg);
-    return true;
+export function isBooleanOrUndefined(val: unknown, msg?: string): boolean | undefined {
+    if (!Guard.isBooleanOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be boolean or undefined`, msg);
+    return val;
 }
 
-export function isNonEmptyArrayOrUndefined<T>(value: T[] | unknown, msg?: string): value is T[] | undefined {
-    if (!Guard.isNonEmptyArrayOrUndefined(value))
-        _fail(`Expected ${value} to be non-empty array or undefined`, msg);
-    return true;
+export function isTrue(val: unknown, msg?: string): true {
+    if (!Guard.isTrue(val))
+        _fail(`Expected ${fmt(val)} to be true`, msg);
+    return val;
 }
 
-export function isString(value: unknown, msg?: string): value is string {
-    if (!Guard.isString(value))
-        _fail(`Expected ${value} to be string`, msg);
-    return true;
+export function isTrueOrUndefined(val: unknown, msg?: string): true | undefined {
+    if (!Guard.isTrueOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be true or undefined`, msg);
+    return val;
 }
 
-export function isEmptyString(value: unknown, msg?: string): value is "" {
-    if (!Guard.isEmptyString(value))
-        _fail(`Expected ${value} to be empty string`, msg);
-    return true;
+export function isFalse(val: unknown, msg?: string): false {
+    if (!Guard.isFalse(val))
+        _fail(`Expected ${fmt(val)} to be false`, msg);
+    return val;
 }
 
-export function isNonEmptyString(value: unknown, msg?: string): value is string {
-    if (!Guard.isNonEmptyString(value))
-        _fail(`Expected ${value} to be non-empty string`, msg);
-    return true;
+export function isFalseOrUndefined(val: unknown, msg?: string): false | undefined {
+    if (!Guard.isFalseOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be false or undefined`, msg);
+    return val;
 }
 
-export function isStringOrUndefined(value: unknown, msg?: string): value is string | undefined {
-    if (!Guard.isStringOrUndefined(value))
-        _fail(`Expected ${value} to be string or undefined`, msg);
-    return true;
+export function isFunction<T extends (...args: any[]) => any>(val: unknown, msg?: string): T {
+    if (!Guard.isFunction(val))
+        _fail(`Expected ${fmt(val)} to be function`, msg);
+    return val as T;
 }
 
-export function isEmptyStringOrUndefined(value: unknown, msg?: string): value is "" | undefined {
-    if (!Guard.isEmptyStringOrUndefined(value))
-        _fail(`Expected ${value} to be empty string or undefined`, msg);
-    return true;
+export function isFunctionOrUndefined<T extends (...args: any[]) => any>(val: unknown, msg?: string): T | undefined {
+    if (!Guard.isFunctionOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be function or undefined`, msg);
+    return val as T | undefined;
 }
 
-export function isNonEmptyStringOrUndefined(value: unknown, msg?: string): value is string | undefined {
-    if (!Guard.isNonEmptyStringOrUndefined(value))
-        _fail(`Expected ${value} to be non-empty string or undefined`, msg);
-    return true;
+export function isEnumValue<E extends EnumObject>(val: unknown, enumObject: E, msg?: string): E[keyof E] {
+    if (!Guard.isEnumValue(val, enumObject))
+        _fail(`Expected ${fmt(val)} to be enum val`, msg);
+    return val;
 }
 
-export function isBoolean(value: unknown, msg?: string): value is boolean {
-    if (!Guard.isBoolean(value))
-        _fail(`Expected ${value} to be boolean`, msg);
-    return true;
+export function isEnumValueOrUndefined<E extends EnumObject>(val: unknown, enumObject: E, msg?: string): E[keyof E] | undefined {
+    if (!Guard.isEnumValueOrUndefined(val, enumObject))
+        _fail(`Expected ${fmt(val)} to be enum val or undefined`, msg);
+    return val;
 }
 
-export function isBooleanOrUndefined(value: unknown, msg?: string): value is boolean | undefined {
-    if (!Guard.isBooleanOrUndefined(value))
-        _fail(`Expected ${value} to be boolean or undefined`, msg);
-    return true;
+export function isNumber(val: unknown, msg?: string): number {
+    if (!Guard.isNumber(val))
+        _fail(`Expected ${fmt(val)} to be number`, msg);
+    return val;
 }
 
-export function isTrue(value: unknown, msg?: string): value is boolean {
-    if (!Guard.isTrue(value))
-        _fail(`Expected ${value} to be true`, msg);
-    return true;
+export function isNumberOrUndefined(val: unknown, msg?: string): number | undefined {
+    if (!Guard.isNumberOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be number or undefined`, msg);
+    return val;
 }
 
-export function isTrueOrUndefined(value: unknown, msg?: string): value is boolean {
-    if (!Guard.isTrueOrUndefined(value))
-        _fail(`Expected ${value} to be true or undefined`, msg);
-    return true;
+export function isFinite(val: unknown, msg?: string): number {
+    if (!Guard.isFinite(val))
+        _fail(`Expected ${fmt(val)} to be finite`, msg);
+    return val;
 }
 
-export function isFalse(value: unknown, msg?: string): value is boolean {
-    if (!Guard.isFalse(value))
-        _fail(`Expected ${value} to be false`, msg);
-    return true;
+export function isInteger(val: unknown, msg?: string): number {
+    if (!Guard.isInteger(val))
+        _fail(`Expected ${fmt(val)} to be integer`, msg);
+    return val;
 }
 
-export function isFalseOrUndefined(value: unknown, msg?: string): value is boolean {
-    if (!Guard.isFalseOrUndefined(value))
-        _fail(`Expected ${value} to be false or undefined`, msg);
-    return true;
+export function isIntegerOrUndefined(val: unknown, msg?: string): number | undefined {
+    if (!Guard.isIntegerOrUndefined(val))
+        _fail(`Expected ${fmt(val)} to be integer or undefined`, msg);
+    return val;
 }
 
-export function isFunction(value: unknown, msg?: string): value is Function {
-    if (!Guard.isFunction(value))
-        _fail(`Expected ${value} to be function`, msg);
-    return true;
+export function isIntegerEq(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isIntegerEq(val, ref))
+        _fail(`Expected ${fmt(val)} to be integer equal to ${fmt(ref)}`, msg);
+    return val;
 }
 
-export function isFunctionOrUndefined(value: unknown, msg?: string): value is Function | undefined {
-    if (!Guard.isFunctionOrUndefined(value))
-        _fail(`Expected ${value} to be function or undefined`, msg);
-    return true;
+export function isIntegerGt(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isIntegerGt(val, ref))
+        _fail(`Expected ${fmt(val)} to be integer > ${fmt(ref)}`, msg);
+    return val;
 }
 
-export function isEnumValue<E extends EnumObject>(enumValue: unknown, enumObject: E, msg?: string): enumValue is E[keyof E] {
-    if (!Guard.isEnumValue(enumValue, enumObject))
-        _fail(`Expected ${enumValue} to be enum value`, msg);
-    return true;
+export function isIntegerGte(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isIntegerGte(val, ref))
+        _fail(`Expected ${fmt(val)} to be integer >= ${fmt(ref)}`, msg);
+    return val;
 }
 
-export function isEnumValueOrUndefined<E extends EnumObject>(enumValue: unknown, enumObject: E, msg?: string): enumValue is E[keyof E] {
-    if (!Guard.isEnumValueOrUndefined(enumValue, enumObject))
-        _fail(`Expected ${enumValue} to be enum value or undefined`, msg);
-    return true;
+export function isIntegerLt(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isIntegerLt(val, ref))
+        _fail(`Expected ${fmt(val)} to be integer < ${fmt(ref)}`, msg);
+    return val;
 }
 
-export function isNumber(value: unknown, msg?: string): value is number {
-    if (!Guard.isNumber(value))
-        _fail(`Expected ${value} to be number`, msg);
-    return true;
+export function isIntegerLte(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isIntegerLte(val, ref))
+        _fail(`Expected ${fmt(val)} to be integer <= ${fmt(ref)}`, msg);
+    return val;
 }
 
-export function isNumberOrUndefined(value: unknown, msg?: string): value is number | undefined {
-    if (!Guard.isNumberOrUndefined(value))
-        _fail(`Expected ${value} to be number or undefined`, msg);
-    return true;
+export function isIntegerBetween(val: unknown, min: unknown, max: unknown, msg?: string): number {
+    if (!Guard.isIntegerBetween(val, min, max))
+        _fail(`Expected integer ${fmt(min)} <= ${fmt(val)} <= ${fmt(max)}.`, msg);
+    return val;
 }
 
-export function isFinite(value: unknown, msg?: string): value is number {
-    if (!Guard.isFinite(value))
-        _fail(`Expected ${value} to be finite`, msg);
-    return true;
+export function isIntegerBetweenExclusive(val: unknown, min: unknown, max: unknown, msg?: string): number {
+    if (!Guard.isIntegerBetweenExclusive(val, min, max))
+        _fail(`Expected integer ${fmt(min)} < ${fmt(val)} < ${fmt(max)}.`, msg);
+    return val;
 }
 
-export function isInteger(value: unknown, msg?: string): value is number {
-    if (!Guard.isInteger(value))
-        _fail(`Expected ${value} to be integer`, msg);
-    return true;
+export function isNumberBetween(val: unknown, min: unknown, max: unknown, msg?: string): number {
+    if (!Guard.isNumberBetween(val, min, max))
+        _fail(`Expected number ${fmt(min)} <= ${fmt(val)} <= ${fmt(max)}.`, msg);
+    return val;
 }
 
-export function isIntegerOrUndefined(value: unknown, msg?: string): value is number | undefined {
-    if (!Guard.isIntegerOrUndefined(value))
-        _fail(`Expected ${value} to be integer or undefined`, msg);
-    return true;
+export function isNumberBetweenExclusive(val: unknown, min: unknown, max: unknown, msg?: string): number {
+    if (!Guard.isNumberBetweenExclusive(val, min, max))
+        _fail(`Expected number ${fmt(min)} < ${fmt(val)} < ${fmt(max)}.`, msg);
+    return val;
 }
 
-export function isIntegerEq(value: unknown, compareTo: unknown, msg?: string): value is number {
-    if (!Guard.isIntegerEq(value, compareTo))
-        _fail(`Expected ${value} to be integer equal to ${compareTo}`, msg);
-    return true;
+export function isNaNValue(val: unknown, msg?: string): number {
+    if (!Guard.isNaNValue(val))
+        _fail(`Expected ${fmt(val)} to be NaN.`, msg);
+    return NaN;
 }
 
-export function isIntegerGt(value: unknown, compareTo: unknown, msg?: string): value is number {
-    if (!Guard.isIntegerGt(value, compareTo))
-        _fail(`Expected ${value} to be integer > ${compareTo}`, msg);
-    return true;
+export function isInfinity(val: unknown, msg?: string): number {
+    if (!Guard.isInfinity(val))
+        _fail(`Expected ${fmt(val)} to be +-Infinity.`, msg);
+    return val;
 }
 
-export function isIntegerGte(value: unknown, compareTo: unknown, msg?: string): value is number {
-    if (!Guard.isIntegerGte(value, compareTo))
-        _fail(`Expected ${value} to be integer >= ${compareTo}`, msg);
-    return true;
+export function isPosInfinity(val: unknown, msg?: string): number {
+    if (!Guard.isPosInfinity(val))
+        _fail(`Expected ${fmt(val)} to be +Infinity.`, msg);
+    return val;
 }
 
-export function isIntegerLt(value: unknown, compareTo: unknown, msg?: string): value is number {
-    if (!Guard.isIntegerLt(value, compareTo))
-        _fail(`Expected ${value} to be integer < ${compareTo}`, msg);
-    return true;
+export function isNegInfinity(val: unknown, msg?: string): number {
+    if (!Guard.isNegInfinity(val))
+        _fail(`Expected ${fmt(val)} to be -Infinity.`, msg);
+    return val;
 }
 
-export function isIntegerLte(value: unknown, compareTo: unknown, msg?: string): value is number {
-    if (!Guard.isIntegerLte(value, compareTo))
-        _fail(`Expected ${value} to be integer <= ${compareTo}`, msg);
-    return true;
+export function isOddNumber(val: unknown, msg?: string): number {
+    if (!Guard.isOddNumber(val))
+        _fail(`Expected ${fmt(val)} to odd number.`, msg);
+    return val;
 }
 
-export function isIntegerBetween(value: unknown, min: unknown, max: unknown, msg?: string): value is number {
-    if (!Guard.isIntegerBetween(value, min, max))
-        _fail(`Expected integer ${min} <= ${value} <= ${max}.`, msg);
-    return true;
+export function isEvenNumber(val: unknown, msg?: string): number {
+    if (!Guard.isEvenNumber(val))
+        _fail(`Expected ${fmt(val)} to even number.`, msg);
+    return val;
 }
 
-export function isIntegerBetweenExclusive(value: unknown, min: unknown, max: unknown, msg?: string): value is number {
-    if (!Guard.isIntegerBetweenExclusive(value, min, max))
-        _fail(`Expected integer ${min} < ${value} < ${max}.`, msg);
-    return true;
+export function isDivisibleBy(val: unknown, n: unknown, msg?: string): number {
+    if (!Guard.isDivisibleBy(val, n))
+        _fail(`Expected ${fmt(val)} to be divisble bu ${fmt(n)}.`, msg);
+    return val;
 }
 
-export function isNumberBetween(value: unknown, min: unknown, max: unknown, msg?: string): value is number {
-    if (!Guard.isNumberBetween(value, min, max))
-        _fail(`Expected number ${min} <= ${value} <= ${max}.`, msg);
-    return true;
+export function isIncluded<T>(val: unknown, array: ReadonlyArray<T>, msg?: string): T {
+    if (!Guard.isIncluded(val, array))
+        _fail(`Expected ${fmt(val)} to be included in ${fmt(array)}.`, msg);
+    return val;
 }
 
-export function isNumberBetweenExclusive(value: unknown, min: unknown, max: unknown, msg?: string): value is number {
-    if (!Guard.isNumberBetweenExclusive(value, min, max))
-        _fail(`Expected number ${min} < ${value} < ${max}.`, msg);
-    return true;
-}
-
-export function isNaNValue(value: unknown, msg?: string): value is number {
-    if (!Guard.isNaNValue(value))
-        _fail(`Expected ${value} to be NaN.`, msg);
-    return true;
-}
-
-export function isInfinity(value: unknown, msg?: string): value is number {
-    if (!Guard.isInfinity(value))
-        _fail(`Expected ${value} to be +-Infinity.`, msg);
-    return true;
-}
-
-export function isPosInfinity(value: unknown, msg?: string): value is number {
-    if (!Guard.isPosInfinity(value))
-        _fail(`Expected ${value} to be +Infinity.`, msg);
-    return true;
-}
-
-export function isNegInfinity(value: unknown, msg?: string): value is number {
-    if (!Guard.isNegInfinity(value))
-        _fail(`Expected ${value} to be -Infinity.`, msg);
-    return true;
-}
-
-export function isOddNumber(value: unknown, msg?: string): value is number {
-    if (!Guard.isOddNumber(value))
-        _fail(`Expected ${value} to odd number.`, msg);
-    return true;
-}
-
-export function isEvenNumber(value: unknown, msg?: string): value is number {
-    if (!Guard.isEvenNumber(value))
-        _fail(`Expected ${value} to even number.`, msg);
-    return true;
-}
-
-export function isIncluded<T>(value: T, array: ReadonlyArray<T>, msg?: string): value is T {
-    if (!Guard.isIncluded(value, array))
-        _fail(`Expected ${value} to be included in [${array.map(v => String(v)).join(", ")}].`, msg);
-    return true;
-}
-
-export function isArrayIndex<T>(index: unknown, array: ReadonlyArray<T>, msg?: string): index is number {
+export function isArrayIndex<T>(index: unknown, array: ReadonlyArray<T>, msg?: string): number {
     if (!Guard.isArrayIndex(index, array))
-        _fail(`Expected ${index} to be index for array [${array.map(v => String(v)).join(", ")}]`, msg);
-    return true;
+        _fail(`Expected ${index} to be index for ${fmt(array)}`, msg);
+    return index;
+}
+
+export function isArrayElement<T>(index: unknown, array: ReadonlyArray<T>, msg?: string): T {
+    if (!Guard.isArrayIndex(index, array))
+        _fail(`Expected index ${index} to have element in ${fmt(array)}`, msg);
+    return array[index];
 }
 
 export function isThrowing(throwTestFn: () => void, msg?: string): true {
