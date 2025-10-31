@@ -2,15 +2,15 @@ import { isInteger, isArray } from "../../guard";
 
 export { isArray }
 
-export function toArray<T>(a: T | T[]): Array<T> {
+export function toArray<T>(a: T | T[]): T[] {
     return isArray(a) ? a : [a];
 }
 
-export function duplicate<T>(a: T[] | undefined) {
-    return a === undefined ? a : a.slice();
+export function duplicate<T>(a: ReadonlyArray<T> | undefined): T[] {
+    return a?.slice() ?? [];
 }
 
-export function removeDuplicates<T>(arr: T[], compareFn?: (a: T, b: T) => boolean): T[] {
+export function removeDuplicates<T>(arr: ReadonlyArray<T>, compareFn?: (a: T, b: T) => boolean): Array<T> {
     return compareFn !== undefined
         ? arr.filter((a, id, self) => id === self.findIndex(b => compareFn(a, b)))
         : arr.filter((a, id, self) => id === self.indexOf(a));
