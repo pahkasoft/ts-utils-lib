@@ -47,12 +47,12 @@ describe("Assert", () => {
         });
     });
 
-    describe("Equality", () => {
-        it("isEqual() passes for same value", () => {
-            expect(() => Assert.isEqual(5, 5)).not.toThrow();
+    describe("Strict euality", () => {
+        it("isStrictEqual() passes for same value", () => {
+            expect(() => Assert.isStrictEqual(5, 5)).not.toThrow();
         });
-        it("isEqual() fails for different", () => {
-            expectThrow(() => Assert.isEqual(5, 6), "equal");
+        it("isStrictEqual() fails for different", () => {
+            expectThrow(() => Assert.isStrictEqual(5, 6), "equal");
         });
 
         it("isDeepEqual() passes for same object", () => {
@@ -146,9 +146,11 @@ describe("Assert", () => {
             expectThrow(() => Assert.isIncluded(5, arr));
         });
 
-        it("isArrayIndex() works", () => {
-            expect(() => Assert.isArrayIndex(1, arr)).not.toThrow();
-            expectThrow(() => Assert.isArrayIndex(5, arr));
+        it("isIndex() works", () => {
+            expect(() => Assert.isIndex(-1)).toThrow();
+            expect(() => Assert.isIndex(1)).not.toThrow();
+            expect(() => Assert.isIndex(1, arr)).not.toThrow();
+            expect(() => Assert.isIndex(5, arr)).toThrow();
         });
     });
 });

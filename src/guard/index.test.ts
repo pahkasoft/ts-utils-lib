@@ -275,12 +275,12 @@ describe("Is", () => {
     });
 
     it("isOddNumber", () => {
-        expect(Guard.isOddNumber(3)).toBeTrue();
-        expect(Guard.isOddNumber(4)).toBeFalse();
+        expect(Guard.isOdd(3)).toBeTrue();
+        expect(Guard.isOdd(4)).toBeFalse();
     });
 
     it("isEvenNumber", () => {
-        expect(Guard.isEvenNumber(3)).toBeFalse();
-        expect(Guard.isEvenNumber(4)).toBeTrue();
+        expect(Guard.isEven(3)).toBeFalse();
+        expect(Guard.isEven(4)).toBeTrue();
     });
 });
