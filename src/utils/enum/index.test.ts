@@ -1,12 +1,4 @@
-import {
-    getEnumKeys,
-    getEnumValues,
-    getEnumEntries,
-    getEnumKey,
-    forEachEnum,
-    isEnumValue,
-    assertEnumValue,
-} from ".";
+import { getEnumKeys, getEnumValues, getEnumEntries, getEnumKey, forEachEnum } from ".";
 
 enum Color {
     Red = "RED",
@@ -84,26 +76,6 @@ describe("Enum utilities", () => {
                 ["Green", "GREEN"],
                 ["Blue", "BLUE"],
             ]);
-        });
-    });
-
-    describe("isEnumValue", () => {
-        it("returns true for valid value", () => {
-            expect(isEnumValue(Color, "BLUE")).toBeTrue();
-        });
-
-        it("returns false for invalid value", () => {
-            expect(isEnumValue(Color, "PURPLE")).toBeFalse();
-        });
-    });
-
-    describe("assertEnumValue", () => {
-        it("does not throw for valid value", () => {
-            expect(() => assertEnumValue(Color, "GREEN")).not.toThrow();
-        });
-
-        it("throws TypeError for invalid value", () => {
-            expect(() => assertEnumValue(Color, "ORANGE")).toThrowError(TypeError);
         });
     });
 });

@@ -25,13 +25,3 @@ export function forEachEnum<E extends EnumObject>(
 ): void {
     for (const [k, v] of getEnumEntries(e)) callback(k, v);
 }
-
-export function isEnumValue<E extends EnumObject>(e: E, value: unknown): value is EnumValue<E> {
-    return getEnumValues(e).includes(value as EnumValue<E>);
-}
-
-export function assertEnumValue<E extends EnumObject>(e: E, value: unknown): asserts value is EnumValue<E> {
-    if (!isEnumValue(e, value)) {
-        throw new TypeError(`Invalid enum value: ${String(value)}`);
-    }
-}
