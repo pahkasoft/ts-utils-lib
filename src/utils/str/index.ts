@@ -1,3 +1,4 @@
+import { getCtorName } from "../obj";
 import { BaseContainer } from "../../core";
 import { isString, isArray, isInteger, isNaNValue, isFinite } from "../../guard";
 export { isString }
@@ -134,15 +135,6 @@ export function makeSentenceFromPascal(PascalString: string) {
     addWord();
 
     return sentence;
-}
-
-function getCtorName(value: any): string {
-    if (value === null) return "null";
-    if (Array.isArray(value)) return "Array";
-    if (typeof value !== "object") return typeof value;
-
-    const tag = Object.prototype.toString.call(value).slice(8, -1);
-    return tag || "Object";
 }
 
 export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): string {

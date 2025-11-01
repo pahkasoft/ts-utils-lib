@@ -1,4 +1,4 @@
-import { isObject } from "../../guard";
+import { isArray, isObject } from "../../guard";
 
 export { isObject }
 
@@ -44,4 +44,13 @@ export function deepEqual<T>(a: T, b: T): boolean {
     }
 
     return true;
+}
+
+export function getCtorName(obj: any): string {
+    if (obj === null) return "null";
+    if (isArray(obj)) return "Array";
+    if (typeof obj !== "object") return typeof obj;
+
+    const tag = Object.prototype.toString.call(obj).slice(8, -1);
+    return tag || "Object";
 }
