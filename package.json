@@ -4,12 +4,10 @@
     "author": "PahkaSoft",
     "license": "MIT",
     "private": false,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pahkasoft/ts-utils-lib.git"
-    },
+    "homepage": "https://pahkasoft.github.io/ts-utils-lib",
+    "repository": "github:pahkasoft/ts-utils-lib",
     "bugs": {
-        "url": "https://github.com/pahkasoft/ts-utils-lib/issues/new/choose"
+        "url": "https://github.com/pahkasoft/ts-utils-lib/issues"
     },
     "description": "Useful library of typescript classes, modules and functions.",
     "types": "dist/index.d.ts",
