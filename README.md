@@ -36,11 +36,13 @@ Available in version `2.1.0`.
     You must load polyfills of your choise first (optional).
 -->
 <script src="https://unpkg.com/@tspro/ts-utils-lib@2.1.0/dist/index.es5.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.1.0/dist/index.es5.iife.js"></script>
 
 <!--
     Alternatively you can load this TsUtilsLib version that is bundled with polyfills.
 -->
 <script src="https://unpkg.com/@tspro/ts-utils-lib@2.1.0/dist/index.es5.polyfilled.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.1.0/dist/index.es5.polyfilled.iife.js"></script>
 
 <!-- Another JS example: -->
 <script>
