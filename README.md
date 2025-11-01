@@ -12,6 +12,8 @@ lib is written by AI.
 [Package](https://www.npmjs.com/package/@tspro/ts-utils-lib) |
 [Homepage](https://pahkasoft.github.io/ts-utils-lib)
 
+Homepage contains TS Docs/API Reference.
+
 ## Install
 `npm i @tspro/ts-utils-lib`
 
