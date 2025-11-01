@@ -1,5 +1,4 @@
 import { getCtorName } from "../obj";
-import { BaseContainer } from "../../core";
 import { isString, isArray, isInteger, isNaNValue, isFinite } from "../../guard";
 export { isString }
 
@@ -212,12 +211,9 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
 
     if (value instanceof WeakMap)
         return "WeakMap{ ? }";
+
     if (value instanceof WeakSet)
         return "WeakSet{ ? }";
-
-    // --- Custom container class ---
-    if (typeof BaseContainer !== "undefined" && value instanceof BaseContainer)
-        return value.toString();
 
     // --- Built-ins ---
     if (value instanceof Date)
