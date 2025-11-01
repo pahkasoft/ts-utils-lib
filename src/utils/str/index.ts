@@ -136,6 +136,15 @@ export function makeSentenceFromPascal(PascalString: string) {
     return sentence;
 }
 
+function getCtorName(value: any): string {
+    if (value === null) return "null";
+    if (Array.isArray(value)) return "Array";
+    if (typeof value !== "object") return typeof value;
+
+    const tag = Object.prototype.toString.call(value).slice(8, -1);
+    return tag || "Object";
+}
+
 export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): string {
     // --- Primitive & simple values ---
     if (value === null) return "null";
@@ -243,9 +252,23 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
     if (value === Reflect) return "Reflect";
     if (value === Intl) return "Intl";
 
+    // --- Custom toString method ---
+    const hasCustomToString =
+        typeof value?.toString === "function" &&
+        value.toString !== Object.prototype.toString;
+
+    if (hasCustomToString) {
+        try {
+            const str = value.toString();
+            // Optional: skip if it’s just "[object Object]"
+            if (!/^\[object .+\]$/.test(str)) return str;
+        }
+        catch { /* ignore broken toString() */ }
+    }
+
     // --- Plain object or class instance ---
     if (t === "object") {
-        const ctorName = value.constructor?.name ?? "Object";
+        const ctorName = getCtorName(value);
         const entries = Object.entries(value).map(
             ([key, val]) => `${strfy(key)}: ${strfy(val)}`
         );
