@@ -18,8 +18,8 @@ git log --pretty="- %s"
 
 # Update version
 - Update version in package.json
-- `git commit -a -m "v2.0.0"`
-- `git tag v2.0.0`
+- `git commit -a -m "v2.1.0"`
+- `git tag v2.1.0`
 
 # Build production version
 npm run build
