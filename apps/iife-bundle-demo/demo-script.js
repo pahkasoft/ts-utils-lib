@@ -1,4 +1,5 @@
 const {
+    getLibInfo,
     Utils,
     DefaultArray,
     IndexArray,
@@ -27,6 +28,7 @@ const arect = new AnchoredRect(1, 2, 3, 4, 5, 6);
 const vec = new Vec(1,2,3,4);
 
 document.getElementById('demo').innerHTML = `
+    <p>${getLibInfo()}</p>
     <p>${Utils.Str.stringify(arr1)}</p>
     <p>${Utils.Str.stringify(arr2)}</p>
     <p>${Utils.Str.stringify(arr3)}</p>
