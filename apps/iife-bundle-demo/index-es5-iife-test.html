@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Browser Demo</title>
+    <style>
+        /* tiny centered layout */
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7f7fb;
+            color: #111;
+        }
+
+        .card {
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            background: white;
+            max-width: 640px;
+            text-align: center;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="card" role="main">
+        <h1>Browser Demo</h1>
+        <p>
+        <div id="demo"></div>
+        </p>
+    </main>
+
+    <!--
+        Include polyfills (optional, to support older browsers).
+        Download and include local file or use CDN version of your choise.
+        <script src="./polyfill.min.js"></script>
+    -->
+
+    <!-- Load TsUtilsLib -->
+    <!--
+    <script src="https://unpkg.com/@tspro/ts-utils-lib@2.1.0/dist/index.es5.iife.js"></script>
+    -->
+    <script src="../../dist/index.es5.iife.js"></script>
+
+    <script src="./demo-script.js"></script>
+</body>
+
+</html>

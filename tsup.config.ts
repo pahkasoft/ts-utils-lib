@@ -17,8 +17,8 @@ export default defineConfig([
     },
     {
         entry: {
-            'index.es5': 'src/index.ts',
-            'index.es5.polyfilled': 'src/index.polyfilled.ts'
+            'index.es5': 'src/index.es5.iife.ts',
+            'index.es5.polyfilled': 'src/index.es5.polyfilled.iife.ts'
         },
         outDir: 'dist',
         target: 'es5',
