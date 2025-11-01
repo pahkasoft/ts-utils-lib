@@ -1,11 +1,11 @@
 # Changelog
 ## [2.1.0] - 2025-11-??
 ### Added
- - Bundle index.es5.iife.js
- - Bundle index.es5.polyfilled.iife.js
- - AnchoredRect.toString()
- - stringify: detect custom toString.
- - stringify: detect constructor name.
+ - Bundle ``index.es5.iife.js`
+ - Bundle `index.es5.polyfilled.iife.js`
+ - `AnchoredRect.toString()`
+ - `Utils.Str.stringify()`: detect custom `toString()`.
+ - `Utils.Str.stringify()`: detect constructor name.
 
 ## [2.0.0] - 2025-10-31
 ### **Breaking Major Update**
