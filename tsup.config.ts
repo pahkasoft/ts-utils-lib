@@ -1,32 +1,38 @@
 // tsup.config.ts
-import { defineConfig } from 'tsup'
+import { defineConfig, Format, Options } from 'tsup'
 import pkg from './package.json' assert { type: 'json' }
 
-const bannerText = `/* TsUtilsLib v${pkg.version} | (c) 2023 PahkaSoft | Licensed under the MIT License */`;
+const ConfigEntries: { entry: Record<string, string>, format: Format }[] = [
+    { entry: { 'index': 'src/index.ts' }, format: 'esm' },
+    { entry: { 'index': 'src/index.ts' }, format: 'cjs' },
+    { entry: { 'index.es5': 'src/index.es5.iife.ts' }, format: 'iife' },
+    { entry: { 'index.es5.polyfilled': 'src/index.es5.polyfilled.iife.ts' }, format: 'iife' }
+];
 
-export default defineConfig([
-    {
-        entry: ['src/index.ts'],
+const ConfigOptions = ConfigEntries.map((config, configId) => {
+    const { entry, format } = config;
+    const bannerText = `/*!
+ * TsUtilsLib v${pkg.version} (${format})
+ * (c) 2023–${new Date().getFullYear()} PahkaSoft
+ * Licensed under the MIT License
+ */`;
+    const libInfo = `TsUtilsLib v${pkg.version} (${format})`;
+    const isIIFE = format === 'iife';
+    return {
+        entry,
         outDir: 'dist',
-        target: 'es2020',
-        format: ['esm', 'cjs'],
-        dts: true,
-        sourcemap: true,
-        clean: true,
-        banner: { js: bannerText }
-    },
-    {
-        entry: {
-            'index.es5': 'src/index.es5.iife.ts',
-            'index.es5.polyfilled': 'src/index.es5.polyfilled.iife.ts'
-        },
-        outDir: 'dist',
-        target: 'es5',
-        format: ['iife'],
-        globalName: 'TsUtilsLib',
-        sourcemap: true,
+        target: isIIFE ? 'es5' : 'es2020',
+        format,
+        treeshake: !isIIFE,
+        globalName: isIIFE ? 'TsUtilsLib' : undefined,
+        sourcemap: !isIIFE,
+        dts: !isIIFE,
+        clean: configId === 0,
+        minify: isIIFE,
+        outExtension: () => ({ js: isIIFE ? '.iife.js' : undefined }),
         banner: { js: bannerText },
-        minify: true,
-        outExtension: () => ({ js: '.iife.js' })
-    },
-]);
+        define: { __LIB_INFO__: JSON.stringify(libInfo) }
+    }
+});
+
+export default defineConfig(ConfigOptions);
