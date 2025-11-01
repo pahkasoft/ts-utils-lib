@@ -437,4 +437,8 @@ export class AnchoredRect {
     toRect(): Rect {
         return new Rect(this.left, this.right, this.width, this.height);
     }
+
+    toString(): string {
+        return `Rect(left=${this.left}, anchorX=${this.anchorX}, right=${this.right}, top=${this.top}, anchorY=${this.anchorY}, bottom=${this.bottom})`;
+    }
 }
