@@ -30,23 +30,20 @@ const map = new UniMap();
 ```
 
 ## Browser Usage
-Available in version `2.1.0`.
+- Available in version `2.1.0`.
+- These bundles are transpiled with `ES5` target.
+- With non-polyfilled versions you can use option to your own polyfilling choise.
 
 ```html
-<!--
-    Load this lighter TsUtilsLib version.
-    You must load polyfills of your choise first (optional).
--->
+<!-- Load non-polyfilled or polyfilled bundles on unpkg cdn -->
 <script src="https://unpkg.com/@tspro/ts-utils-lib@2.1.0/dist/index.es5.iife.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.1.0/dist/index.es5.iife.js"></script>
-
-<!--
-    Alternatively you can load this TsUtilsLib version that is bundled with polyfills.
--->
 <script src="https://unpkg.com/@tspro/ts-utils-lib@2.1.0/dist/index.es5.polyfilled.iife.js"></script>
+
+<!-- Load non-polyfilled or polyfilled bundles on jsdelivr cdn -->
+<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.1.0/dist/index.es5.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.1.0/dist/index.es5.polyfilled.iife.js"></script>
 
-<!-- Another JS example: -->
+<!-- JS example: -->
 <script>
     const { UniMap, Utils } = window.TsUtilsLib;
     const map = new UniMap();
