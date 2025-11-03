@@ -13,7 +13,7 @@ const ConfigOptions = ConfigEntries.map((config, configId) => {
     const { entry, format } = config;
     const bannerText = `/*!
  * TsUtilsLib v${pkg.version} (${format})
- * (c) 2023–${new Date().getFullYear()} PahkaSoft
+ * (c) 2023-2025 PahkaSoft
  * Licensed under the MIT License
  */`;
     const libInfo = `TsUtilsLib v${pkg.version} (${format})`;
