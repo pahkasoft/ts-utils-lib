@@ -267,3 +267,46 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
     // --- Fallback ---
     return String(value);
 }
+
+const getYear = (arg?: string | number): number => (arg === undefined ? new Date().getFullYear() : +arg);
+
+/**
+ * ```ts
+ * // Usage
+ * getCopyrightYears();           // Returns "2025"
+ * getCopyrightYears(1980);       // Returns "1980-2025"
+ * getCopyrightYears(1980, 2000); // Returns "1980-2000"
+ * ```
+ */
+export function getCopyrightYears(copyStartYear: number = getYear(), copyEndYear: number = getYear()): string {
+    if (copyEndYear < copyStartYear) {
+        [copyEndYear, copyStartYear] = [copyStartYear, copyEndYear];
+    }
+    return copyEndYear === copyStartYear ? `${copyEndYear}` : `${copyStartYear}-${copyEndYear}`;
+}
+
+/**
+ * ```ts
+ * // Usage
+ * getCopyright("MyCompany");                  // Returns "(c) 2025 MyCompany"
+ * getCopyright("MyCompany", "©");             // Returns "© 2025 MyCompany"
+ * getCopyright("MyCompany", 1980);            // Returns "(c) 1980-2025 MyCompany"
+ * getCopyright("MyCompany", 1980, "©");       // Returns "© 1980-2025 MyCompany"
+ * getCopyright("MyCompany", 1980, 2000);      // Returns "(c) 1980-2000 MyCompany"
+ * getCopyright("MyCompany", 1980, 2000, "©"); // Returns "© 1980-2000 MyCompany"
+ * ```
+ */
+export function getCopyright(copyOwner: string): string;
+export function getCopyright(copyOwner: string, copyStartYear: number): string;
+export function getCopyright(copyOwner: string, copyStartYear: number, copyEndYead: number): string;
+
+export function getCopyright(copyOwner: string, copySymbol: string): string;
+export function getCopyright(copyOwner: string, copyStartYear: number, copySymbol: string): string;
+export function getCopyright(copyOwner: string, copyStartYear: number, copyEndYead: number, copySymbol: string): string;
+
+export function getCopyright(copyOwner: string, ...args: (number | string)[]): string {
+    const copySymbol = typeof args[args.length - 1] === "string" ? (args.pop() as string) : "(c)";
+    const copyStartYear = getYear(args.shift());
+    const copyEndYear = getYear(args.shift());
+    return `${copySymbol} ${getCopyrightYears(copyStartYear, copyEndYear)} ${copyOwner}`;
+}

@@ -1,12 +1,17 @@
 # Changelog
+## [2.2.0] - 2025-11-??
+### Added
+- Utils.Str.getCopyrightYears()
+- Utils.Str.getCopyright()
+
 ## [2.1.0] - 2025-11-01
 ### Added
- - Bundle ``index.es5.iife.js`
- - Bundle `index.es5.polyfilled.iife.js`
- - `AnchoredRect.toString()`
- - `Utils.Str.stringify()`: detect custom `toString()`.
- - `Utils.Str.stringify()`: detect constructor name.
- - `getLibInfo()` (name, version, bundle format).
+- Bundle ``index.es5.iife.js`
+- Bundle `index.es5.polyfilled.iife.js`
+- `AnchoredRect.toString()`
+- `Utils.Str.stringify()`: detect custom `toString()`.
+- `Utils.Str.stringify()`: detect constructor name.
+- `getLibInfo()` (name, version, bundle format).
 
 ## [2.0.0] - 2025-10-31
 ### **Breaking Major Update**

@@ -35,4 +35,24 @@ describe("StringUtil", () => {
         expect(StringUtils.makeSentenceFromPascal("WhatAGreatDay!")).toBe("What a great day!");
     });
 
+    it("returns copyright years", () => {
+        const curYear = new Date().getFullYear();
+        expect(StringUtils.getCopyrightYears()).toBe(`${curYear}`);
+        expect(StringUtils.getCopyrightYears(curYear)).toBe(`${curYear}`);
+        expect(StringUtils.getCopyrightYears(curYear, curYear)).toBe(`${curYear}`);
+        expect(StringUtils.getCopyrightYears(1980, 1980)).toBe(`1980`);
+        expect(StringUtils.getCopyrightYears(1980)).toBe(`1980-${curYear}`);
+        expect(StringUtils.getCopyrightYears(1970, 1980)).toBe(`1970-1980`);
+        expect(StringUtils.getCopyrightYears(1970, 1950)).toBe(`1950-1970`);
+    });
+
+    it("returns copyright", () => {
+        const curYear = new Date().getFullYear();
+        expect(StringUtils.getCopyright("MyCompany")).toBe(`(c) ${curYear} MyCompany`);
+        expect(StringUtils.getCopyright("MyCompany", "©")).toBe(`© ${curYear} MyCompany`);
+        expect(StringUtils.getCopyright("MyCompany", curYear)).toBe(`(c) ${curYear} MyCompany`);
+        expect(StringUtils.getCopyright("MyCompany", 1980)).toBe(`(c) 1980-${curYear} MyCompany`);
+        expect(StringUtils.getCopyright("MyCompany", 1980, curYear)).toBe(`(c) 1980-${curYear} MyCompany`);
+        expect(StringUtils.getCopyright("MyCompany", 1980, curYear, "©")).toBe(`© 1980-${curYear} MyCompany`);
+    });
 });
