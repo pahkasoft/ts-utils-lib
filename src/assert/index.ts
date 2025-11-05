@@ -267,9 +267,57 @@ export function isNumber(val: unknown, msg?: string): number {
     return val;
 }
 
+export function isSafeNumber(val: unknown, msg?: string): number {
+    if (!Guard.isSafeNumber(val))
+        _fail(`Expected ${fmt(val)} to be safe number`, msg);
+    return val;
+}
+
 export function isNumberOrUndefined(val: unknown, msg?: string): number | undefined {
     if (!Guard.isNumberOrUndefined(val))
         _fail(`Expected ${fmt(val)} to be number or undefined`, msg);
+    return val;
+}
+
+export function isNumberEq(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isNumberEq(val, ref))
+        _fail(`Expected ${fmt(val)} to be number equal to ${fmt(ref)}`, msg);
+    return val;
+}
+
+export function isNumberGt(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isNumberGt(val, ref))
+        _fail(`Expected ${fmt(val)} to be number > ${fmt(ref)}`, msg);
+    return val;
+}
+
+export function isNumberGte(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isNumberGte(val, ref))
+        _fail(`Expected ${fmt(val)} to be number >= ${fmt(ref)}`, msg);
+    return val;
+}
+
+export function isNumberLt(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isNumberLt(val, ref))
+        _fail(`Expected ${fmt(val)} to be number < ${fmt(ref)}`, msg);
+    return val;
+}
+
+export function isNumberLte(val: unknown, ref: unknown, msg?: string): number {
+    if (!Guard.isNumberLte(val, ref))
+        _fail(`Expected ${fmt(val)} to be number <= ${fmt(ref)}`, msg);
+    return val;
+}
+
+export function isNumberBetween(val: unknown, min: unknown, max: unknown, msg?: string): number {
+    if (!Guard.isNumberBetween(val, min, max))
+        _fail(`Expected number ${fmt(min)} <= ${fmt(val)} <= ${fmt(max)}`, msg);
+    return val;
+}
+
+export function isNumberBetweenExclusive(val: unknown, min: unknown, max: unknown, msg?: string): number {
+    if (!Guard.isNumberBetweenExclusive(val, min, max))
+        _fail(`Expected number ${fmt(min)} < ${fmt(val)} < ${fmt(max)}`, msg);
     return val;
 }
 
@@ -342,18 +390,6 @@ export function isIntegerBetween(val: unknown, min: unknown, max: unknown, msg?:
 export function isIntegerBetweenExclusive(val: unknown, min: unknown, max: unknown, msg?: string): number {
     if (!Guard.isIntegerBetweenExclusive(val, min, max))
         _fail(`Expected integer ${fmt(min)} < ${fmt(val)} < ${fmt(max)}`, msg);
-    return val;
-}
-
-export function isNumberBetween(val: unknown, min: unknown, max: unknown, msg?: string): number {
-    if (!Guard.isNumberBetween(val, min, max))
-        _fail(`Expected number ${fmt(min)} <= ${fmt(val)} <= ${fmt(max)}`, msg);
-    return val;
-}
-
-export function isNumberBetweenExclusive(val: unknown, min: unknown, max: unknown, msg?: string): number {
-    if (!Guard.isNumberBetweenExclusive(val, min, max))
-        _fail(`Expected number ${fmt(min)} < ${fmt(val)} < ${fmt(max)}`, msg);
     return val;
 }
 

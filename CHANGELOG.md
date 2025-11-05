@@ -3,6 +3,7 @@
 ### Added
 - Utils.Str.getCopyrightYears()
 - Utils.Str.getCopyright()
+- Some Guard and Assert isNumberX() functions.
 
 ## [2.1.0] - 2025-11-01
 ### Added

@@ -158,8 +158,40 @@ export function isNumber(val: unknown): val is number {
     return typeof val === "number";
 }
 
+export function isSafeNumber(val: unknown): val is number {
+    return isNumber(val) && Number.isSafeInteger(val);
+}
+
 export function isNumberOrUndefined(val: unknown): val is number | undefined {
     return typeof val === "number" || val === undefined;
+}
+
+export function isNumberEq(val: unknown, ref: unknown): val is number {
+    return isNumber(val) && val === ref;
+}
+
+export function isNumberGt(val: unknown, ref: unknown): val is number {
+    return isNumber(val) && isNumber(ref) && val > ref;
+}
+
+export function isNumberGte(val: unknown, ref: unknown): val is number {
+    return isNumber(val) && isNumber(ref) && val >= ref;
+}
+
+export function isNumberLt(val: unknown, ref: unknown): val is number {
+    return isNumber(val) && isNumber(ref) && val < ref;
+}
+
+export function isNumberLte(val: unknown, ref: unknown): val is number {
+    return isNumber(val) && isNumber(ref) && val <= ref;
+}
+
+export function isNumberBetween(val: unknown, min: unknown, max: unknown): val is number {
+    return isNumber(val) && isNumber(min) && isNumber(max) && val >= min && val <= max;
+}
+
+export function isNumberBetweenExclusive(val: unknown, min: unknown, max: unknown): val is number {
+    return isNumber(val) && isNumber(min) && isNumber(max) && val > min && val < max;
 }
 
 export function isFinite(val: unknown): val is number {
@@ -208,14 +240,6 @@ export function isIntegerBetween(val: unknown, min: unknown, max: unknown): val 
 
 export function isIntegerBetweenExclusive(val: unknown, min: unknown, max: unknown): val is number {
     return isInteger(val) && isNumber(min) && isNumber(max) && val > min && val < max;
-}
-
-export function isNumberBetween(val: unknown, min: unknown, max: unknown): val is number {
-    return isNumber(val) && isNumber(min) && isNumber(max) && val >= min && val <= max;
-}
-
-export function isNumberBetweenExclusive(val: unknown, min: unknown, max: unknown): val is number {
-    return isNumber(val) && isNumber(min) && isNumber(max) && val > min && val < max;
 }
 
 export function isNaNValue(val: unknown): val is number {
