@@ -4,6 +4,7 @@
 - Utils.Str.getCopyrightYears()
 - Utils.Str.getCopyright()
 - Some Guard and Assert isNumberX() functions.
+- Utils.Str.splitByCapsAndSpaces()
 
 ## [2.1.0] - 2025-11-01
 ### Added

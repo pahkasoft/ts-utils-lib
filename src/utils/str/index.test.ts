@@ -55,4 +55,15 @@ describe("StringUtil", () => {
         expect(StringUtils.getCopyright("MyCompany", 1980, curYear)).toBe(`(c) 1980-${curYear} MyCompany`);
         expect(StringUtils.getCopyright("MyCompany", 1980, curYear, "©")).toBe(`© 1980-${curYear} MyCompany`);
     });
+
+    it("split by caps and spaces", () => {
+        expect(StringUtils.splitByCapsAndSpaces("")).toEqual([]);
+        expect(StringUtils.splitByCapsAndSpaces("hello")).toEqual(["hello"]);
+        expect(StringUtils.splitByCapsAndSpaces("Hello")).toEqual(["Hello"]);
+        expect(StringUtils.splitByCapsAndSpaces("HelloWorld")).toEqual(["Hello", "World"]);
+        expect(StringUtils.splitByCapsAndSpaces("Helloworld")).toEqual(["Helloworld"]);
+        expect(StringUtils.splitByCapsAndSpaces("Hello world")).toEqual(["Hello", "world"]);
+        expect(StringUtils.splitByCapsAndSpaces("Hello World")).toEqual(["Hello", "World"]);
+        expect(StringUtils.splitByCapsAndSpaces("Hello  World")).toEqual(["Hello", "World"]);
+    });
 });

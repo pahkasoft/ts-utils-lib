@@ -310,3 +310,12 @@ export function getCopyright(copyOwner: string, ...args: (number | string)[]): s
     const copyEndYear = getYear(args.shift());
     return `${copySymbol} ${getCopyrightYears(copyStartYear, copyEndYear)} ${copyOwner}`;
 }
+
+/**
+ * Split string into words by caps and spaces.
+ * @param str - Input string.
+ * @returns - Array of words.
+ */
+export function splitByCapsAndSpaces(str: string): string[] {
+    return str.split(/(?=[A-Z])|\s+/).filter(x => !!x);
+}
