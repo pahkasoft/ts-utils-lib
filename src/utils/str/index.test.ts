@@ -66,4 +66,21 @@ describe("StringUtil", () => {
         expect(StringUtils.splitByCapsAndSpaces("Hello World")).toEqual(["Hello", "World"]);
         expect(StringUtils.splitByCapsAndSpaces("Hello  World")).toEqual(["Hello", "World"]);
     });
+
+    it("split by strings", () => {
+        expect(StringUtils.splitByStrings("")).toEqual([""]); // no splitter
+        expect(StringUtils.splitByStrings("", "")).toEqual([]); // "" splitter
+        expect(StringUtils.splitByStrings("abc", "")).toEqual(["a", "b", "c"]);
+        expect(StringUtils.splitByStrings("abc", "abc")).toEqual(["", ""]);
+        expect(StringUtils.splitByStrings("abc", "b")).toEqual(["a", "c"]);
+        expect(StringUtils.splitByStrings("aa.bb,cc;dd:ee", ".", ",", ";", ":")).toEqual(["aa", "bb", "cc", "dd", "ee"]);
+    });
+
+    it("split by chars", () => {
+        expect(StringUtils.splitByChars("", "")).toEqual([""]); // no splitters
+        expect(StringUtils.splitByChars("abc", "")).toEqual(["abc"]);
+        expect(StringUtils.splitByChars("abc", "abc")).toEqual(["", "", "", ""]);
+        expect(StringUtils.splitByChars("abc", "b")).toEqual(["a", "c"]);
+        expect(StringUtils.splitByChars("aa.bb,cc;dd:ee", ".,;:")).toEqual(["aa", "bb", "cc", "dd", "ee"]);
+    });
 });

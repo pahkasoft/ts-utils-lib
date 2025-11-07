@@ -319,3 +319,20 @@ export function getCopyright(copyOwner: string, ...args: (number | string)[]): s
 export function splitByCapsAndSpaces(str: string): string[] {
     return str.split(/(?=[A-Z])|\s+/).filter(x => !!x);
 }
+
+export function splitByStrings(str: string, ...splitters: string[]): string[] {
+    if (splitters.length === 0) return [str];
+
+    // Escape regex special characters in splitters
+    const escaped = splitters.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+
+    // Build a regex that matches any of them
+    const regex = new RegExp(escaped.join('|'), 'g');
+
+    // Split and filter out empty strings if desired
+    return str.split(regex);
+}
+
+export function splitByChars(str: string, splitters: string): string[] {
+    return splitByStrings(str, ...splitters.split(""));
+}
