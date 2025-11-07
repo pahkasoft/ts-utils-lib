@@ -35,36 +35,15 @@ describe("StringUtil", () => {
         expect(StringUtils.makeSentenceFromPascal("WhatAGreatDay!")).toBe("What a great day!");
     });
 
-    it("returns copyright years", () => {
-        const curYear = new Date().getFullYear();
-        expect(StringUtils.getCopyrightYears()).toBe(`${curYear}`);
-        expect(StringUtils.getCopyrightYears(curYear)).toBe(`${curYear}`);
-        expect(StringUtils.getCopyrightYears(curYear, curYear)).toBe(`${curYear}`);
-        expect(StringUtils.getCopyrightYears(1980, 1980)).toBe(`1980`);
-        expect(StringUtils.getCopyrightYears(1980)).toBe(`1980-${curYear}`);
-        expect(StringUtils.getCopyrightYears(1970, 1980)).toBe(`1970-1980`);
-        expect(StringUtils.getCopyrightYears(1970, 1950)).toBe(`1950-1970`);
-    });
-
-    it("returns copyright", () => {
-        const curYear = new Date().getFullYear();
-        expect(StringUtils.getCopyright("MyCompany")).toBe(`(c) ${curYear} MyCompany`);
-        expect(StringUtils.getCopyright("MyCompany", "©")).toBe(`© ${curYear} MyCompany`);
-        expect(StringUtils.getCopyright("MyCompany", curYear)).toBe(`(c) ${curYear} MyCompany`);
-        expect(StringUtils.getCopyright("MyCompany", 1980)).toBe(`(c) 1980-${curYear} MyCompany`);
-        expect(StringUtils.getCopyright("MyCompany", 1980, curYear)).toBe(`(c) 1980-${curYear} MyCompany`);
-        expect(StringUtils.getCopyright("MyCompany", 1980, curYear, "©")).toBe(`© 1980-${curYear} MyCompany`);
-    });
-
-    it("split by caps and spaces", () => {
-        expect(StringUtils.splitByCapsAndSpaces("")).toEqual([]);
-        expect(StringUtils.splitByCapsAndSpaces("hello")).toEqual(["hello"]);
-        expect(StringUtils.splitByCapsAndSpaces("Hello")).toEqual(["Hello"]);
-        expect(StringUtils.splitByCapsAndSpaces("HelloWorld")).toEqual(["Hello", "World"]);
-        expect(StringUtils.splitByCapsAndSpaces("Helloworld")).toEqual(["Helloworld"]);
-        expect(StringUtils.splitByCapsAndSpaces("Hello world")).toEqual(["Hello", "world"]);
-        expect(StringUtils.splitByCapsAndSpaces("Hello World")).toEqual(["Hello", "World"]);
-        expect(StringUtils.splitByCapsAndSpaces("Hello  World")).toEqual(["Hello", "World"]);
+    it("split by caps", () => {
+        expect(StringUtils.splitByCaps("")).toEqual([]);
+        expect(StringUtils.splitByCaps("hello")).toEqual(["hello"]);
+        expect(StringUtils.splitByCaps("Hello")).toEqual(["Hello"]);
+        expect(StringUtils.splitByCaps("HelloWorld")).toEqual(["Hello", "World"]);
+        expect(StringUtils.splitByCaps("Helloworld")).toEqual(["Helloworld"]);
+        expect(StringUtils.splitByCaps("Hello world")).toEqual(["Hello world"]);
+        expect(StringUtils.splitByCaps("Hello World")).toEqual(["Hello ", "World"]);
+        expect(StringUtils.splitByCaps("HeLlOWorLd")).toEqual(["He", "Ll", "O", "Wor", "Ld"]);
     });
 
     it("split by strings", () => {

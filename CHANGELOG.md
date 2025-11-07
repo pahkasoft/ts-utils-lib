@@ -1,10 +1,8 @@
 # Changelog
 ## [2.2.0] - 2025-11-??
 ### Added
-- Utils.Str.getCopyrightYears()
-- Utils.Str.getCopyright()
 - Some Guard and Assert isNumberX() functions.
-- Utils.Str.splitByCapsAndSpaces()
+- Utils.Str.splitByCaps()
 - Utils.Str.splitByStrings()
 - Utils.Str.splitByChars()
 
