@@ -269,14 +269,35 @@ export function stringify(value: any, maxDepth = 5, seen = new WeakSet()): strin
 }
 
 /**
- * Split string into words by caps.
- * @param str - Input string.
- * @returns - Array of words.
+ * Splits a string into words by capital letters (A–Z).
+ * 
+ * Example:
+ * ```ts
+ * splitByCaps("HelloWorld"); // ["Hello", "World"]
+ * splitByCaps("XMLHttpRequest"); // ["XML", "Http", "Request"]
+ * ```
+ *
+ * @param str - The input string to split.
+ * @returns An array of string segments split at capital letters.
  */
 export function splitByCaps(str: string): string[] {
     return str.split(/(?=[A-Z])/).filter(x => !!x);
 }
 
+/**
+ * Splits a string by any of the given substrings.
+ * Each splitter is treated literally (special regex characters are escaped).
+ * 
+ * Example:
+ * ```ts
+ * splitByStrings("one--two__three", "--", "__");
+ * // ["one", "two", "three"]
+ * ```
+ *
+ * @param str - The input string to split.
+ * @param splitters - One or more substrings to split by.
+ * @returns An array of string segments split at any of the given substrings.
+ */
 export function splitByStrings(str: string, ...splitters: string[]): string[] {
     if (splitters.length === 0) return [str];
 
@@ -290,6 +311,19 @@ export function splitByStrings(str: string, ...splitters: string[]): string[] {
     return str.split(regex);
 }
 
+/**
+ * Splits a string by any of the given characters.
+ * 
+ * Example:
+ * ```ts
+ * splitByChars("a,b;c", ",;"); 
+ * // ["a", "b", "c"]
+ * ```
+ *
+ * @param str - The input string to split.
+ * @param splitters - A string containing one or more characters to split by.
+ * @returns An array of string segments split at any of the given characters.
+ */
 export function splitByChars(str: string, splitters: string): string[] {
     return splitByStrings(str, ...splitters.split(""));
 }
