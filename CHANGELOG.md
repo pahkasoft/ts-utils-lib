@@ -1,4 +1,9 @@
 # Changelog
+## [2.2.1] - 2025-11-??
+### Fixed
+- Moved "core-js" and "regenerator-runtime" to "devDependencies" because 
+  they are bundles (only used by polyfilled iife version).
+
 ## [2.2.0] - 2025-11-08
 ### Added
 - Some Guard and Assert isNumberX() functions.
