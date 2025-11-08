@@ -49,6 +49,7 @@
         "@swc/core": "^1.14.0",
         "@types/jasmine": "^5.1.8",
         "benchmark": "^2.1.4",
+        "core-js": "^3.46.0",
         "jasmine": "^5.8.0",
         "karma": "^6.4.4",
         "karma-chrome-launcher": "^3.2.0",
@@ -56,6 +57,7 @@
         "karma-jasmine": "^5.1.0",
         "karma-webpack": "^5.0.1",
         "npm-watch": "^0.13.0",
+        "regenerator-runtime": "^0.14.1",
         "ts-loader": "^9.5.2",
         "tsup": "^8.5.0",
         "typedoc": "^0.28.7",
@@ -67,9 +69,5 @@
         "watch": "tsup --watch",
         "test": "karma start",
         "docs": "typedoc"
-    },
-    "dependencies": {
-        "core-js": "^3.46.0",
-        "regenerator-runtime": "^0.14.1"
     }
 }
