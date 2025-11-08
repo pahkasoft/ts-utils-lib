@@ -1,5 +1,5 @@
 # Changelog
-## [2.2.0] - 2025-11-??
+## [2.2.0] - 2025-11-08
 ### Added
 - Some Guard and Assert isNumberX() functions.
 - Utils.Str.splitByCaps()

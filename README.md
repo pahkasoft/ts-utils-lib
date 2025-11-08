@@ -36,12 +36,12 @@ const map = new UniMap();
 
 ```html
 <!-- Load non-polyfilled or polyfilled bundles on unpkg cdn -->
-<script src="https://unpkg.com/@tspro/ts-utils-lib@2.1.0/dist/index.es5.iife.js"></script>
-<script src="https://unpkg.com/@tspro/ts-utils-lib@2.1.0/dist/index.es5.polyfilled.iife.js"></script>
+<script src="https://unpkg.com/@tspro/ts-utils-lib@2.2.0/dist/index.es5.iife.js"></script>
+<script src="https://unpkg.com/@tspro/ts-utils-lib@2.2.0/dist/index.es5.polyfilled.iife.js"></script>
 
 <!-- Load non-polyfilled or polyfilled bundles on jsdelivr cdn -->
-<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.1.0/dist/index.es5.iife.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.1.0/dist/index.es5.polyfilled.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.2.0/dist/index.es5.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@2.2.0/dist/index.es5.polyfilled.iife.js"></script>
 
 <!-- JS example: -->
 <script>
