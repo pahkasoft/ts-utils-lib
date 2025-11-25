@@ -1,8 +1,9 @@
 # Changelog
-## [2.2.1] - 2025-11-??
+## [2.2.1] - 2025-11-25
 ### Fixed
 - Moved "core-js" and "regenerator-runtime" to "devDependencies" because 
   they are bundles (only used by polyfilled iife version).
+- SSR safety (for Docusaurus) by checking typeof `document` and `window`.
 
 ## [2.2.0] - 2025-11-08
 ### Added

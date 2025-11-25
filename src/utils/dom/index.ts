@@ -1,5 +1,9 @@
 import { Device } from "../..";
 
+function _getElemById(id: string): HTMLElement | undefined {
+    return typeof document === "undefined" ? undefined : (document.getElementById(id) ?? undefined);
+}
+
 export interface CSSProperties {
     // Declare necessary css properties
     //[key: string]: string | number;
@@ -63,12 +67,20 @@ export function setOffset(el: HTMLElement, left: number, top: number, unit: stri
 }
 
 export function getOffset(el: HTMLElement): { left: number, top: number } {
-    let box = el.getBoundingClientRect();
-    let docElem = document.documentElement;
-    return {
-        top: box.top + window.pageYOffset - docElem.clientTop,
-        left: box.left + window.pageXOffset - docElem.clientLeft
+    let { left, top } = el.getBoundingClientRect();
+
+    if (typeof window !== "undefined") {
+        left += window.pageXOffset;
+        top += window.pageYOffset;
     }
+
+    if (typeof document !== "undefined") {
+        let de = document.documentElement;
+        left -= de.clientLeft;
+        top -= de.clientTop;
+    }
+
+    return { left, top }
 }
 
 export function getWidth(el: HTMLElement | Window) {
@@ -119,12 +131,12 @@ export function setRect(el: HTMLElement, left: number, top: number, width: numbe
 }
 
 export function getButton(btn: HTMLElement | string): HTMLButtonElement | undefined {
-    let el = typeof btn === "string" ? document.getElementById(btn) : btn;
+    let el = typeof btn === "string" ? _getElemById(btn) : btn;
     return el instanceof HTMLButtonElement ? el : undefined;
 }
 
 export function getCanvas(canvas: HTMLElement | string): HTMLCanvasElement | undefined {
-    let el = typeof canvas === "string" ? document.getElementById(canvas) : canvas;
+    let el = typeof canvas === "string" ? _getElemById(canvas) : canvas;
     return el instanceof HTMLCanvasElement ? el : undefined;
 }
 
@@ -214,12 +226,13 @@ export function styleLayoutChanged(style1?: CSSProperties, style2?: CSSPropertie
 let canvas: HTMLCanvasElement | undefined;
 
 export function getCanvasTextWidth(text: string, font: string) {
-    canvas ??= document.createElement("canvas");
+    if (!canvas && typeof document !== "undefined")
+        canvas = document.createElement("canvas");
 
-    let ctx = canvas.getContext("2d");
-    if (!ctx) {
+    let ctx = canvas?.getContext("2d");
+
+    if (!ctx)
         return 0;
-    }
 
     ctx.font = font;
 

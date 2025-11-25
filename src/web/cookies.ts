@@ -11,7 +11,10 @@ let _expires: Date | undefined;
 let str = _read(ConsentCookieName);
 _consent = (str === ConsentState.Accept || str === ConsentState.Decline) ? str : undefined;
 
-function _getList(): string[] {
+function _getCookieList(): string[] {
+    if (typeof document === "undefined")
+        return [];
+
     let s = document.cookie;
     return s.split(";").map(c => c.trim());
 }
@@ -21,17 +24,21 @@ function _save<T extends string | number | boolean>(name: string, value: T): T {
     if (_expires) {
         cookie += "expires=" + _expires.toUTCString() + ";";
     }
-    document.cookie = cookie;
+
+    if (typeof document !== "undefined")
+        document.cookie = cookie;
+
     return value;
 }
 
 function _read(name: string, defaultValue?: string): string | undefined {
-    let str = _getList().find(c => c.startsWith(name + "="));
+    let str = _getCookieList().find(c => c.startsWith(name + "="));
     return str === undefined ? defaultValue : str.substring(name.length + 1);
 }
 
 function _erase(name: string) {
-    document.cookie = name + "=;" + "expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    if (typeof document !== "undefined")
+        document.cookie = name + "=;" + "expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 }
 
 /**
@@ -137,6 +144,7 @@ export function erase(name: string) {
  * Erase all cookies.
  */
 export function eraseAll() {
-    document.cookie.split(';').forEach(c => erase(c.trim().split('=')[0]));
+    if (typeof document !== "undefined")
+        document.cookie.split(';').forEach(c => erase(c.trim().split('=')[0]));
 }
 

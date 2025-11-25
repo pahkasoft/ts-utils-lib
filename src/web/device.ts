@@ -1,12 +1,17 @@
 import { Assert } from "..";
 
 function getDPI(): number {
-    let el = document.createElement("div");
-    el.style.width = "1in";
-    document.body.appendChild(el);
-    let dpi = el.offsetWidth;
-    el.remove();
-    return dpi || 96;
+    try {
+        let el = document.createElement("div");
+        el.style.width = "1in";
+        document.body.appendChild(el);
+        let dpi = el.offsetWidth;
+        el.remove();
+        return dpi || 96;
+    }
+    catch (e) {
+        return 96;
+    }
 }
 
 function getScrollBarWidth(): number {
@@ -42,21 +47,27 @@ function getScrollBarWidth(): number {
 }
 
 function getSystemFontSize(): number {
-    let tmpDiv = document.createElement("div");
-    tmpDiv.style.cssText = "display:inline-block; padding:0; line-height:1; position:absolute; visibility:hidden; font-size:1em";
-    tmpDiv.appendChild(document.createTextNode("M"));
-    document.body.appendChild(tmpDiv);
-    let fontsize = tmpDiv.offsetHeight;
-    document.body.removeChild(tmpDiv);
-    return fontsize;
+    try {
+        let tmpDiv = document.createElement("div");
+        tmpDiv.style.cssText = "display:inline-block; padding:0; line-height:1; position:absolute; visibility:hidden; font-size:1em";
+        tmpDiv.appendChild(document.createTextNode("M"));
+        document.body.appendChild(tmpDiv);
+        let fontsize = tmpDiv.offsetHeight;
+        document.body.removeChild(tmpDiv);
+        return fontsize;
+    }
+    catch (e) {
+        return 16;
+    }
 }
 
 function getIsTouchDevice(): boolean {
     // Modified from: https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
+    if (typeof window === "undefined")
+        return false;
 
-    if ("ontouchstart" in window || "DocumentTouch" in window || "createTouch" in document && "createTouchList" in document) {
+    if ("ontouchstart" in window || "DocumentTouch" in window || "createTouch" in document && "createTouchList" in document)
         return true;
-    }
 
     // include the "heartz" as a way to have a non matching MQ to help terminate the join
     // https://git.io/vznFH
@@ -75,7 +86,10 @@ function getIsMobileDevice() {
 }
 
 function getHostAddress(): string {
-    return location.protocol + "//" + location.host;
+    if (typeof location === "undefined" || !location.host) {
+        return "localhost";
+    }
+    return `${location.protocol}//${location.host}`;
 }
 
 type UnitType = "mm" | "cm" | "in" | "inch" | "px" | "em";
