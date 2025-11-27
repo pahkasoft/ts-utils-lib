@@ -26,7 +26,7 @@ const ConfigOptions = ConfigEntries.map((config, configId) => {
         treeshake: !isIIFE,
         globalName: isIIFE ? 'TsUtilsLib' : undefined,
         sourcemap: !isIIFE,
-        dts: !isIIFE,
+        dts: format === 'cjs',
         clean: configId === 0,
         minify: isIIFE,
         outExtension: () => ({ js: isIIFE ? '.iife.js' : undefined }),

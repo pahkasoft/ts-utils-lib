@@ -1,4 +1,9 @@
 # Changelog
+## [2.3.0] - 2025-11-??
+### Changed
+- Replaced .d.mts type declarations with .d.ts.
+- Include .map files in package.
+
 ## [2.2.1] - 2025-11-25
 ### Fixed
 - Moved "core-js" and "regenerator-runtime" to "devDependencies" because 

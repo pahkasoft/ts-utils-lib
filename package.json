@@ -21,7 +21,7 @@
                     "default": "./dist/index.js"
                 },
                 "import": {
-                    "types": "./dist/index.d.mts",
+                    "types": "./dist/index.d.ts",
                     "default": "./dist/index.mjs"
                 }
             },
@@ -30,7 +30,7 @@
                 "default": "./dist/index.js"
             },
             "import": {
-                "types": "./dist/index.d.mts",
+                "types": "./dist/index.d.ts",
                 "default": "./dist/index.mjs"
             }
         }
@@ -42,7 +42,7 @@
         "dist/**/*.js",
         "dist/**/*.mjs",
         "dist/**/*.d.ts",
-        "dist/**/*.d.mts",
+        "dist/**/*.map",
         "package.json"
     ],
     "devDependencies": {
