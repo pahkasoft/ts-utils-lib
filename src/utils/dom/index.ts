@@ -238,3 +238,19 @@ export function getCanvasTextWidth(text: string, font: string) {
 
     return ctx.measureText(text).width;
 }
+
+/**
+ * Add style element to document head.
+ * @param styleId - Id of style element.
+ * @param styleCss - Style CSS string.
+ */
+export function injectCss(styleId: string, styleCss: string) {
+    if (styleId === "" || styleCss === "") return; // Nothing to inject
+    if (typeof document === "undefined") return;   // SSR safe
+    if (document.getElementById(styleId)) return;  // Already injected
+    const style = document.createElement("style");
+    style.id = styleId;
+    style.textContent = styleCss;
+    document.head.appendChild(style);
+}
+

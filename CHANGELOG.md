@@ -4,6 +4,9 @@
 - Replaced .d.mts type declarations with .d.ts.
 - Include .map files in package.
 
+### Added
+- Utils.Dom.injectCss()
+
 ## [2.2.1] - 2025-11-25
 ### Fixed
 - Moved "core-js" and "regenerator-runtime" to "devDependencies" because 
