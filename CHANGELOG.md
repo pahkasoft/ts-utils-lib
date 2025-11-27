@@ -1,5 +1,5 @@
 # Changelog
-## [2.3.0] - 2025-11-??
+## [2.3.0] - 2025-11-27
 ### Changed
 - Replaced .d.mts type declarations with .d.ts.
 - Include .map files in package.
