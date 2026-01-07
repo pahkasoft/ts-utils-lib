@@ -1,4 +1,8 @@
 # Changelog
+## [3.0.0] - 2026-01-??
+### Breaking Change
+- Updated Device module.
+
 ## [2.3.0] - 2025-11-27
 ### Changed
 - Replaced .d.mts type declarations with .d.ts.

@@ -21,7 +21,7 @@ export interface CSSProperties {
 }
 
 function toPx(value: string | number | undefined): number | undefined {
-    return value === undefined ? undefined : Device.toPx(value);
+    return value === undefined ? undefined : Device.unitToPx(value);
 }
 
 export function hasClass(el: HTMLElement, className: string) {

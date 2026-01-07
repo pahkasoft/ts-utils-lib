@@ -1,16 +1,43 @@
-import { Assert } from "..";
+import { Assert, Guard } from "..";
 
-function getDPI(): number {
+const CSS_UNIT_RE = /^\s*([+-]?\d*\.?\d+)\s*(px|cm|mm|in|pt|pc|em|rem|vw|vh|vmin|vmax|%)?\s*$/;
+
+export type CssUnit =
+    | "px" | "cm" | "mm" | "in"
+    | "pt" | "pc"
+    | "em" | "rem"
+    | "vw" | "vh" | "vmin" | "vmax"
+    | "%";
+
+interface ParsedCssUnit {
+    value: number;
+    unit: CssUnit | undefined;
+}
+
+function parseCssUnit(input: string): ParsedCssUnit | undefined {
+    const m = CSS_UNIT_RE.exec(input);
+    if (!m) return undefined;
+    return {
+        value: Number(m[1]),
+        unit: (m[2] as CssUnit) ?? undefined,
+    };
+}
+
+function getDevicePixelRatio() {
+    return typeof window === "undefined" ? 1 : window.devicePixelRatio;
+}
+
+function getPxPerUnit(unit: CssUnit, _default: number): number {
     try {
         let el = document.createElement("div");
-        el.style.width = "1in";
+        el.style.width = "1" + unit;
         document.body.appendChild(el);
         let dpi = el.offsetWidth;
         el.remove();
-        return dpi || 96;
+        return dpi || _default;
     }
     catch (e) {
-        return 96;
+        return _default;
     }
 }
 
@@ -92,16 +119,6 @@ function getHostAddress(): string {
     return `${location.protocol}//${location.host}`;
 }
 
-type UnitType = "mm" | "cm" | "in" | "inch" | "px" | "em";
-const UnitRegExp = /^(mm|cm|in|inch|px|em)$/;
-const ValueUnitRegExp = /^([0-9\\.]+)(.*)$/;
-
-/** Devices dots per inch. */
-export const DPI = getDPI();
-
-/** Devices pixels per millimeter. */
-export const PxPerMm = DPI / 25.4;
-
 /** Browsers scroll bar width. */
 export const ScrollbarWidth = getScrollBarWidth();
 
@@ -117,70 +134,77 @@ export const IsMobileDevice = getIsMobileDevice();
 /** Host address. */
 export const HostAddress = getHostAddress();
 
-/**
- * Convert pixels to millimeters on a device.
- * @param px - Pixels.
- * @returns - Millimeters.
- */
-export function pxToMm(px: number): number {
-    return px / PxPerMm;
-}
+/** Devices dots per inch. */
+export const DPI = getPxPerUnit("in", 96);
 
-/**
- * Convert millimeters to pixels on a device.
- * @param mm - Millimeters.
- * @returns - Pixels.
- */
-export function mmToPx(mm: number): number {
-    return mm * PxPerMm;
-}
+/** Pixels per inch. */
+export const PxPerIn = getPxPerUnit("in", 96);
+
+/** Pixels per mm. */
+export const PxPerMm = getPxPerUnit("mm", 96 / 25.4);
+
+/** Pixels per cm. */
+export const PxPerCm = getPxPerUnit("cm", 96 / 25.4 * 10);
+
+/** Pixels per em. */
+export const PxPerEm = getPxPerUnit("em", FontSize);
+
+/** Device pixel ratio. */
+export const DevicePixelRatio = getDevicePixelRatio();
 
 /**
  * Convert input to pixels on a device. Input value is in html style form containing number
  * followed by unit (e.g. "10px"). Supported units are "mm", "cm", "in", "inch", "em" and "px".
  * 
- * @param input - Input value.
+ * @param valueUnit - Input value.
  * @returns - Pixels.
  */
-export function toPx(input: string | number): number {
-    if (typeof input === "number") {
-        return input;
-    }
+export function unitToPx(valueUnit: string | number): number {
+    if (typeof valueUnit === "number")
+        return valueUnit;
 
-    let value: number = NaN;
-    let unit: UnitType | undefined = undefined;
+    const p = parseCssUnit(valueUnit);
 
-    let match = input.toString().match(ValueUnitRegExp);
+    const value = p?.value;
+    const unit = p?.unit;
 
-    if (match && match[1]) {
-        value = parseFloat(match[1]);
-
-        let unitStr = match[2] ? match[2].toLowerCase() : "undefined";
-        let unitStrOk = UnitRegExp.test(unitStr);
-
-        unit = unitStrOk ? unitStr as UnitType : undefined;
-        if (!unit) {
-            console.log("Unknown unit '" + unitStr + "' => using 'px'.");
-        }
-    }
-    else {
-        value = parseFloat(input);
-    }
-
-    Assert.isFinite(value, "value in function toPx");
+    if (!Guard.isFinite(value))
+        Assert.fail(`Invalid value: ${value}`);
 
     switch (unit) {
         case "mm":
-            return mmToPx(value);
+            return value * PxPerMm;
         case "cm":
-            return mmToPx(value) * 10;
+            return value * PxPerCm;
         case "in":
-        case "inch":
-            return mmToPx(value) * 25.4;
+            return value * PxPerIn;
         case "em":
-            return FontSize * value;
-        default:
+            return value * PxPerEm;
         case "px":
+        case undefined:
             return value;
+        default:
+            Assert.fail(`Unsupported CssUnit: ${unit}`);
     }
+}
+
+export function pxToUnit(px: number, unit: CssUnit): number {
+    switch (unit) {
+        case "mm":
+            return px / PxPerMm;
+        case "cm":
+            return px / PxPerCm;
+        case "em":
+            return px / PxPerEm;
+        case "in":
+            return px / PxPerIn;
+        case "px":
+            return px;
+        default:
+            Assert.fail(`Unsupported CssUnit: ${unit}`);
+    }
+}
+
+export function pxToUnitStr(px: number, unit: CssUnit): string {
+    return `${pxToUnit(px, unit)}${unit}`;
 }
