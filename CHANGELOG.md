@@ -1,4 +1,8 @@
 # Changelog
+## [3.1.1] - 2026-01-08
+## Fixed
+- CallTracker.
+
 ## [3.1.0] - 2026-01-08
 ### Added
 - CallTracker.

@@ -1,20 +1,30 @@
 import { UniMap } from ".";
 
-export class CallTracker {
-    private counts = new UniMap<any, number>((a, b) => a === b);
+export class CallTracker<T = unknown> {
+    private counts = new UniMap<T, number>((a, b) => a === b);
 
-    getCallCountFor(value: any): number {
-        let oldCount = this.counts.getOrCreate(value, 0);
-        this.counts.set(value, oldCount + 1);
-        return oldCount;
+    track(value: T): void {
+        const count = this.counts.getOrCreate(value, 0);
+        this.counts.set(value, count + 1);
     }
 
-    hasBeenCalledWith(value: any): boolean {
+    getCallCountFor(value: T): number {
+        return this.counts.get(value) ?? 0;
+    }
+
+    hasBeenCalledWith(value: T): boolean {
         return this.getCallCountFor(value) > 0;
     }
 
-    // Static default interface
-    private static _default = new CallTracker();
+    // ─────────────────────────────────────────
+    // Static default tracker
+    // ─────────────────────────────────────────
+
+    private static _default = new CallTracker<any>();
+
+    static track(value: any): void {
+        this._default.track(value);
+    }
 
     static getCallCountFor(value: any): number {
         return this._default.getCallCountFor(value);

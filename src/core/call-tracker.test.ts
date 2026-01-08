@@ -1,35 +1,79 @@
 import { CallTracker } from "./call-tracker";
 
 describe("CallTracker", () => {
-    it("Test default", () => {
-        const obj = {};
-        expect(CallTracker.getCallCountFor("a")).toBe(0);
-        expect(CallTracker.getCallCountFor("a")).toBe(1);
-        expect(CallTracker.hasBeenCalledWith(0)).toBe(false);
-        expect(CallTracker.hasBeenCalledWith(0)).toBe(true);
-        expect(CallTracker.getCallCountFor(obj)).toBe(0);
-        expect(CallTracker.getCallCountFor(obj)).toBe(1);
-        expect(CallTracker.hasBeenCalledWith(obj)).toBe(true);
-    });
 
-    it("Test with string", () => {
-        const tracker = new CallTracker();
+    it("starts with zero counts", () => {
+        const tracker = new CallTracker<string>();
         expect(tracker.getCallCountFor("a")).toBe(0);
-        expect(tracker.getCallCountFor("a")).toBe(1);
+        expect(tracker.hasBeenCalledWith("a")).toBe(false);
     });
 
-    it("Test with number", () => {
-        const tracker = new CallTracker();
+    it("track() increments count", () => {
+        const tracker = new CallTracker<string>();
+        tracker.track("a");
+        tracker.track("a");
+
+        expect(tracker.getCallCountFor("a")).toBe(2);
+    });
+
+    it("track() tracks multiple values independently", () => {
+        const tracker = new CallTracker<string>();
+        tracker.track("a");
+        tracker.track("b");
+        tracker.track("a");
+
+        expect(tracker.getCallCountFor("a")).toBe(2);
+        expect(tracker.getCallCountFor("b")).toBe(1);
+        expect(tracker.getCallCountFor("c")).toBe(0);
+    });
+
+    it("hasBeenCalledWith() reflects tracked values", () => {
+        const tracker = new CallTracker<number>();
+
         expect(tracker.hasBeenCalledWith(1)).toBe(false);
+
+        tracker.track(1);
+
         expect(tracker.hasBeenCalledWith(1)).toBe(true);
+        expect(tracker.hasBeenCalledWith(2)).toBe(false);
     });
 
-    it("Test with object", () => {
-        const tracker = new CallTracker();
-        const obj = {};
-        expect(tracker.getCallCountFor(obj)).toBe(0);
-        expect(tracker.getCallCountFor(obj)).toBe(1);
-        expect(tracker.hasBeenCalledWith(obj)).toBe(true);
+    it("query methods do not mutate state", () => {
+        const tracker = new CallTracker<string>();
+
+        tracker.getCallCountFor("x");
+        tracker.hasBeenCalledWith("x");
+
+        expect(tracker.getCallCountFor("x")).toBe(0);
     });
+
+    it("supports object keys by reference", () => {
+        const tracker = new CallTracker<object>();
+        const a = {};
+        const b = {};
+
+        tracker.track(a);
+        tracker.track(a);
+
+        expect(tracker.getCallCountFor(a)).toBe(2);
+        expect(tracker.getCallCountFor(b)).toBe(0);
+    });
+
+    describe("static default tracker", () => {
+
+        it("tracks values globally", () => {
+            CallTracker.track("px");
+            CallTracker.track("px");
+
+            expect(CallTracker.getCallCountFor("px")).toBe(2);
+            expect(CallTracker.hasBeenCalledWith("px")).toBe(true);
+        });
+
+        it("returns false for untracked values", () => {
+            expect(CallTracker.getCallCountFor("cm")).toBe(0);
+            expect(CallTracker.hasBeenCalledWith("cm")).toBe(false);
+        });
+
+    });
+
 });
-
