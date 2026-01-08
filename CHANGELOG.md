@@ -1,4 +1,8 @@
 # Changelog
+## [3.1.0] - 2026-01-08
+### Added
+- CallTracker.
+
 ## [3.0.0] - 2026-01-08
 ### Breaking Change
 - Device module update.
