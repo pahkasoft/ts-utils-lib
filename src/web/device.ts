@@ -134,23 +134,16 @@ export const IsMobileDevice = getIsMobileDevice();
 /** Host address. */
 export const HostAddress = getHostAddress();
 
+/** Device pixel ratio. */
+export const DevicePixelRatio = getDevicePixelRatio();
+
 /** Devices dots per inch. */
 export const DPI = getPxPerUnit("in", 96);
 
-/** Pixels per inch. */
-export const PxPerIn = getPxPerUnit("in", 96);
-
-/** Pixels per mm. */
-export const PxPerMm = getPxPerUnit("mm", 96 / 25.4);
-
-/** Pixels per cm. */
-export const PxPerCm = getPxPerUnit("cm", 96 / 25.4 * 10);
-
-/** Pixels per em. */
-export const PxPerEm = getPxPerUnit("em", FontSize);
-
-/** Device pixel ratio. */
-export const DevicePixelRatio = getDevicePixelRatio();
+const PxPerIn = getPxPerUnit("in", 96);
+const PxPerMm = getPxPerUnit("mm", 96 / 25.4);
+const PxPerCm = getPxPerUnit("cm", 96 / 25.4 * 10);
+const PxPerEm = getPxPerUnit("em", FontSize);
 
 /**
  * Convert input to pixels on a device. Input value is in html style form containing number

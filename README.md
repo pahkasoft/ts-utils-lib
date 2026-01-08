@@ -15,7 +15,7 @@ lib is written by AI.
 Homepage contains TS Docs/API Reference.
 
 ## Install
-`npm i @tspro/ts-utils-lib`
+`npm install @tspro/ts-utils-lib`
 
 ## Usage
 ```js

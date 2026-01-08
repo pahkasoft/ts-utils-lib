@@ -1,7 +1,7 @@
 # Changelog
-## [3.0.0] - 2026-01-??
+## [3.0.0] - 2026-01-08
 ### Breaking Change
-- Updated Device module.
+- Device module update.
 
 ## [2.3.0] - 2025-11-27
 ### Changed

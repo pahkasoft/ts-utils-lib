@@ -1,10 +1,10 @@
 {
     "name": "@tspro/ts-utils-lib",
-    "version": "2.3.0",
+    "version": "3.0.0",
     "author": "PahkaSoft",
     "license": "MIT",
     "private": false,
-    "homepage": "https://pahkasoft.github.io/ts-utils-lib",
+    "homepage": "https://pahkasoft.com/ts-utils-lib",
     "repository": "github:pahkasoft/ts-utils-lib",
     "bugs": {
         "url": "https://github.com/pahkasoft/ts-utils-lib/issues"
