@@ -14,6 +14,12 @@ lib is written by AI.
 
 Homepage contains TS Docs/API Reference.
 
+## Version 3.x Info
+Version `3.0.0` changed `Device`.
+
+Version `3.1.0` added invalid `CallTracker`.
+Use version `3.1.1` with correct `CallTracker` instead.
+
 ## Install
 `npm install @tspro/ts-utils-lib`
 
@@ -50,29 +56,3 @@ const map = new UniMap();
     console.log(Utils.Str.stringify(map));
 </script>
 ```
-
-## Version 2 Update
-
-Made major update because
-- Wanted to remove deprecated renamed or obsoloted stuff.
-- Wanted to upgrade Assert and Guard namespaces.
-- Version 1 had already grown a bit.
-
-Deprecations and replacements
-- `Vec2` -> `Vec`
-- `Map1` -> `UniMap`
-- `Map2` -> `BiMap`
-- `Map3` -> `TriMap`
-- `Set1` -> `ValueSet`
-- `DeepSet` -> `ValueSet.createDeep()`
-- `DivRect` -> `AnchoredRect`
-- `Utils.Is.isX...` -> `Guard.isX...`
-
-Additions
-- `Rect`
-- `Guard.is*`  - intriduced more guards.
-- `Assert.is*` - introduced more assertions.
-- `Utils.Str.stringify(val)` - generic format-anything.
-
-There are some other changes (e.g. `Guard.isOddNumber()` -> `Guard.isOdd()`
-and so on), but most the stuff is compatible with 1.x.
