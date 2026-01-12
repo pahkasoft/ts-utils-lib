@@ -1,4 +1,5 @@
 import * as StringUtils from ".";
+import { trim, trimStart, trimEnd } from './';
 
 describe("StringUtil", () => {
 
@@ -62,4 +63,107 @@ describe("StringUtil", () => {
         expect(StringUtils.splitByChars("abc", "b")).toEqual(["a", "c"]);
         expect(StringUtils.splitByChars("aa.bb,cc;dd:ee", ".,;:")).toEqual(["aa", "bb", "cc", "dd", "ee"]);
     });
+});
+
+describe('string trim helpers', () => {
+
+  describe('trimStart', () => {
+
+    it('uses native trimStart when no chars are given', () => {
+      expect(trimStart('   hello')).toBe('hello');
+      expect(trimStart('\n\t hello')).toBe('hello');
+    });
+
+    it('trims single custom characters from start', () => {
+      expect(trimStart('---hello', '-')).toBe('hello');
+      expect(trimStart('###hello', '#')).toBe('hello');
+    });
+
+    it('trims multiple custom characters from start', () => {
+      expect(trimStart('---___hello', '-', '_')).toBe('hello');
+    });
+
+    it('trims multi-character strings from start', () => {
+      expect(trimStart('foobarfoohello', 'foo')).toBe('barfoohello');
+    });
+
+    it('repeats trimming until no match remains', () => {
+      expect(trimStart('foofoofoohello', 'foo')).toBe('hello');
+    });
+
+    it('does nothing when no match is found', () => {
+      expect(trimStart('hello', '-')).toBe('hello');
+    });
+  });
+
+  describe('trimEnd', () => {
+
+    it('uses native trimEnd when no chars are given', () => {
+      expect(trimEnd('hello   ')).toBe('hello');
+      expect(trimEnd('hello \n\t')).toBe('hello');
+    });
+
+    it('trims single custom characters from end', () => {
+      expect(trimEnd('hello---', '-')).toBe('hello');
+      expect(trimEnd('hello###', '#')).toBe('hello');
+    });
+
+    it('trims multiple custom characters from end', () => {
+      expect(trimEnd('hello---___', '-', '_')).toBe('hello');
+    });
+
+    it('trims multi-character strings from end', () => {
+      expect(trimEnd('hellobarfoo', 'foo')).toBe('hellobar');
+    });
+
+    it('repeats trimming until no match remains', () => {
+      expect(trimEnd('hellofoofoofoo', 'foo')).toBe('hello');
+    });
+
+    it('does nothing when no match is found', () => {
+      expect(trimEnd('hello', '-')).toBe('hello');
+    });
+  });
+
+  describe('trim', () => {
+
+    it('uses native trim when no chars are given', () => {
+      expect(trim('   hello   ')).toBe('hello');
+      expect(trim('\n\t hello \t\n')).toBe('hello');
+    });
+
+    it('trims custom characters from both ends', () => {
+      expect(trim('---hello---', '-')).toBe('hello');
+    });
+
+    it('trims different characters from both ends', () => {
+      expect(trim('___---hello---___', '-', '_')).toBe('hello');
+    });
+
+    it('handles multi-character strings on both ends', () => {
+      expect(trim('foohellofoo', 'foo')).toBe('hello');
+    });
+
+    it('does not trim inner content', () => {
+      expect(trim('---he--llo---', '-')).toBe('he--llo');
+    });
+  });
+
+  describe('edge cases', () => {
+
+    it('handles empty string', () => {
+      expect(trim('', '-')).toBe('');
+    });
+
+    it('handles string fully made of trim characters', () => {
+      expect(trim('------', '-')).toBe('');
+      expect(trim('foofoo', 'foo')).toBe('');
+    });
+
+    it('handles overlapping patterns', () => {
+      expect(trimStart('aaaa', 'aa')).toBe('');
+      expect(trimEnd('aaaa', 'aa')).toBe('');
+    });
+  });
+
 });

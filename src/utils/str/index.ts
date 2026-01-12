@@ -327,3 +327,46 @@ export function splitByStrings(str: string, ...splitters: string[]): string[] {
 export function splitByChars(str: string, splitters: string): string[] {
     return splitByStrings(str, ...splitters.split(""));
 }
+
+export function trimStart(str: string, ...chars: string[]): string {
+    if (chars.length === 0) return str.trimStart();
+
+    const sorted = [...chars].sort((a, b) => b.length - a.length);
+
+    let changed = true;
+    while (changed) {
+        changed = false;
+        for (const c of sorted) {
+            if (str.startsWith(c)) {
+                str = str.slice(c.length);
+                changed = true;
+                break;
+            }
+        }
+    }
+    return str;
+}
+
+export function trimEnd(str: string, ...chars: string[]): string {
+    if (chars.length === 0) return str.trimEnd();
+
+    const sorted = [...chars].sort((a, b) => b.length - a.length);
+
+    let changed = true;
+    while (changed) {
+        changed = false;
+        for (const c of sorted) {
+            if (str.endsWith(c)) {
+                str = str.slice(0, -c.length);
+                changed = true;
+                break;
+            }
+        }
+    }
+    return str;
+}
+
+export function trim(str: string, ...chars: string[]): string {
+    if (chars.length === 0) return str.trim();
+    return trimEnd(trimStart(str, ...chars), ...chars);
+}
