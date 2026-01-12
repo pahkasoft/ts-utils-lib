@@ -1,6 +1,6 @@
 import { Device } from "../..";
 
-function _getElemById(id: string): HTMLElement | undefined {
+function _getElemById(id: string): Element | undefined {
     return typeof document === "undefined" ? undefined : (document.getElementById(id) ?? undefined);
 }
 
@@ -24,41 +24,35 @@ function toPx(value: string | number | undefined): number | undefined {
     return value === undefined ? undefined : Device.unitToPx(value);
 }
 
-export function hasClass(el: HTMLElement, className: string) {
-    if (className.length === 0) {
+export function hasClass(el: Element, className: string) {
+    if (className.length === 0)
         return false;
-    }
-    else if (el.classList) {
+    else if (el.classList)
         return el.classList.contains(className);
-    }
-    else {
+    else
         return !!el.className.match(new RegExp("(\\s|^)" + className + "(\\s|$)"));
-    }
 }
 
-export function addClass(el: HTMLElement, className: string) {
-    if (className.length === 0) {
-        return;
-    }
-    else if (el.classList) {
-        el.classList.add(className)
-    }
-    else if (!hasClass(el, className)) {
-        el.className += " " + className;
-    }
+export function addClass(el: Element, ...className: string[]) {
+    className.forEach(cls => {
+        if (cls.length === 0)
+            return;
+        else if (el.classList)
+            el.classList.add(cls)
+        else if (!hasClass(el, cls))
+            el.className += " " + cls;
+    });
 }
 
-export function removeClass(el: HTMLElement, className: string) {
-    if (className.length === 0) {
-        return;
-    }
-    else if (el.classList) {
-        el.classList.remove(className)
-    }
-    else if (hasClass(el, className)) {
-        var reg = new RegExp("(\\s|^)" + className + "(\\s|$)");
-        el.className = el.className.replace(reg, " ");
-    }
+export function removeClass(el: Element, ...className: string[]) {
+    className.forEach(cls => {
+        if (cls.length === 0)
+            return;
+        else if (el.classList)
+            el.classList.remove(cls)
+        else if (hasClass(el, cls))
+            el.className = el.className.replace(new RegExp("(\\s|^)" + cls + "(\\s|$)"), " ");
+    });
 }
 
 export function setOffset(el: HTMLElement, left: number, top: number, unit: string = "px") {
@@ -111,11 +105,11 @@ export function setHeight(el: HTMLElement, val: number) {
     el.style.height = val + "px";
 }
 
-export function appendTo(el: HTMLElement | SVGElement, to: HTMLElement | SVGElement) {
+export function appendTo(el: Element | SVGElement, to: Element | SVGElement) {
     to.appendChild(el);
 }
 
-export function removeFromParent(el: HTMLElement | SVGElement) {
+export function removeFromParent(el: Element | SVGElement) {
     el.remove();
 }
 
@@ -130,12 +124,12 @@ export function setRect(el: HTMLElement, left: number, top: number, width: numbe
     el.style.height = height + unit;
 }
 
-export function getButton(btn: HTMLElement | string): HTMLButtonElement | undefined {
+export function getButton(btn: Element | string): HTMLButtonElement | undefined {
     let el = typeof btn === "string" ? _getElemById(btn) : btn;
     return el instanceof HTMLButtonElement ? el : undefined;
 }
 
-export function getCanvas(canvas: HTMLElement | string): HTMLCanvasElement | undefined {
+export function getCanvas(canvas: Element | string): HTMLCanvasElement | undefined {
     let el = typeof canvas === "string" ? _getElemById(canvas) : canvas;
     return el instanceof HTMLCanvasElement ? el : undefined;
 }
