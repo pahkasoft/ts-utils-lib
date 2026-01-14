@@ -4,9 +4,6 @@
 A small collection of TypeScript functions, containers, modules, etc. used
 in my personal projects.
 
-I do not use much AI in my work but this is exception. Lot of stuff in this
-lib is written by AI.
-
 ## Links
 [Repository](https://github.com/pahkasoft/ts-utils-lib) |
 [Package](https://www.npmjs.com/package/@tspro/ts-utils-lib) |
