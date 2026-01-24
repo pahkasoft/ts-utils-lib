@@ -1,6 +1,10 @@
 # Changelog
+## [3.3.1] - 2026-01-24
+### Fixed
+- README.md.
+
 ## [3.3.0] - 2026-01-12
-## Changed
+### Changed
 - Loosen some Utils.Dom function arguments from HTMLElement to Element.
 - Utils.Dom.addClass() and removeClass() accept multiple class names using variadic arg. 
 

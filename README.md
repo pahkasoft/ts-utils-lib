@@ -37,12 +37,12 @@ const { UniMap, Utils } = require("@tspro/ts-utils-lib");
 
 ```html
 <!-- Unpkg CDM: Load non-polyfilled or polyfilled bundles. -->
-<script src="https://unpkg.com/@tspro/ts-utils-lib@3.3.0/dist/index.es5.iife.js"></script>
-<script src="https://unpkg.com/@tspro/ts-utils-lib@3.3.0/dist/index.es5.polyfilled.iife.js"></script>
+<script src="https://unpkg.com/@tspro/ts-utils-lib@3.3.1/dist/index.es5.iife.js"></script>
+<script src="https://unpkg.com/@tspro/ts-utils-lib@3.3.1/dist/index.es5.polyfilled.iife.js"></script>
 
 <!-- jsDelivr CDN: Load non-polyfilled or polyfilled bundles. -->
-<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@3.3.0/dist/index.es5.iife.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@3.3.0/dist/index.es5.polyfilled.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@3.3.1/dist/index.es5.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tspro/ts-utils-lib@3.3.1/dist/index.es5.polyfilled.iife.js"></script>
 
 <script>
     const { UniMap, Utils } = window.TsUtilsLib;

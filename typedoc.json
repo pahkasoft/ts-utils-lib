@@ -7,5 +7,6 @@
     "readme": "./README.md",
     "disableSources": true,
     "excludePrivate": true,
-    "excludeProtected": true
+    "excludeProtected": true,
+    "includeVersion": true
 }
