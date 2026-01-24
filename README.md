@@ -26,7 +26,7 @@ import { UniMap, Utils } from "@tspro/ts-utils-lib";
 
 ```ts
 // Require required stuff.
-const { UniMap, Utils } = require()"@tspro/ts-utils-lib");
+const { UniMap, Utils } = require("@tspro/ts-utils-lib");
 ```
 
 ### Browser Script
