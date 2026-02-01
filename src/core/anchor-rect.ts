@@ -1,8 +1,46 @@
+import { hasProperties } from "../utils/obj";
 import { clamp } from "../utils/math";
 import { Rect } from "./rect";
 
+function getRectProps(arg: unknown) {
+    let left: number = NaN;
+    let anchorX: number | undefined;
+    let right: number = NaN;
+    let top: number = NaN;
+    let anchorY: number | undefined;
+    let bottom: number = NaN;
+
+    if (hasProperties(arg, ["left", "top"] as const)) {
+        left = Number(arg.left);
+        top = Number(arg.top);
+    }
+    else if (hasProperties(arg, ["x", "y"] as const)) {
+        left = Number(arg.x);
+        top = Number(arg.y);
+    }
+    if (hasProperties(arg, ["width", "height"] as const)) {
+        right = left + Number(arg.width);
+        bottom = top + Number(arg.height);
+    }
+    if (hasProperties(arg, ["anchorX", "anchorY"] as const)) {
+        anchorX = Number(arg.anchorX);
+        anchorY = Number(arg.anchorY);
+    }
+
+    return { left, anchorX, right, top, anchorY, bottom }
+}
+
 /**
- * A mutable AnchoredRect class is a rectangle (left, top, right, bottom) with an anchor point (anchorX, anchorY).
+ * Mutable axis-aligned rectangle with an explicit anchor point.
+ *
+ * The rectangle is defined by its edges (`left`, `top`, `right`, `bottom`)
+ * and an independent anchor (`anchorX`, `anchorY`) that acts as a logical
+ * pivot for scaling, sectioning, and layout operations.
+ *
+ * The anchor does not need to lie at the geometric center of the rectangle.
+ *
+ * All coordinates use the same coordinate space and orientation
+ * (top ≤ bottom, left ≤ right).
  */
 export class AnchoredRect {
     left: number;
@@ -13,30 +51,42 @@ export class AnchoredRect {
     bottom: number;
 
     /**
-     * Create rectangle with all zero values.
+     * Create an empty rectangle at the origin.
+     * All edges and anchor coordinates are set to zero.
      */
     constructor();
 
     /**
-     * Create rectangle with left, right, top, bottom.
-     * Properties anchorX and anchorY will be centered in the middle.
-     * 
-     * @param left - Left coordinate.
-     * @param right - Right coordinate.
-     * @param top - Top coordinate.
-     * @param bottom - Bottom coordinate.
+     * Create a rectangle from `{ left, top, width, height }`.
+     * The anchor is placed at the geometric center.
+     */
+    constructor(other: { left: number, top: number, width: number, height: number });
+
+    /**
+     * Create a deep copy of another AnchoredRect.
+     */
+    constructor(other: AnchoredRect);
+
+    /**
+     * Create a rectangle from edge coordinates.
+     * The anchor is placed at the geometric center.
+     *
+     * @param left - Left edge
+     * @param right - Right edge
+     * @param top - Top edge
+     * @param bottom - Bottom edge
      */
     constructor(left: number, right: number, top: number, bottom: number);
 
     /**
-     * Create rectangle with full arguments.
-     * 
-     * @param left - Left coordinate.
-     * @param anchorX - Center x-coordinate.
-     * @param right - Right coordinate.
-     * @param top - Top coordinate.
-     * @param anchorY - Center y-coordinate.
-     * @param bottom - Bottom coordinate.
+     * Create a rectangle with explicit edge and anchor coordinates.
+     *
+     * @param left - Left edge
+     * @param anchorX - Anchor x-coordinate
+     * @param right - Right edge
+     * @param top - Top edge
+     * @param anchorY - Anchor y-coordinate
+     * @param bottom - Bottom edge
      */
     constructor(left: number, anchorX: number, right: number, top: number, anchorY: number, bottom: number);
 
@@ -57,6 +107,15 @@ export class AnchoredRect {
             this.bottom = args[3] as number;
             this.anchorY = (this.top + this.bottom) / 2;
         }
+        else if (args.length === 1) {
+            const _args = getRectProps(args[0]);
+            this.left = _args.left;
+            this.right = _args.right;
+            this.anchorX = _args.anchorX ?? (this.left + this.right) / 2;
+            this.top = _args.top;
+            this.bottom = _args.bottom;
+            this.anchorY = _args.anchorY ?? (this.top + this.bottom) / 2;
+        }
         else if (args.length === 0) {
             this.left = this.anchorX = this.right = 0;
             this.top = this.anchorY = this.bottom = 0;
@@ -67,30 +126,19 @@ export class AnchoredRect {
     }
 
     /**
-     * Set rectangle with all zero values.
+     * Reset this rectangle to the origin.
+     * All edges and anchor coordinates are set to zero.
      */
     set(): AnchoredRect;
 
     /**
-     * Set rectangle with left, right, top, bottom.
-     * Properties anchorX and anchorY will be centered in the middle.
-     * 
-     * @param left - Left coordinate.
-     * @param right - Right coordinate.
-     * @param top - Top coordinate.
-     * @param bottom - Bottom coordinate.
+     * Set rectangle edges.
+     * The anchor is repositioned to the geometric center.
      */
     set(left: number, right: number, top: number, bottom: number): AnchoredRect;
 
     /**
-     * Set rectangle with full arguments.
-     * 
-     * @param left - Left coordinate.
-     * @param anchorX - Center x-coordinate.
-     * @param right - Right coordinate.
-     * @param top - Top coordinate.
-     * @param anchorY - Center y-coordinate.
-     * @param bottom - Bottom coordinate.
+     * Set rectangle edges and anchor explicitly.
      */
     set(left: number, anchorX: number, right: number, top: number, anchorY: number, bottom: number): AnchoredRect;
 
@@ -167,100 +215,118 @@ export class AnchoredRect {
         return new AnchoredRect(-leftw, 0, rightw, -toph, 0, bottomh);
     }
 
-    /**
-     * Get center x-coordinate.
-     */
+    /** Geometric center x-coordinate (ignores anchor). */
     get centerX() {
         return this.left + this.width / 2;
     }
 
-    /**
-     * Get center ycoordinate.
-     */
+    /** Geometric center y-coordinate (ignores anchor). */
     get centerY() {
         return this.top + this.height / 2;
     }
 
-    /**
-     * Width getter.
-     */
+    /** Rectangle width (`right - left`). */
     get width() {
         return this.right - this.left;
     }
 
-    /**
-     * Height getter.
-     */
+    /** Rectangle height (`bottom - top`). */
     get height() {
         return this.bottom - this.top;
     }
 
-    /**
-     * Left section width getter.
-     */
+    /** Distance from left edge to anchor. */
     get leftw() {
         return this.anchorX - this.left;
     }
 
-    /**
-     * Right section width getter.
-     */
+    /** Distance from anchor to right edge. */
     get rightw() {
         return this.right - this.anchorX;
     }
 
-    /**
-     * Top section height getter.
-     */
+    /** Distance from top edge to anchor. */
     get toph() {
         return this.anchorY - this.top;
     }
 
-    /**
-     * Bottom section height getter.
-     */
+    /** Distance from anchor to bottom edge. */
     get bottomh() {
         return this.bottom - this.anchorY;
     }
 
     /**
-     * Does this Rect contain given (x, y)-point?
-     * 
-     * @param x - X-coordinate.
-     * @param y - Y-coordinate.
-     * @returns - True/false.
+     * Test whether a point lies inside or on the edges of this rectangle.
      */
     contains(x: number, y: number): boolean {
         return x >= this.left && x <= this.right && y >= this.top && y <= this.bottom;
     }
 
     /**
-     * Do a and b rects overlap?
-     * 
-     * @param a - AnchoredRect a.
-     * @param b - AnchoredRect b.
-     * @returns - True/false.
+     * Create an inset (shrunken) copy of this rectangle.
+     *
+     * The rectangle edges are moved inward by the given amounts.
+     * The anchor position is preserved.
+     *
+     * @param dx - Horizontal inset applied to left and right edges.
+     * @param dy - Vertical inset applied to top and bottom edges.
+     *             Defaults to `dx`.
+     * @returns A new AnchoredRect inset from all sides.
+     */
+    insetCopy(dx: number, dy: number = dx): AnchoredRect {
+        return new AnchoredRect(this.left + dx, this.anchorX, this.right - dx, this.top + dy, this.anchorY, this.bottom - dy);
+    }
+
+    /**
+     * Create an inflated (expanded) copy of this rectangle.
+     *
+     * The rectangle edges are moved outward by the given amounts.
+     * The anchor position is preserved.
+     *
+     * @param dx - Horizontal expansion applied to left and right edges.
+     * @param dy - Vertical expansion applied to top and bottom edges.
+     *             Defaults to `dx`.
+     * @returns A new AnchoredRect expanded on all sides.
+     */
+    inflateCopy(dx: number, dy: number = dx): AnchoredRect {
+        return new AnchoredRect(this.left - dx, this.anchorX, this.right + dx, this.top - dy, this.anchorY, this.bottom + dy);
+    }
+
+    /**
+     * Test whether this rectangle intersects another rectangle.
+     *
+     * Edge-touching is considered an intersection.
+     * Accepts either an AnchoredRect or a rect-like object
+     * with `{ left, top, width, height }`.
+     */
+    intersects(other: AnchoredRect): boolean;
+    intersects(other: { left: number, top: number, width: number, height: number }): boolean;
+    intersects(other: unknown): boolean {
+        const _args = getRectProps(other);
+        return !(
+            _args.right < this.left ||
+            _args.left > this.right ||
+            _args.bottom < this.top ||
+            _args.top > this.bottom
+        );
+    }
+
+    /**
+     * This method requires strict overlap (edge-touching does NOT count).
      */
     static overlap(a: AnchoredRect, b: AnchoredRect): boolean {
         return a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
     }
 
     /**
-     * Do horizontal measures of a and b rects overlap?
-     * 
-     * @param a - AnchoredRect a.
-     * @param b - AnchoredRect b.
-     * @returns - True/false.
+     * This method requires strict (horizontal) overlap (edge-touching does NOT count).
      */
     static overlapX(a: AnchoredRect, b: AnchoredRect): boolean {
         return a.right > b.left && a.left < b.right;
     }
 
     /**
-     * Check if given rects are equal.
-     * @param a - AnchoredRect a.
-     * @param b - AnchoredRect b.
-     * @returns - True/false.
+     * Test if rects are equal.
      */
     static equals(a: AnchoredRect | null | undefined, b: AnchoredRect | null | undefined): boolean {
         if (a == null && b == null) {
@@ -276,20 +342,14 @@ export class AnchoredRect {
     }
 
     /**
-     * Check if this rect equals with another rect.
-     * @param other - The other rect.
-     * @returns - True/false.
+     * Test if this rect equals with given rect.
      */
     equals(other: AnchoredRect): boolean {
         return AnchoredRect.equals(this, other);
     }
 
     /**
-     * Check if edges of given rects are equal, ignoring anchorX and anchorY.
-     * 
-     * @param a - AnchoredRect a.
-     * @param b - AnchoredRect b.
-     * @returns - True/false.
+     * Test if edges of given rects are equal, ignoring anchorX and anchorY.
      */
     static equalsEdges(a: AnchoredRect | null | undefined, b: AnchoredRect | null | undefined): boolean {
         if (a == null && b == null) {
@@ -305,29 +365,25 @@ export class AnchoredRect {
     }
 
     /**
-     * Check if edges of this Rect equals with given Rect, ignoring anchorX and anchorY.
-     * 
-     * @param other - The other AnchoredRect.
-     * @returns - True/false.
+     * Test if edges of this equal with given Rect, ignoring anchorX and anchorY.
      */
     equalsEdges(other: AnchoredRect): boolean {
         return AnchoredRect.equalsEdges(this, other);
     }
 
     /**
-     * Created duplicate of this Rect.
-     * @returns - Duplicate.
+     * Create copy.
      */
     clone(): AnchoredRect {
         return new AnchoredRect(this.left, this.anchorX, this.right, this.top, this.anchorY, this.bottom);
     }
 
     /**
-     * Move this rect by (dx, dy). Modifies this Rect.
+     * Move this rect by (dx, dy).
      * 
      * @param dx - Offset amount in x-direction.
      * @param dy - Offset amount in y-direction.
-     * @returns - This AnchoredRect instance.
+     * @returns - Modified this.
      */
     offsetInPlace(dx: number, dy: number): AnchoredRect {
         this.left += dx;
@@ -340,45 +396,57 @@ export class AnchoredRect {
     }
 
     /**
-     * Move this rect by (dx, dy). Immutable, returns modified copy.
+     * Move this rect by (dx, dy).
      * 
      * @param dx - Offset amount in x-direction.
      * @param dy - Offset amount in y-direction.
-     * @returns - AnchoredRect copy with applied offset.
+     * @returns - Copy with applied offset.
      */
     offsetCopy(dx: number, dy: number): AnchoredRect {
         return this.clone().offsetInPlace(dx, dy);
     }
 
     /**
-     * Expand this Rect by given Rect. Modifies this Rect.
-     * 
-     * @param rect - AnchoredRect to expand this instance with.
-     * @returns - This AnchoredRect instance.
+     * Expand this rectangle to include another rectangle.
+     * The anchor is preserved.
      */
-    expandInPlace(rect: AnchoredRect): AnchoredRect {
-        this.left = Math.min(this.left, rect.left);
-        this.right = Math.max(this.right, rect.right);
-        this.top = Math.min(this.top, rect.top);
-        this.bottom = Math.max(this.bottom, rect.bottom);
+    unionInPlace(other: AnchoredRect): AnchoredRect {
+        this.left = Math.min(this.left, other.left);
+        this.right = Math.max(this.right, other.right);
+        this.top = Math.min(this.top, other.top);
+        this.bottom = Math.max(this.bottom, other.bottom);
         return this;
     }
 
-    /**
-     * Expand this Rect by given Rect. Immutable, returns modified copy.
-     * 
-     * @param rect - AnchoredRect to expand this instance with.
-     * @returns - Expanded copy of this AnchoredRect.
-     */
-    expandCopy(rect: AnchoredRect): AnchoredRect {
-        return this.clone().expandInPlace(rect);
+    /** @deprecated - Use unionInPlace(). */
+    expandInPlace(other: AnchoredRect): AnchoredRect {
+        return this.unionInPlace(other);
     }
 
     /**
-     * Clip this Rect by given Rect. Mmodifies this Rect.
-     * 
-     * @param clipRect - AnchoredRect to clip this instance with.
-     * @returns - This AnchoredRect instance.
+     * Union this rect with given Rect. 
+     * @param other - Union with.
+     * @returns - Modified copy.
+     */
+    unionCopy(other: AnchoredRect): AnchoredRect {
+        return new AnchoredRect(
+            Math.min(this.left, other.left),
+            this.anchorX,
+            Math.max(this.right, other.right),
+            Math.min(this.top, other.top),
+            this.anchorY,
+            Math.max(this.bottom, other.bottom)
+        );
+    }
+
+    /** @deprecated - Use unionCopy(). */
+    expandCopy(other: AnchoredRect): AnchoredRect {
+        return this.unionCopy(other);
+    }
+
+    /**
+     * Clip this rectangle to the bounds of another rectangle.
+     * The anchor is clamped to remain inside the clipped region.
      */
     clipInPlace(clipRect: AnchoredRect): AnchoredRect {
         this.left = Math.max(this.left, clipRect.left);
@@ -401,11 +469,8 @@ export class AnchoredRect {
     }
 
     /**
-     * Scale Rect. Anchor pos is (anchorX, anchorY). Modifies this Rect.
-     * 
-     * @param scaleX - Scale x-amount.
-     * @param scaleY - Scale y-amount. If undefined then scale x-amount is used.
-     * @returns This AnchoredRect instance.
+     * Scale this rectangle around its anchor point.
+     * Edges are moved relative to the anchor.
      */
     scaleInPlace(scaleX: number, scaleY: number = scaleX): AnchoredRect {
         this.left = this.anchorX - this.leftw * scaleX;
@@ -427,17 +492,21 @@ export class AnchoredRect {
     }
 
     /**
-     * Get this AnchoredRect instance.
-     * @returns - This AnchoredRect instance.
+     * Return this rect.
      */
     getRect(): AnchoredRect {
         return this;
     }
 
+    /**
+     * Convert to a basic Rect using geometric edges.
+     * Anchor information is discarded.
+     */
     toRect(): Rect {
-        return new Rect(this.left, this.right, this.width, this.height);
+        return new Rect(this.left, this.top, this.width, this.height);
     }
 
+    /** String of this rect. */
     toString(): string {
         return `Rect(left=${this.left}, anchorX=${this.anchorX}, right=${this.right}, top=${this.top}, anchorY=${this.anchorY}, bottom=${this.bottom})`;
     }
