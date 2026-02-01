@@ -1,5 +1,10 @@
 # Changelog
-## [Unreleased]
+## [3.4.0]- 2026-02-01
+### Added
+- More functions to Rect and AnchoredRect.
+
+### Fixed
+- AnchoredRect.toRect() returned wrong Rect.
 
 ## [3.3.1] - 2026-01-24
 ### Fixed
