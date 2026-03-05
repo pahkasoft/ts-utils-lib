@@ -1,4 +1,9 @@
 # Changelog
+## [3.5.0]- 2026-03-05
+### Added
+- Utils.Str.levenshtein()
+- Utils.Str.getClosestString()
+
 ## [3.4.0]- 2026-02-01
 ### Added
 - More functions to Rect and AnchoredRect.
