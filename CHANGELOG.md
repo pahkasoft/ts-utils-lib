@@ -1,4 +1,8 @@
 # Changelog
+## [3.5.1]- 2026-07-28
+### Fixed
+- Updated package.json links.
+
 ## [3.5.0]- 2026-03-05
 ### Added
 - Utils.Str.levenshtein()

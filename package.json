@@ -1,14 +1,11 @@
 {
     "name": "@tspro/ts-utils-lib",
-    "version": "3.5.0",
+    "version": "3.5.1",
     "author": "Stefan B.",
     "license": "MIT",
     "private": false,
-    "homepage": "https://pahkasoft.com/ts-utils-lib",
+    "homepage": "https://pahkasoft.github.io/ts-utils-lib",
     "repository": "github:pahkasoft/ts-utils-lib",
-    "bugs": {
-        "url": "https://github.com/pahkasoft/ts-utils-lib/issues"
-    },
     "description": "Useful library of typescript classes, modules and functions.",
     "types": "dist/index.d.ts",
     "main": "dist/index.js",

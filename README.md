@@ -5,7 +5,7 @@ A small collection of TypeScript functions, containers, modules, etc. used
 in my personal projects.
 
 ## Links
-[Homepage](https://pahkasoft.com/ts-utils-lib) |
+[Homepage](https://pahkasoft.github.io/ts-utils-lib) |
 [Repository](https://github.com/pahkasoft/ts-utils-lib) |
 [Package](https://www.npmjs.com/package/@tspro/ts-utils-lib)
 
