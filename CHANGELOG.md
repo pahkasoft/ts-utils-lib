@@ -1,4 +1,8 @@
 # Changelog
+## [3.5.2]- 2026-07-28
+### Fixed
+- Forgot to update version links.
+
 ## [3.5.1]- 2026-07-28
 ### Fixed
 - Updated package.json links.
